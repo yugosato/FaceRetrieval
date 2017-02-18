@@ -48,8 +48,6 @@ public:
 
 	const int fontsize_ = 18;			// フォントサイズ
 
-//	const int inputTextposx_ = 84;		// "INPUT"の表示x座標
-//	const int inputTextposy_ = 260;		// "INPUT"の表示y座標
 	const int inputImgposx_ = 10;		// クエリ画像表示x座標
 	const int inputImgposy_ = 10;		// クエリ画像表示y座標
 	const int inputImgsize_ = 220;		// クエリ画像サイズ

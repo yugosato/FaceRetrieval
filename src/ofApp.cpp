@@ -84,10 +84,8 @@ void ofApp::setup()
 	font_.load(ttf_, fontsize_);
 	backbutton0_.load("items/cantBack.png");
 	backbutton1_.load("items/canBack1.png");
-	//backbutton2_.load("items/canBack2.png");
 	enterbutton0_.load("items/cantEnter.png");
 	enterbutton1_.load("items/canEnter1.png");
-	//enterbutton2_.load("items/canEnter2.png");
 
 	// データベース情報取得
 	input_ = new DataBase();
@@ -248,7 +246,6 @@ void ofApp::draw()
 		if (clickflag_ && mode_ == query)
 		{
 			ofSetHexColor(0xCCCCCC);
-			//font_.drawString("INPUT", inputTextposx_, inputTextposy_);
 			picture_.draw(inputImgposx_, inputImgposy_, inputImgsize_, inputImgsize_);
 			ofDrawRectangle(5, inputImgposy_ - 5, 5, inputImgsize_ + 10);
 			ofDrawRectangle(5, inputImgposy_ - 5, inputImgsize_ + 10, 5);
