@@ -233,15 +233,18 @@ void ofApp::draw()
 			int drawy = topsize_ + d_size_ * k + dragh_;
 
 			img = loader_->picture_[i];
-			img.draw(drawx, drawy, d_size_, d_size_);
+			if (img.bAllocated())
+				img.draw(drawx, drawy, d_size_, d_size_);
+			else
+				break;
 
 			if (i == mouseover_)
 			{
 				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 127.0f));
 				ofDrawRectangle(leftsize_ + d_size_ * j, topsize_ + d_size_ * k + dragh_, d_size_, d_size_);
 				ofSetColor(255);
-			}
-;		}
+			};
+		}
 
 		if (clickflag_ && mode_ == query)
 		{
@@ -619,7 +622,7 @@ bool ofApp::isReady()
 	bool READYorNOT = true;
 	if (loader_->isThreadRunning())
 	{
-		std::cout << "[ImageLoader] wait a sec." << std::endl;
+		std::cout << "[ImageLoader] wait a second." << std::endl;
 		READYorNOT = false;
 	}
 	else
