@@ -233,10 +233,11 @@ void ofApp::draw()
 			int drawy = topsize_ + d_size_ * k + dragh_;
 
 			img = loader_->picture_[i];
-			if (img.bAllocated())
-				img.draw(drawx, drawy, d_size_, d_size_);
-			else
+
+			if (!img.bAllocated())
 				break;
+			else
+				img.draw(drawx, drawy, d_size_, d_size_);
 
 			if (i == mouseover_)
 			{
