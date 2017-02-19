@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import scipy.spatial.distance as dis
 
 
 class DistanceMatrix:
@@ -22,14 +21,18 @@ class DistanceMatrix:
         
     def compute(self):
         print 'computing distance matrix... '
-        self.dMat_ = np.zeros([self.rows_, self.rows_])
+        self.dMat_ = np.zeros((self.rows_, self.rows_))
         size = self.rows_**2
         for i in range(self.rows_):
             for j in range(self.rows_):
-                print '({}/{})'.format((self.rows_ * i + j), size)
-                # distance = 1 - cosine_similarity
-                self.dMat_[i, j] = dis.cosine(self.data_[i], self.data_[j])
+                self.dMat_[i, j] = 1.0 - self.cos_sim(self.data_[i], self.data_[j])
+                print '({}/{})'.format((self.rows_ * i + j) + 1, size)
         print '-> done.'
+        print self.dMat_
+        
+        
+    def cos_sim(self, v1, v2):
+        return np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
         
         
     def save(self, filename):
@@ -39,7 +42,7 @@ class DistanceMatrix:
 
 def main():
     dMat = DistanceMatrix()
-    dMat.setdatafile('../bin/data/lfw/vgg.tsv')
+    dMat.setdatafile('../sat.tsv')
     dMat.loaddata()
     dMat.compute()
     dMat.save('./dMatrix.npy')
