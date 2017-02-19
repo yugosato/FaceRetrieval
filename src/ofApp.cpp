@@ -243,7 +243,7 @@ void ofApp::draw()
 				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 127.0f));
 				ofDrawRectangle(leftsize_ + d_size_ * j, topsize_ + d_size_ * k + dragh_, d_size_, d_size_);
 				ofSetColor(255);
-			};
+			}
 		}
 
 		if (clickflag_ && mode_ == query)
