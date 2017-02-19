@@ -24,8 +24,8 @@ class DistanceMatrix:
         print 'computing distance matrix... '
         self.dMat_ = np.zeros([self.rows_, self.rows_])
         size = self.rows_**2
-        for i in range(self.rows):
-            for j in range(self.rows):
+        for i in range(self.rows_):
+            for j in range(self.rows_):
                 print '({}/{})'.format((self.rows_ * i + j), size)
                 # distance = 1 - cosine_similarity
                 self.dMat_[i, j] = dis.cosine(self.data_[i], self.data_[j])
