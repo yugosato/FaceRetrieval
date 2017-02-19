@@ -234,7 +234,7 @@ void ofApp::draw()
 
 			img = loader_->picture_[i];
 
-			if (!img.bAllocated())
+			if (!img.isAllocated())
 				break;
 			else
 				img.draw(drawx, drawy, d_size_, d_size_);
