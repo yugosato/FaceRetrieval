@@ -100,6 +100,7 @@ public:
 	// クエリ関連
 	int clickNo_;						// クリック番号
 	bool clickflag_;					// クエリクリック
+	std::string queryname_;				// クリックした人物名
 
 	//-----------------------------------------
 	// その他/ウィンドウ設定
@@ -147,6 +148,8 @@ public:
 	inline void back();
 	inline void enter();
 	inline bool pressbutton(float x, float y, float w, float h);
+	inline void queryinfo();
+	inline void queryname(const std::string& fullpath);
 
 public:
 	ofTrueTypeFont font_;				// フォントデータ

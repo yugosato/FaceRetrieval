@@ -540,7 +540,29 @@ void ofApp::inputQuery()
 
 		calculate();
 		onPaint();
+		queryinfo();
 	}
+}
+
+//--------------------------------------------------------------
+void ofApp::queryname(const std::string& fullpath)
+{
+	int path_i = fullpath.find("/");
+	int path_j = fullpath.rfind("/");
+	std::string tempname = fullpath.substr(path_i, path_j);
+
+	int size = tempname.size();
+	int path_i2 = tempname.rfind("/") + 1;
+
+	queryname_ = tempname.substr(path_i2, size);
+}
+
+//--------------------------------------------------------------
+void ofApp::queryinfo()
+{
+	const std::string fullpath = name_[clickNo_];
+	queryname(fullpath);
+	std::cout << "[ofApp] you clicked --> " << queryname_ << std::endl;
 }
 
 //--------------------------------------------------------------
@@ -562,10 +584,12 @@ void ofApp::inputHistory()
 	numberhistory_.push_back(number_);
 	historysize_ = numberhistory_.size();
 
+	std::cout << "click history: ";
 	for (int i = 0; i < historysize_; ++i)
 	{
 		std::cout << queryhistory_[i] << " ";
 	}
+	std::cout << std::endl;
 	std::cout << std::endl;
 
 	if (historysize_ > 1)
