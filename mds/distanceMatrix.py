@@ -25,9 +25,12 @@ class DistanceMatrix:
         
         for i in xrange(self.rows_):
             for j in xrange(self.rows_):
-                self.dMat_[i, j] = distance.cosine(self.data_[i], self.data_[j])
+                dis = distance.cosine(self.data_[i], self.data_[j])
+                if i == j:
+                    dis = 0.0
+                self.dMat_[i, j] = dis
                 print '{} / {}'.format((self.rows_ * i + j) + 1, size)
-        np.clip(self.dMat_,0,1,self.dMat_)
+#        np.clip(self.dMat_,0,1,self.dMat_)
         
         print 'finished computing distance matrix.'
         print 'dmatrix shape: {}'.format(self.dMat_.shape)
