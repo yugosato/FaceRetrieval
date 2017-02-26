@@ -69,7 +69,7 @@ void ofApp::initparam()
 	ttf_ = "fonts/RictyDiminished-Bold.ttf";
 
 	// その他/データベース情報
-	matrixfile_ = "bin/data/lfw/vgg.tsv";
+	matrixfile_ = "bin/data/lfw/lfw-vgg.tsv";
 	nameFile_ = "bin/data/lfw/images.txt";
 	indexFile_ = "bin/data/lfw/index";
 
