@@ -30,7 +30,7 @@ class DistanceMatrix:
                     dis = 0.0
                 self.dMat_[i, j] = dis
                 print '{} / {}'.format((self.rows_ * i + j) + 1, size)
-#        np.clip(self.dMat_,0,1,self.dMat_)
+        np.clip(self.dMat_, 0, 1, self.dMat_)
         
         print 'finished computing distance matrix.'
         print 'dmatrix shape: {}'.format(self.dMat_.shape)
