@@ -14,7 +14,7 @@ def main():
     
     for x, y in zip(pos[:,0], pos[:,1]):
         plt.plot(x, y, 'ro')
-    plt.show()
+    plt.savefig('test.png')
 
 if __name__ == '__main__':
     main()
