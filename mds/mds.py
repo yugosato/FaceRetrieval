@@ -1,20 +1,28 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
+import os
 import numpy as np
 from sklearn import manifold
-import matplotlib.pyplot as plt
 from sklearn.externals import joblib
 
+
+lfwdir = '../bin/data/lfw'
+dmatrixfile = 'cos-dmatrix.npy'
+resultfile = 'lfw_mds.pkl'
+
+
 def main():
-    X = np.load('../bin/data/lfw/cos-dmatrix.npy')    
-    mds = manifold.MDS(n_components=2, dissimilarity='precomputed', random_state=6, n_jobs=3)
+    # load distance matrix (1 - cosine_similarity)
+    X = np.load(os.path.join(lfwdir, dmatrixfile))
+
+    # set mds parameter and fit    
+    mds = manifold.MDS(n_components=2, dissimilarity='precomputed', random_state=6, n_jobs=5)
     pos = mds.fit_transform(X)
-    joblib.dump(pos, 'mds.pkl')
     
-    for x, y in zip(pos[:,0], pos[:,1]):
-        plt.plot(x, y, 'ro')
-    plt.savefig('test.png')
+    # serialize the mds model
+    joblib.dump(pos, os.path.join(lfwdir, resultfile))
+
 
 if __name__ == '__main__':
     main()
