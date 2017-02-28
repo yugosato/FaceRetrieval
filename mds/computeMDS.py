@@ -8,8 +8,8 @@ from sklearn.externals import joblib
 
 
 lfwdir = '../bin/data/lfw'
-dmatrixfile = 'cos-dmatrix.npy'
-resultfile = 'lfw_mds.pkl'
+dmatrixfile = 'lfw-vgg_cos-dmatrix.npy'
+resultfile = 'lfw-vgg_cos_mds.pkl'
 
 
 def main():

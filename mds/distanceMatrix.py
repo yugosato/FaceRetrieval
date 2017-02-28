@@ -46,7 +46,7 @@ def main():
     dMat.setdatafile('../bin/data/lfw/lfw-vgg.npy')
     dMat.loaddata()
     dMat.compute()
-    dMat.save('./cos-dmatrix.npy')
+    dMat.save('./lfw-vgg_cos-dmatrix.npy')
 
 
 if __name__ == '__main__':
