@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+各クラス（人）ごとの重心座標
+"""
+
 import os
 import numpy as np
 
