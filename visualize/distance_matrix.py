@@ -56,7 +56,7 @@ class DistanceMatrix:
 
 def main():
     inputfile = os.path.join(inputdir, 'lfw-vgg_center.npy')
-    outputfile = os.path.join(inputdir, 'lfw-vgg_center_cos-dmatrix')
+    outputfile = os.path.join(inputdir, 'lfw-vgg_center_cos-dmatrix.npy')
 
     dMat = DistanceMatrix()
     dMat.setdatafile(inputfile)
