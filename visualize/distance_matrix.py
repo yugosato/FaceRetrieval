@@ -62,7 +62,7 @@ def main():
     dMat.setdatafile(inputfile)
     dMat.loaddata()
     dMat.compute_distance()
-    dMat.save(outputfile)
+    # dMat.save(outputfile)
 
 
 if __name__ == '__main__':

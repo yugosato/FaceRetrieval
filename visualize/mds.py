@@ -14,7 +14,6 @@ def main():
     inputfile = os.path.join(inputdir, 'lfw-vgg_center_cos-dmatrix.npy')
     outputfile = os.path.join(inputdir, 'lfw-vgg_center_cos-mds.pkl')
 
-
     X = np.load(inputfile)
     mds = manifold.MDS(n_components=2, dissimilarity='precomputed', random_state=6, n_jobs=5)
     pos = mds.fit_transform(X)
