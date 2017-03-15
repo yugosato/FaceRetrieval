@@ -14,10 +14,6 @@ def main():
     inputfile = os.path.join(inputdir, 'lfw-vgg_center_cos-mds.pkl')
 
     pos = joblib.load(inputfile)
-
-    # images = np.loadtxt(os.path.join(lfwdir, imglist), delimiter=' ', dtype=str)[:,1]
-    # images = map(int, images)
-    print len(pos)
     plt.scatter(pos[:,0], pos[:,1])
     plt.show()
     
