@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import numpy as np
 from sklearn.externals import joblib
 import matplotlib.pyplot as plt
 
