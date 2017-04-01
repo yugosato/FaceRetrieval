@@ -33,9 +33,6 @@ def make_thumbnail_images():
     inputfile = os.path.join(inputdir, 'labels.txt')
     labels = np.genfromtxt(inputfile, delimiter=' ', dtype=str)[:, 1]
 
-    # persons = os.listdir(imagesdir) #imagesから参照する必要あり メタデータは正しい
-    # persons.sort()
-
     thumbnail_images = []
     for label in labels:
         images = os.listdir(os.path.join(imagesdir, label))
