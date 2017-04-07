@@ -1,2 +1,3 @@
-bin/data/lfw/
+bin/
+obj/
 visualize/.idea/
