@@ -1,14 +1,2 @@
-#files
-addons.make
-config.make
-Makefile
-qtcreator.qbs
-template.xml
-.cproject
-.project
-
-#directories
-bin/
-obj/
-visualize/.idea/
-.settings/
+# lfw data
+bin/data/lfw/
