@@ -33,12 +33,12 @@
 		<link>
 			<name>addons/ofxUI</name>
 			<type>2</type>
-			<locationURI>/home/yugo/Downloads/of-0.9.8/addons/ofxUI</locationURI>
+			<locationURI>/home/yugo/Library/of-0.9.8/addons/ofxUI</locationURI>
 		</link>
 		<link>
 			<name>addons/ofxXmlSettings</name>
 			<type>2</type>
-			<locationURI>/home/yugo/Downloads/of-0.9.8/addons/ofxXmlSettings</locationURI>
+			<locationURI>/home/yugo/Library/of-0.9.8/addons/ofxXmlSettings</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

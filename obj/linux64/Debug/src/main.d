@@ -1,162 +1,162 @@
 obj/linux64/Debug/src/main.o: /home/yugo/workspace/Interface/src/main.cpp \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/ofMain.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofConstants.h \
- /home/yugo/Downloads/of-0.9.8/libs/tess2/include/tesselator.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofFileUtils.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofLog.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofTypes.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofColor.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofMath.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofPoint.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofVec3f.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofVec2f.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofVec4f.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofSystemUtils.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofURLFileLoader.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/events/ofEvents.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/events/ofEventUtils.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/events/ofEvent.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofTimer.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofFpsCounter.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofUtils.h \
- /home/yugo/Downloads/of-0.9.8/libs/utf8cpp/include/utf8.h \
- /home/yugo/Downloads/of-0.9.8/libs/utf8cpp/include/utf8/checked.h \
- /home/yugo/Downloads/of-0.9.8/libs/utf8cpp/include/utf8/core.h \
- /home/yugo/Downloads/of-0.9.8/libs/utf8cpp/include/utf8/unchecked.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofThread.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/AtomicCounter.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Foundation.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Config.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Platform.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Platform_POSIX.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Alignment.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Bugcheck.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Types.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Mutex.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Exception.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/ScopedLock.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Mutex_POSIX.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Thread.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Event.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Event_POSIX.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Thread_POSIX.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Runnable.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SignalHandler.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/RefCountedObject.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/AutoPtr.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SharedPtr.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofThreadChannel.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofBaseTypes.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofRectangle.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofMatrix4x4.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofQuaternion.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/ofMesh.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofGLUtils.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofPixels.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofXml.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofParameter.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofVectorMath.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofMatrix3x3.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofParameterGroup.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Document.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/XML.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/AbstractContainerNode.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/AbstractNode.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Node.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/EventTarget.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DOMObject.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/XMLString.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/NamespaceSupport.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/MutationEvent.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Event.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DocumentEvent.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Element.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/Name.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/NamePool.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/AutoReleasePool.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DocumentFragment.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DOMParser.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/SAXParser.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/XMLReader.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/ParserEngine.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/expat.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/expat_external.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/XMLStream.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/Locator.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/TextEncoding.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DOMException.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/XMLException.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/SAXException.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/XMLWriter.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/ContentHandler.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/LexicalHandler.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/DTDHandler.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/StreamConverter.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/UnbufferedStreamBuf.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/StreamUtil.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DOMWriter.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Attr.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Text.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/CharacterData.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/NodeIterator.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/NodeFilter.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/NamedNodeMap.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/ChildNodesList.h \
- /home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/NodeList.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/communication/ofSerial.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/communication/ofArduino.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofFbo.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofTexture.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofVboMesh.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofVbo.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofGLUtils.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofBufferObject.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofGLRenderer.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofPolyline.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/of3dGraphics.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/of3dPrimitives.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/ofNode.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/of3dUtils.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofAppRunner.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofWindowSettings.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofMainLoop.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofAppBaseWindow.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofBaseApp.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofBitmapFont.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofMatrixStack.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofGraphics.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofPath.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofTessellator.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofLight.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofMaterial.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofShader.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofGLProgrammableRenderer.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofCairoRenderer.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/ofMain.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofConstants.h \
+ /home/yugo/Library/of-0.9.8/libs/tess2/include/tesselator.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofFileUtils.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofLog.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofTypes.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofColor.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofMath.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofPoint.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofVec3f.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofVec2f.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofVec4f.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofSystemUtils.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofURLFileLoader.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/events/ofEvents.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/events/ofEventUtils.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/events/ofEvent.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofTimer.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofFpsCounter.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofUtils.h \
+ /home/yugo/Library/of-0.9.8/libs/utf8cpp/include/utf8.h \
+ /home/yugo/Library/of-0.9.8/libs/utf8cpp/include/utf8/checked.h \
+ /home/yugo/Library/of-0.9.8/libs/utf8cpp/include/utf8/core.h \
+ /home/yugo/Library/of-0.9.8/libs/utf8cpp/include/utf8/unchecked.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofThread.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/AtomicCounter.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Foundation.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Config.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Platform.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Platform_POSIX.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Alignment.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Bugcheck.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Types.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Mutex.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Exception.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/ScopedLock.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Mutex_POSIX.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Thread.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Event.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Event_POSIX.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Thread_POSIX.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Runnable.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SignalHandler.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/RefCountedObject.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/AutoPtr.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SharedPtr.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofThreadChannel.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofBaseTypes.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofRectangle.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofMatrix4x4.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofQuaternion.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/ofMesh.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofGLUtils.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofPixels.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofXml.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofParameter.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofVectorMath.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofMatrix3x3.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofParameterGroup.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Document.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/XML.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/AbstractContainerNode.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/AbstractNode.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Node.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/EventTarget.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DOMObject.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/XMLString.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/NamespaceSupport.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/MutationEvent.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Event.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DocumentEvent.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Element.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/Name.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/NamePool.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/AutoReleasePool.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DocumentFragment.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DOMParser.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/SAXParser.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/XMLReader.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/ParserEngine.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/expat.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/expat_external.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/XMLStream.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/Locator.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/TextEncoding.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DOMException.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/XMLException.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/SAXException.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/XMLWriter.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/ContentHandler.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/LexicalHandler.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/DTDHandler.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/StreamConverter.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/UnbufferedStreamBuf.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/StreamUtil.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DOMWriter.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Attr.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Text.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/CharacterData.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/NodeIterator.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/NodeFilter.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/NamedNodeMap.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/ChildNodesList.h \
+ /home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/NodeList.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/communication/ofSerial.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/communication/ofArduino.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofFbo.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofTexture.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofVboMesh.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofVbo.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofGLUtils.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofBufferObject.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofGLRenderer.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofPolyline.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/of3dGraphics.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/of3dPrimitives.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/ofNode.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/of3dUtils.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofAppRunner.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofWindowSettings.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofMainLoop.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofAppBaseWindow.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofBaseApp.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofBitmapFont.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofMatrixStack.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofGraphics.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofPath.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofTessellator.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofLight.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofMaterial.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofShader.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofGLProgrammableRenderer.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofCairoRenderer.h \
  /usr/include/cairo/cairo-features.h /usr/include/cairo/cairo-pdf.h \
  /usr/include/cairo/cairo.h /usr/include/cairo/cairo-version.h \
  /usr/include/cairo/cairo-features.h \
  /usr/include/cairo/cairo-deprecated.h /usr/include/cairo/cairo-svg.h \
  /usr/include/cairo/cairo.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofImage.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofRendererCollection.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofTrueTypeFont.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofAppGLFWWindow.h \
- /home/yugo/Downloads/of-0.9.8/libs/glfw/include/GLFW/glfw3.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofAppGlutWindow.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofSoundStream.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofBaseSoundStream.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofRtAudioSoundStream.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofSoundBuffer.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofSoundPlayer.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofBaseSoundPlayer.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofOpenALSoundPlayer.h \
- /home/yugo/Downloads/of-0.9.8/libs/kiss/include/kiss_fft.h \
- /home/yugo/Downloads/of-0.9.8/libs/kiss/include/kiss_fftr.h \
- /home/yugo/Downloads/of-0.9.8/libs/kiss/include/kiss_fft.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofSoundBuffer.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/video/ofVideoGrabber.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/video/ofGstVideoGrabber.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/video/ofGstUtils.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofImage.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofRendererCollection.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofTrueTypeFont.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofAppGLFWWindow.h \
+ /home/yugo/Library/of-0.9.8/libs/glfw/include/GLFW/glfw3.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofAppGlutWindow.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofSoundStream.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofBaseSoundStream.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofRtAudioSoundStream.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofSoundBuffer.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofSoundPlayer.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofBaseSoundPlayer.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofOpenALSoundPlayer.h \
+ /home/yugo/Library/of-0.9.8/libs/kiss/include/kiss_fft.h \
+ /home/yugo/Library/of-0.9.8/libs/kiss/include/kiss_fftr.h \
+ /home/yugo/Library/of-0.9.8/libs/kiss/include/kiss_fft.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofSoundBuffer.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/video/ofVideoGrabber.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/video/ofGstVideoGrabber.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/video/ofGstUtils.h \
  /usr/include/gstreamer-1.0/gst/gst.h /usr/include/glib-2.0/glib.h \
  /usr/include/glib-2.0/glib/galloca.h /usr/include/glib-2.0/glib/gtypes.h \
  /usr/lib/x86_64-linux-gnu/glib-2.0/include/glibconfig.h \
@@ -342,277 +342,277 @@ obj/linux64/Debug/src/main.o: /home/yugo/workspace/Interface/src/main.cpp \
  /usr/include/gstreamer-1.0/gst/video/videoorientation.h \
  /usr/include/gstreamer-1.0/gst/video/video-overlay-composition.h \
  /usr/include/gstreamer-1.0/gst/video/videooverlay.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/video/ofVideoPlayer.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/video/ofGstVideoPlayer.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/ofCamera.h \
- /home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/ofEasyCam.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/video/ofVideoPlayer.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/video/ofGstVideoPlayer.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/ofCamera.h \
+ /home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/ofEasyCam.h \
  /home/yugo/workspace/Interface/src/ofApp.h
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/ofMain.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/ofMain.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofConstants.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofConstants.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/tess2/include/tesselator.h:
+/home/yugo/Library/of-0.9.8/libs/tess2/include/tesselator.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofFileUtils.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofFileUtils.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofLog.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofLog.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofTypes.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofTypes.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofColor.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofColor.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofMath.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofMath.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofPoint.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofPoint.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofVec3f.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofVec3f.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofVec2f.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofVec2f.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofVec4f.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofVec4f.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofSystemUtils.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofSystemUtils.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofURLFileLoader.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofURLFileLoader.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/events/ofEvents.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/events/ofEvents.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/events/ofEventUtils.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/events/ofEventUtils.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/events/ofEvent.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/events/ofEvent.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofTimer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofTimer.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofFpsCounter.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofFpsCounter.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofUtils.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofUtils.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/utf8cpp/include/utf8.h:
+/home/yugo/Library/of-0.9.8/libs/utf8cpp/include/utf8.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/utf8cpp/include/utf8/checked.h:
+/home/yugo/Library/of-0.9.8/libs/utf8cpp/include/utf8/checked.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/utf8cpp/include/utf8/core.h:
+/home/yugo/Library/of-0.9.8/libs/utf8cpp/include/utf8/core.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/utf8cpp/include/utf8/unchecked.h:
+/home/yugo/Library/of-0.9.8/libs/utf8cpp/include/utf8/unchecked.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofThread.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofThread.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/AtomicCounter.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/AtomicCounter.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Foundation.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Foundation.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Config.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Config.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Platform.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Platform.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Platform_POSIX.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Platform_POSIX.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Alignment.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Alignment.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Bugcheck.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Bugcheck.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Types.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Types.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Mutex.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Mutex.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Exception.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Exception.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/ScopedLock.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/ScopedLock.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Mutex_POSIX.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Mutex_POSIX.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Thread.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Thread.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Event.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Event.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Event_POSIX.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Event_POSIX.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Thread_POSIX.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Thread_POSIX.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/Runnable.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/Runnable.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SignalHandler.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SignalHandler.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/RefCountedObject.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/RefCountedObject.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/AutoPtr.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/AutoPtr.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SharedPtr.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SharedPtr.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofThreadChannel.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofThreadChannel.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofBaseTypes.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofBaseTypes.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofRectangle.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofRectangle.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofMatrix4x4.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofMatrix4x4.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofQuaternion.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofQuaternion.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/ofMesh.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/ofMesh.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofGLUtils.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofGLUtils.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofPixels.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofPixels.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofXml.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofXml.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofParameter.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofParameter.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofVectorMath.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofVectorMath.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/math/ofMatrix3x3.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/math/ofMatrix3x3.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/types/ofParameterGroup.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/types/ofParameterGroup.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Document.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Document.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/XML.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/XML.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/AbstractContainerNode.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/AbstractContainerNode.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/AbstractNode.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/AbstractNode.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Node.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Node.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/EventTarget.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/EventTarget.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DOMObject.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DOMObject.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/XMLString.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/XMLString.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/NamespaceSupport.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/NamespaceSupport.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/MutationEvent.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/MutationEvent.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Event.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Event.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DocumentEvent.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DocumentEvent.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Element.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Element.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/Name.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/Name.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/NamePool.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/NamePool.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/AutoReleasePool.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/AutoReleasePool.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DocumentFragment.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DocumentFragment.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DOMParser.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DOMParser.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/SAXParser.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/SAXParser.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/XMLReader.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/XMLReader.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/ParserEngine.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/ParserEngine.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/expat.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/expat.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/expat_external.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/expat_external.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/XMLStream.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/XMLStream.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/Locator.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/Locator.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/TextEncoding.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/TextEncoding.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DOMException.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DOMException.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/XMLException.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/XMLException.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/SAXException.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/SAXException.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/XML/XMLWriter.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/XML/XMLWriter.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/ContentHandler.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/ContentHandler.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/LexicalHandler.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/LexicalHandler.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/SAX/DTDHandler.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/SAX/DTDHandler.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/StreamConverter.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/StreamConverter.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/UnbufferedStreamBuf.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/UnbufferedStreamBuf.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/StreamUtil.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/StreamUtil.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/DOMWriter.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/DOMWriter.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Attr.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Attr.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/Text.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/Text.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/CharacterData.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/CharacterData.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/NodeIterator.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/NodeIterator.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/NodeFilter.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/NodeFilter.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/NamedNodeMap.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/NamedNodeMap.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/ChildNodesList.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/ChildNodesList.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/poco/include/Poco/DOM/NodeList.h:
+/home/yugo/Library/of-0.9.8/libs/poco/include/Poco/DOM/NodeList.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/communication/ofSerial.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/communication/ofSerial.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/communication/ofArduino.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/communication/ofArduino.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofFbo.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofFbo.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofTexture.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofTexture.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofVboMesh.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofVboMesh.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofVbo.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofVbo.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofGLUtils.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofGLUtils.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofBufferObject.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofBufferObject.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofGLRenderer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofGLRenderer.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofPolyline.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofPolyline.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/of3dGraphics.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/of3dGraphics.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/of3dPrimitives.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/of3dPrimitives.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/ofNode.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/ofNode.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/of3dUtils.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/of3dUtils.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofAppRunner.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofAppRunner.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofWindowSettings.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofWindowSettings.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofMainLoop.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofMainLoop.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofAppBaseWindow.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofAppBaseWindow.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofBaseApp.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofBaseApp.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofBitmapFont.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofBitmapFont.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/utils/ofMatrixStack.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/utils/ofMatrixStack.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofGraphics.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofGraphics.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofPath.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofPath.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofTessellator.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofTessellator.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofLight.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofLight.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofMaterial.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofMaterial.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofShader.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofShader.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/gl/ofGLProgrammableRenderer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/gl/ofGLProgrammableRenderer.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofCairoRenderer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofCairoRenderer.h:
 
 /usr/include/cairo/cairo-features.h:
 
@@ -630,45 +630,45 @@ obj/linux64/Debug/src/main.o: /home/yugo/workspace/Interface/src/main.cpp \
 
 /usr/include/cairo/cairo.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofImage.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofImage.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofRendererCollection.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofRendererCollection.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/graphics/ofTrueTypeFont.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/graphics/ofTrueTypeFont.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofAppGLFWWindow.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofAppGLFWWindow.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/glfw/include/GLFW/glfw3.h:
+/home/yugo/Library/of-0.9.8/libs/glfw/include/GLFW/glfw3.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/app/ofAppGlutWindow.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/app/ofAppGlutWindow.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofSoundStream.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofSoundStream.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofBaseSoundStream.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofBaseSoundStream.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofRtAudioSoundStream.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofRtAudioSoundStream.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofSoundBuffer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofSoundBuffer.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofSoundPlayer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofSoundPlayer.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofBaseSoundPlayer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofBaseSoundPlayer.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofOpenALSoundPlayer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofOpenALSoundPlayer.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/kiss/include/kiss_fft.h:
+/home/yugo/Library/of-0.9.8/libs/kiss/include/kiss_fft.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/kiss/include/kiss_fftr.h:
+/home/yugo/Library/of-0.9.8/libs/kiss/include/kiss_fftr.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/kiss/include/kiss_fft.h:
+/home/yugo/Library/of-0.9.8/libs/kiss/include/kiss_fft.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/sound/ofSoundBuffer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/sound/ofSoundBuffer.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/video/ofVideoGrabber.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/video/ofVideoGrabber.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/video/ofGstVideoGrabber.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/video/ofGstVideoGrabber.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/video/ofGstUtils.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/video/ofGstUtils.h:
 
 /usr/include/gstreamer-1.0/gst/gst.h:
 
@@ -1068,12 +1068,12 @@ obj/linux64/Debug/src/main.o: /home/yugo/workspace/Interface/src/main.cpp \
 
 /usr/include/gstreamer-1.0/gst/video/videooverlay.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/video/ofVideoPlayer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/video/ofVideoPlayer.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/video/ofGstVideoPlayer.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/video/ofGstVideoPlayer.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/ofCamera.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/ofCamera.h:
 
-/home/yugo/Downloads/of-0.9.8/libs/openFrameworks/3d/ofEasyCam.h:
+/home/yugo/Library/of-0.9.8/libs/openFrameworks/3d/ofEasyCam.h:
 
 /home/yugo/workspace/Interface/src/ofApp.h:
