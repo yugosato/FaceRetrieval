@@ -424,7 +424,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 				if (clickpos < (int) showList_.size())
 				{
 					const int No = showList_[clickpos];
-					if (button == 0 && mode_ == query && isReady() && isLoaded_)
+					if (button == 0 && mode_ == query && isLoaded_)
 					{
 						clickNo_ = No;
 						inputQuery();
@@ -508,11 +508,7 @@ void ofApp::calculate()
 void ofApp::onPaint()
 {
 	loader_->setShowList(showList_);
-
-	if (loader_->isThreadRunning())
-		loader_->waitForThread(true);
-	else
-		loader_->startThread();
+	loader_->load();
 
 	if (clickflag_ && mode_ == query)
 	{
@@ -527,21 +523,18 @@ void ofApp::onPaint()
 //--------------------------------------------------------------
 void ofApp::inputQuery()
 {
-	if (isReady())
-	{
-		clickflag_ = true;
-		goback_ = true;
+	clickflag_ = true;
+	goback_ = true;
 
-		ngt_->setInput(clickNo_);
-		ngt_->search();
-		ngt_->getNumber(&number_);
-		input_->setNumber(number_);
-		initRange(2, 26);
+	ngt_->setInput(clickNo_);
+	ngt_->search();
+	ngt_->getNumber(&number_);
+	input_->setNumber(number_);
+	initRange(2, 26);
 
-		calculate();
-		onPaint();
-		queryinfo();
-	}
+	calculate();
+	onPaint();
+	queryinfo();
 }
 
 //--------------------------------------------------------------
@@ -639,21 +632,6 @@ void ofApp::initRange(const int& begin, const int& end)
 	picA_ = begin;
 	picB_ = end;
 	picnum_ = picB_ - picA_ + 1;
-}
-
-//--------------------------------------------------------------
-bool ofApp::isReady()
-{
-	bool READYorNOT = true;
-	if (loader_->isThreadRunning())
-	{
-		std::cout << "[ImageLoader] wait a second." << std::endl;
-		READYorNOT = false;
-	}
-	else
-		READYorNOT = true;
-
-	return READYorNOT;
 }
 
 //--------------------------------------------------------------

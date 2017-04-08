@@ -141,7 +141,6 @@ public:
 	inline void inputQuery();
 	inline void inputHistory();
 	inline void initRange(const int& begin_, const int& end_);
-	inline bool isReady();
 	inline void sizeChanged();
 	inline void backhistory();
 	inline void enterhistory();

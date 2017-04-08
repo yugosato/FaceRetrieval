@@ -76,7 +76,7 @@ public:
 };
 
 
-class ImageLoader: public ofThread
+class ImageLoader
 {
 public:
 	std::vector<ofImage> picture_;
@@ -85,15 +85,12 @@ public:
 	int row_;
 
 public:
-	void threadedFunction()
+	void load()
 	{
-		lock();
 		for (int i = 0; i < row_; i++)
 		{
 			picture_[i].load(name_[showList_[i]]);
 		}
-		this->stopThread();
-		unlock();
 	}
 
 	void setName(const std::vector<std::string>& name)
