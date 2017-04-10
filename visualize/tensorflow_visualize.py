@@ -102,5 +102,6 @@ def embedding_visualization():
 
 
 if __name__ == '__main__':
-    make_metadata()
+    # make_thumbnail_images()
+    # make_metadata()
     embedding_visualization()
