@@ -73,6 +73,7 @@ void ofApp::initparam()
 	nameFile_ = "bin/data/lfw/images.txt";
 	indexFile_ = "bin/data/lfw/index";
 
+
 	onoff_ = false;
 }
 
