@@ -9,19 +9,12 @@
 #include "loader.h"
 #include "search.h"
 
-enum Mode
-{
-	query, bin, multi, rvector, cluster, vector5, mapping
-};
-
 const int initWidth_ = 960;				// 初期ウィンドウサイズ(幅)
 const int initHeight_ = 720;			// 初期ウィンドウサイズ(高)
 
 class ofApp: public ofBaseApp
 {
 public:
-	//-----------------------------------------
-	Mode mode_;							// モード
 
 	//-----------------------------------------
 	// 履歴
