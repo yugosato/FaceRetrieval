@@ -71,8 +71,6 @@ void ofApp::initparam()
 	nameFile_ = datasetdir_ + dataset_ + "/images.txt";
 	matrixfile_ = "bin/data/lfw/lfw-vgg.tsv";
 	indexFile_ = "bin/data/lfw/index";
-
-	onoff_ = false;
 }
 
 //--------------------------------------------------------------
@@ -292,14 +290,6 @@ void ofApp::keyPressed(int key)
 				enter();
 			else
 				std::cout << "[ofApp] can't enter." << std::endl;
-			break;
-		}
-		case 102: // Ctrl+F
-		{
-			if (onoff_)
-				ofToggleFullscreen();
-			else
-				ofToggleFullscreen();
 			break;
 		}
 	}
