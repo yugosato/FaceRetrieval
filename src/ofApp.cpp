@@ -69,10 +69,11 @@ void ofApp::initparam()
 	ttf_ = "fonts/RictyDiminished-Bold.ttf";
 
 	// その他/データベース情報
+	datasetdir_ = "/home/yugo/Desktop/dataset/";
+	dataset_ = "lfw-cropped"; // [lfw-cropped, fuji-B, vgg-face-cropped]
+	nameFile_ = datasetdir_ + dataset_ + "/images.txt";
 	matrixfile_ = "bin/data/lfw/lfw-vgg.tsv";
-	nameFile_ = "bin/data/lfw/images.txt";
 	indexFile_ = "bin/data/lfw/index";
-
 
 	onoff_ = false;
 }

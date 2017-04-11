@@ -113,6 +113,8 @@ public:
 
 	// その他/パス
 	std::string binData_;				// データファイルディレクトリ
+	std::string datasetdir_;			// データセットディレクトリ
+	std::string dataset_;				// データセット
 	std::string matrixfile_;			// 特徴量ファイル
 	std::string nameFile_;				// 画像パスリストファイル
 	std::string indexFile_;				// NGTインデックス
