@@ -27,6 +27,7 @@ public:
 	bool canBack_;
 	bool canEnter_;
 	int nowhistory_;
+	std::vector<int> firstshowlist_;
 
 	//-----------------------------------------
 	// 表示枚数(表示範囲[picA - picB])

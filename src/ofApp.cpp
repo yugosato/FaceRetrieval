@@ -100,6 +100,9 @@ void ofApp::setup()
 	calculate();
 	onPaint();
 
+	// 初期表示リストの登録
+	firstshowlist_ = showList_;
+
 	// NGTセットアップ
 	ngt_ = new Search();
 	ngt_->setup(indexFile_);
@@ -291,6 +294,27 @@ void ofApp::keyPressed(int key)
 			else
 				std::cout << "[ofApp] can't enter." << std::endl;
 			break;
+		}
+		case 114: // Ctrl+r
+		{
+			if (clickflag_)
+			{
+				std::cout << "[ofApp] restart" << std::endl;
+
+				historysize_ = 0;
+				backcount_ = 0;
+				entercount_ = 0;
+				ishistory_ = false;
+				canBack_ = false;
+				canEnter_ = false;
+				nowhistory_ = -1;
+				clickflag_ = false;
+
+				showList_ = firstshowlist_;
+				onPaint();
+				queryhistory_.clear();
+				numberhistory_.clear();
+			}
 		}
 	}
 }
@@ -530,7 +554,7 @@ void ofApp::queryinfo()
 {
 	const std::string fullpath = name_[clickNo_];
 	queryname(fullpath);
-	std::cout << "[ofApp] you clicked --> " << queryname_ << std::endl;
+	std::cout << "[ofApp] you clicked " << queryname_ << std::endl;
 }
 
 //--------------------------------------------------------------
@@ -552,12 +576,11 @@ void ofApp::inputHistory()
 	numberhistory_.push_back(number_);
 	historysize_ = numberhistory_.size();
 
-	std::cout << "click history: ";
+	std::cout << "click history (query id): ";
 	for (int i = 0; i < historysize_; ++i)
 	{
 		std::cout << queryhistory_[i] << " ";
 	}
-	std::cout << std::endl;
 	std::cout << std::endl;
 
 	if (historysize_ > 1)
