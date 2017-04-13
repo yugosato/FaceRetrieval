@@ -6,6 +6,7 @@ qtcreator.qbs
 template.xml
 .cproject
 .project
+perf.data
 
 # directories
 bin/
