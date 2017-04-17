@@ -3,24 +3,10 @@
 
 import os
 import numpy as np
+import json
 import sklearn.base
 import bhtsne
 from sklearn import manifold
-
-
-class BHTSNE(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-
-    def __init__(self, dimensions=2, perplexity=30.0, theta=0.5, rand_seed=-1):
-        self.dimensions = dimensions
-        self.perplexity = perplexity
-        self.theta = theta
-        self.rand_seed = rand_seed
-
-
-    def fit_transform(self, x):
-        return bhtsne.tsne(
-            x.astype(np.float64), dimensions=self.dimensions, perplexity=self.perplexity,
-            theta=self.theta, rand_seed=self.rand_seed)
 
 
 class MDS(sklearn.base.BaseEstimator):
@@ -38,16 +24,52 @@ class MDS(sklearn.base.BaseEstimator):
         return mds.fit_transform(x)
 
 
+class BHTSNE(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
+
+    def __init__(self, dimensions=2, perplexity=30.0, theta=0.5, rand_seed=-1):
+        self.dimensions = dimensions
+        self.perplexity = perplexity
+        self.theta = theta
+        self.rand_seed = rand_seed
+
+
+    def fit_transform(self, x):
+        return bhtsne.tsne(
+            x.astype(np.float64), dimensions=self.dimensions, perplexity=self.perplexity,
+            theta=self.theta, rand_seed=self.rand_seed)
+
+
+# tensorflow projections -> npy file"
+def tf2npy(state_path):
+    f = open(state_path, 'r')
+    json_dict = json.load(f)[0]
+    projections = json_dict['projections']
+
+    results = []
+    for projection in projections:
+        x = projection['tsne-0']
+        y = projection['tsne-1']
+        z = projection['tsne-2']
+        temp = [x, y, z]
+        results.append(temp)
+
+    return results
+
+
 def main():
-
     inputdir = '../bin/data/lfw'
-    inputfile = os.path.join(inputdir, 'lfw-vgg_center.npy')
 
-    X = np.load(inputfile)
-    tsne = BHTSNE(dimensions=3, perplexity=30.0, theta=0.5, rand_seed=6)
-    Y = tsne.fit_transform(X)
+    # t-SNE
+    # inputfile = os.path.join(inputdir, 'lfw-vgg_center.npy')
+    # X = np.load(inputfile)
+    # tsne = BHTSNE(dimensions=3, perplexity=30.0, theta=0.5, rand_seed=6)
+    # Y = tsne.fit_transform(X)
 
-    np.save(os.path.join(inputdir, 'lfw-vgg_center-tsne.npy'), Y)
+    # # t-SNE (tensorflow)
+    inputfile = os.path.join(inputdir, 'state.txt')
+    Y = np.asarray(tf2npy(inputfile))
+
+    np.save(os.path.join(inputdir, 'lfw-vgg_center-tsne_tf.npy'), Y)
     print 'data shape: {}'.format(Y.shape)
     print 'complete.'
 
