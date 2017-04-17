@@ -15,9 +15,12 @@ def main():
 
     fig = plt.figure()
     ax = Axes3D(fig)
-    ax.set_xlabel("X-axis")
-    ax.set_ylabel("Y-axis")
-    ax.set_zlabel("Z-axis")
+    # ax.set_xlabel("X-axis")
+    # ax.set_ylabel("Y-axis")
+    # ax.set_zlabel("Z-axis")
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.set_zticklabels([])
     ax.plot(X[:, 0], X[:, 1], X[:, 2], "o", color="b", ms=4, mew=0.5)
     plt.show()
     
