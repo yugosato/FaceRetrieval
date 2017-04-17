@@ -47,7 +47,7 @@ def main():
     tsne = BHTSNE(dimensions=3, perplexity=19.0, theta=10, rand_seed=6)
     Y = tsne.fit_transform(X)
 
-    np.save(os.path.join(inputdir, 'lfw-vgg_center_tsne.npy'), Y)
+    np.save(os.path.join(inputdir, 'lfw-vgg_center-tsne.npy'), Y)
     print 'data shape: {}'.format(Y.shape)
     print 'complete.'
 
