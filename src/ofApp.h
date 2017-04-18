@@ -3,11 +3,13 @@
 #include <iostream>
 #include <vector>
 #include <NGT/Index.h>
+#include <python2.7/Python.h>
 #include "ofMain.h"
 #include "ofxUI.h"
 #include "database.h"
 #include "loader.h"
 #include "search.h"
+
 
 const int initWidth_ = 960;				// 初期ウィンドウサイズ(幅)
 const int initHeight_ = 720;			// 初期ウィンドウサイズ(高)

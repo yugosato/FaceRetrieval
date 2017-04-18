@@ -1,7 +1,4 @@
 # files
-addons.make
-config.make
-Makefile
 qtcreator.qbs
 template.xml
 .cproject
@@ -12,4 +9,3 @@ bin/
 obj/
 visualize/.idea/
 .settings/
-/Debug/
