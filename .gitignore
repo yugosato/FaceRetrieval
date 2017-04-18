@@ -13,3 +13,4 @@ bin/
 obj/
 visualize/.idea/
 .settings/
+/Debug/
