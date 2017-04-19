@@ -315,6 +315,12 @@ void ofApp::keyPressed(int key)
 				queryhistory_.clear();
 				numberhistory_.clear();
 			}
+			break;
+		}
+		case 109: // Ctrl+m
+		{
+			mapping();
+			break;
 		}
 	}
 }
@@ -655,4 +661,21 @@ void ofApp::sizeChanged()
 		rowshort_ = false;
 
 	dragw_ = 0;
+}
+
+//--------------------------------------------------------------
+void ofApp::mapping()
+{
+	// pythonスクリプト起動
+	Py_SetPythonHome("/home/yugo/anaconda2");
+	Py_Initialize();
+	boost::python::object global_ns = boost::python::import("__main__").attr("__dict__");
+	std::ifstream ifs("visualize/visualize_for_evaluation.py");
+	if (!ifs)
+	{
+		std::cout << "cannnot open python script." << std::endl;
+	}
+	std::string script((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+	boost::python::exec(script.c_str(), global_ns);
+//	Py_Finalize();
 }
