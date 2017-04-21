@@ -71,6 +71,9 @@ void ofApp::initparam()
 	nameFile_ = datasetdir_ + dataset_ + "/images.txt";
 	matrixfile_ = "bin/data/lfw/lfw-vgg.tsv";
 	indexFile_ = "bin/data/lfw/index";
+
+	// 探索評価関連
+	person_logfile_ = "bin/data/lfw/person_log.txt";
 }
 
 //--------------------------------------------------------------
@@ -89,6 +92,7 @@ void ofApp::setup()
 	input_->setup(nameFile_);
 	row_ = input_->getRow();
 	input_->getName(&name_);
+	input_->getPersonID(&person_ids_);
 
 	guiSetup();
 
@@ -311,6 +315,7 @@ void ofApp::keyPressed(int key)
 				showList_ = firstshowlist_;
 				onPaint();
 				queryhistory_.clear();
+				personhistory_.clear();
 				numberhistory_.clear();
 			}
 			break;
@@ -553,7 +558,10 @@ void ofApp::queryinfo()
 {
 	const std::string fullpath = name_[clickNo_];
 	queryname(fullpath);
-	std::cout << "[ofApp] you clicked " << queryname_ << std::endl;
+	std::cout << "-----------------------------------------------" << std::endl;
+	std::cout << "[ofApp] person name: " << queryname_ << std::endl;
+	std::cout << "[ofApp] person id: " << person_ids_[clickNo_] << std::endl;
+	std::cout << "[ofApp] image id: " << clickNo_ << std::endl;
 }
 
 //--------------------------------------------------------------
@@ -567,26 +575,39 @@ void ofApp::inputHistory()
 		{
 			canEnter_ = false;
 			queryhistory_.pop_back();
+			personhistory_.pop_back();
 			numberhistory_.pop_back();
 		}
 	}
 
 	queryhistory_.push_back(clickNo_);
+	personhistory_.push_back(person_ids_[clickNo_]);
 	numberhistory_.push_back(number_);
 	historysize_ = numberhistory_.size();
 
-	std::cout << "click history (query id): ";
+	std::cout << "[ofApp] person id history: ";
+	for (int i = 0; i < historysize_; ++i)
+	{
+		std::cout << personhistory_[i] << " ";
+	}
+	std::cout << std::endl;
+
+	std::cout << "[ofApp] image id history: ";
 	for (int i = 0; i < historysize_; ++i)
 	{
 		std::cout << queryhistory_[i] << " ";
 	}
 	std::cout << std::endl;
+	std::cout << "-----------------------------------------------" << std::endl;
 
 	if (historysize_ > 1)
 	{
 		canBack_ = true;
 		nowhistory_ = historysize_ - 1;
 	}
+
+	std::ofstream log(person_logfile_, ios::app);
+	log << person_ids_[clickNo_] << std::endl;
 }
 
 //--------------------------------------------------------------

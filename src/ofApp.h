@@ -23,6 +23,7 @@ public:
 	// 履歴
 	int historysize_;					// 履歴サイズ
 	std::vector<int> queryhistory_;		// クリックした画像番号履歴
+	std::vector<int> personhistory_;	// クリックした人物ID履歴
 	int backcount_;						// backした回数
 	int entercount_;
 	std::vector<std::vector<int>> numberhistory_;
@@ -115,6 +116,10 @@ public:
 	std::string matrixfile_;			// 特徴量ファイル
 	std::string nameFile_;				// 画像パスリストファイル
 	std::string indexFile_;				// NGTインデックス
+
+	// 探索評価関連
+	std::string person_logfile_;
+	std::vector<int> person_ids_;		// 各画像に対応する人物ID
 
 public:
 	void setup();

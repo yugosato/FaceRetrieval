@@ -2,8 +2,10 @@
 #define SRC_DATABASE_H_
 
 #include <iostream>
+#include <string>
 #include <vector>
 #include <random>
+#include <typeinfo>
 #include <NGT/Index.h>
 
 class DataBase
@@ -16,6 +18,7 @@ public:
 	std::vector<std::string> name_;				// ファイル名リスト(サイズ：全画像数)
 	std::vector<int> number_;					// 表示順(サイズ：全画像数)
 	std::vector<int> showList_;					// 表示する画像のリスト
+	std::vector<int> ids_;						// 各画像に対応する人物番号
 
 public:
 	void setup(std::string nameFile)
@@ -45,6 +48,7 @@ public:
 				std::vector<std::string> tokens;
 				NGT::Common::tokenize(line, tokens, " ");
 				name_.push_back(tokens[0]);
+				ids_.push_back(std::atoi(tokens[1].c_str()));
 			}
 			row_ = name_.size();
 		}
@@ -103,6 +107,14 @@ public:
 		nameList->resize(row_);
 		for (int i = 0; i < row_; ++i)
 			(*nameList)[i] = name_[i];
+	}
+
+	// 画像に対応する人物IDを返す
+	void getPersonID(std::vector<int>* person_ids) const
+	{
+		person_ids->resize(row_);
+		for (int i = 0; i < row_; ++i)
+			(*person_ids)[i] = ids_[i];
 	}
 
 	// 画像枚数を返す
