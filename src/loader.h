@@ -28,8 +28,10 @@ public:
 
 	void threadedFunction()
 	{
+		lock();
 		loadMatrix();
 		done_ = true;
+		unlock();
 	}
 
 	void setMatFile(const std::string& matFile)
@@ -57,6 +59,7 @@ public:
 		}
 		else
 		{
+			std::cout << "[NowLoading] start loading vgg-face features." << std::endl;
 			std::string line;
 			while (getline(ifs, line))
 			{
@@ -71,6 +74,7 @@ public:
 				count_++;
 			}
 			col_ = mat_[0].size();
+			std::cout << "[NowLoading] finished loading vgg-face features." << std::endl;
 		}
 	}
 };

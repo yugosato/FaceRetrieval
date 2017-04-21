@@ -4,9 +4,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include <streambuf>
 #include <NGT/Index.h>
-#include <boost/python.hpp>
 #include "ofMain.h"
 #include "ofxUI.h"
 #include "database.h"
@@ -150,7 +148,7 @@ public:
 	inline bool pressbutton(float x, float y, float w, float h);
 	inline void queryinfo();
 	inline void queryname(const std::string& fullpath);
-	inline void mapping();
+
 
 public:
 	ofTrueTypeFont font_;				// フォントデータ
