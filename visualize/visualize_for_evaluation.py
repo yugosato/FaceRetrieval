@@ -13,17 +13,24 @@ class Mapping:
         self.inputdir_ = inputdir
         self.init_pos_ = os.path.join(inputdir, init_pos)
         self.query_log_ = os.path.join(inputdir, query_log)
-        self.inputflag_ = False
+        self.newinput_ = False
+        self.firstinput_ = True
+        self.temp_query_ = -1
 
 
     def input_check(self):
         if os.path.exists(self.query_log_):
-            self.inputflag_ = True
             try:
                 self.now_query_ = int(np.loadtxt(self.query_log_)[-1])
             except:
                 self.now_query_ = int(np.loadtxt(self.query_log_))
-            print "[Mapping] input query image id: {}".format(self.now_query_)
+
+            if self.temp_query_ != self.now_query_:
+                self.newinput_ = True
+                print "[Mapping] input query image id: {}".format(self.now_query_)
+            else:
+                self.newinput_ = False
+            self.temp_query_ = self.now_query_
         else:
             pass
 
@@ -46,16 +53,18 @@ class Mapping:
 
         while True:
             self.input_check()
-            if self.inputflag_:
+            if self.newinput_:
                 query_x = [X[self.now_query_, 0]]
                 query_y = [X[self.now_query_, 1]]
                 query_z = [X[self.now_query_, 2]]
+
+                if not self.firstinput_:
+                    query.remove()
+
                 query, = ax.plot(query_x, query_y, query_z, "o", color="r", ms=5.0)
+                self.firstinput_ = False
 
             plt.pause(0.00000001)
-
-            if self.inputflag_:
-                query.remove()
 
             # check window opening
             fig_numbers = [x.num for x in plt._pylab_helpers.Gcf.get_all_fig_managers()]
