@@ -35,6 +35,12 @@ class Mapping:
             pass
 
 
+    def dist(self, x, y):
+        X = np.asarray(x)
+        Y = np.asarray(y)
+        return np.sqrt(np.sum((X - Y) ** 2))
+
+
     def mapping(self):
         fig = plt.figure(0)
         ax = Axes3D(fig)
@@ -49,7 +55,7 @@ class Mapping:
         database_z = X[:, 2]
 
         # plot database
-        ax.plot(database_x, database_y, database_z, "o", color="b", alpha=0.2, ms=2.0, mew=0.5)
+        database, = ax.plot(database_x, database_y, database_z, "o", color="b", alpha=0.2, ms=2.0, mew=0.5)
 
         while True:
             self.input_check()
@@ -60,8 +66,16 @@ class Mapping:
 
                 if not self.firstinput_:
                     query.remove()
+                    lines, = ax.plot(query_x_past+query_x, query_y_past+query_y, query_z_past+query_z, color="r")
+                    distance = self.dist([query_x_past[0],query_x_past[0],query_x_past[0]],[query_x[0],query_y[0],query_z[0]])
+                    print '[Mapping] distance: {}'.format(distance)
 
                 query, = ax.plot(query_x, query_y, query_z, "o", color="r", ms=5.0)
+
+                query_x_past = query_x
+                query_y_past = query_y
+                query_z_past = query_z
+
                 self.firstinput_ = False
 
             plt.pause(0.00000001)
