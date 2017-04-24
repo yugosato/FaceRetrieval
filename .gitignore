@@ -7,6 +7,5 @@ template.xml
 # directories
 bin/
 obj/
-script/.idea/
-visualize/.idea/
+.idea/
 .settings/
