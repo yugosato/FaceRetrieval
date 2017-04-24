@@ -8,13 +8,14 @@ import tensorflow as tf
 from tensorflow.contrib.tensorboard.plugins import projector
 
 
-inputdir = '/home/yugo/workspace/Interface/bin/data/lfw'
+inputdir = '/home/yugo/workspace/Interface/bin/data/cfd'
+databasedir = '/home/yugo/Desktop/dataset/cfd-cropped'
 embeddingdir = os.path.join(inputdir, 'embedding')
 
 
 def make_metadata():
-    inputfile = os.path.join(inputdir, 'labels.txt')
-    labels = np.genfromtxt(inputfile, delimiter=' ', dtype=str)[:,1]
+    inputfile = os.path.join(databasedir, 'labels.txt')
+    labels = np.genfromtxt(inputfile, delimiter=' ', dtype=str)[:, 1]
 
     if not os.path.exists(embeddingdir):
         os.makedirs(embeddingdir)
@@ -29,27 +30,11 @@ def make_metadata():
 
 
 def make_thumbnail_images():
-    imagesdir = '/home/yugo/Desktop/tools/lfw-cropped'
-    inputfile = os.path.join(inputdir, 'labels.txt')
-    labels = np.genfromtxt(inputfile, delimiter=' ', dtype=str)[:, 1]
-
-    thumbnail_images = []
-    for label in labels:
-        images = os.listdir(os.path.join(imagesdir, label))
-        images.sort()
-        for image in images:
-            fullimage_path = os.path.join(imagesdir, label, image)
-            if not os.path.exists(fullimage_path):
-                break
-
-            thumbnail_images.append(fullimage_path)
-            break
-
-    return thumbnail_images
-
+    inputfile = os.path.join(databasedir, 'images_selected.txt')
+    return np.genfromtxt(inputfile, delimiter=' ', dtype=str)[:, 0]
 
 def embedding_visualization():
-    inputfile = os.path.join(inputdir, 'lfw-vgg_center.npy')
+    inputfile = os.path.join(inputdir, 'cfd-vgg.npy')
     metafile = os.path.join(embeddingdir, 'metadata.tsv')
     logdir = os.path.join(embeddingdir, 'log')
 
@@ -102,6 +87,6 @@ def embedding_visualization():
 
 
 if __name__ == '__main__':
-    # make_thumbnail_images()
-    # make_metadata()
+    make_thumbnail_images()
+    make_metadata()
     embedding_visualization()
