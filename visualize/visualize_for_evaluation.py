@@ -12,8 +12,7 @@ class Mapping:
     def __init__(self, inputdir, init_pos, query_log):
         self.inputdir_ = inputdir
         self.init_pos_ = os.path.join(inputdir, init_pos)
-        self.query_log_ = os.path.join(inputdir, query_log)
-        print self.query_log_
+        self.query_log_ = query_log
         self.newinput_ = False
         self.firstinput_ = True
         self.temp_query_ = -1
@@ -28,6 +27,7 @@ class Mapping:
 
             if self.temp_query_ != self.now_query_:
                 self.newinput_ = True
+                print "-----------------------------------------------------"
                 print "[Mapping] input query image id: {}".format(self.now_query_)
             else:
                 self.newinput_ = False
@@ -69,7 +69,8 @@ class Mapping:
                     query.remove()
                     lines, = ax.plot(query_x_past+query_x, query_y_past+query_y, query_z_past+query_z, color="r")
                     distance = self.dist([query_x_past[0],query_x_past[0],query_x_past[0]],[query_x[0],query_y[0],query_z[0]])
-                    print '[Mapping] distance: {}'.format(distance)
+                    print "[Mapping] distance: {}".format(distance)
+                    print "-----------------------------------------------------"
 
                 query, = ax.plot(query_x, query_y, query_z, "o", color="r", ms=5.0)
 
@@ -88,13 +89,13 @@ class Mapping:
 
 
 def main():
-    inputdir = '../bin/data/cfd'
-    inputfile = 'cfd-vgg-tsne_tf.npy'
-    query_log = 'person_log.txt'
+    inputdir = "../bin/data/cfd"
+    inputfile = "cfd-vgg-tsne_tf.npy"
+    query_log = "../bin/log/person_log.txt"
 
     mapping = Mapping(inputdir, inputfile, query_log)
     mapping.mapping()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
