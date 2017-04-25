@@ -64,7 +64,7 @@ def main():
     # Y = tsne.fit_transform(X)
 
     # # t-SNE (tensorflow)
-    inputfile = os.path.join(inputdir, 'state.txt')
+    inputfile = os.path.join(inputdir, 'embedding/state.txt')
     Y = np.asarray(tf2npy(inputfile))
 
     np.save(os.path.join(inputdir, 'cfd-vgg-tsne_tf.npy'), Y)
