@@ -67,13 +67,27 @@ void ofApp::initparam()
 
 	// その他/データベース情報
 	datasetdir_ = "/home/yugo/Desktop/dataset/";
-	dataset_ = "lfw-cropped"; // [lfw-cropped, fuji-B, vgg-face-cropped]
-	nameFile_ = datasetdir_ + dataset_ + "/images.txt";
-	matrixfile_ = "bin/data/lfw/lfw-vgg.tsv";
-	indexFile_ = "bin/data/lfw/index";
+	dataset_ = "cfd-cropped"; // [lfw-cropped, fuji-B, vgg-face-cropped, cfd-cropped]
+	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
+	matrixfile_ = "bin/data/cfd/cfd-vgg.tsv";
+	indexFile_ = "bin/data/cfd/index";
 
 	// 探索評価関連
-	person_logfile_ = "bin/data/lfw/person_log.txt";
+	logdir_ = "bin/log/";
+	person_logfile_ = logdir_ + "person_log.txt";
+}
+
+//--------------------------------------------------------------
+bool ofApp::isFileexists(const std::string& filepath)
+{
+	struct stat st;
+	int ret = stat(filepath.c_str(), &st);
+	if (ret == 0)
+	{
+		return true;
+	}
+	else
+		return false;
 }
 
 //--------------------------------------------------------------
@@ -116,6 +130,12 @@ void ofApp::setup()
 	loading_->setMatFile(matrixfile_);
 	loading_->setRow(row_);
 	loading_->startThread();
+
+	// 検索ログ
+	if (!isFileexists(logdir_))
+	{
+		mkdir(logdir_.c_str(), 0777);
+	}
 }
 
 //--------------------------------------------------------------

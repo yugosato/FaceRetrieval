@@ -17,7 +17,6 @@ class MDS(sklearn.base.BaseEstimator):
         self.random_state = random_state
         self.n_jobs = n_jobs
 
-
     def compute(self, x):
         mds = manifold.MDS(n_components=self.n_components, dissimilarity=self.dissimilarity,
                            random_state=self.random_state, n_jobs=self.n_jobs)
@@ -31,7 +30,6 @@ class BHTSNE(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
         self.perplexity = perplexity
         self.theta = theta
         self.rand_seed = rand_seed
-
 
     def fit_transform(self, x):
         return bhtsne.tsne(
@@ -57,7 +55,7 @@ def tf2npy(state_path):
 
 
 def main():
-    inputdir = '../bin/data/lfw'
+    inputdir = '../bin/data/cfd'
 
     # t-SNE
     # inputfile = os.path.join(inputdir, 'lfw-vgg_center.npy')
@@ -69,7 +67,7 @@ def main():
     inputfile = os.path.join(inputdir, 'state.txt')
     Y = np.asarray(tf2npy(inputfile))
 
-    np.save(os.path.join(inputdir, 'lfw-vgg_center-tsne_tf.npy'), Y)
+    np.save(os.path.join(inputdir, 'cfd-vgg-tsne_tf.npy'), Y)
     print 'data shape: {}'.format(Y.shape)
     print 'complete.'
 

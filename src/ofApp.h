@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <sys/stat.h>
 #include <NGT/Index.h>
 #include "ofMain.h"
 #include "ofxUI.h"
@@ -118,6 +119,7 @@ public:
 	std::string indexFile_;				// NGTインデックス
 
 	// 探索評価関連
+	std::string logdir_;			// 探索ログ出力ディレクトリ
 	std::string person_logfile_;
 	std::vector<int> person_ids_;		// 各画像に対応する人物ID
 
@@ -153,6 +155,7 @@ public:
 	inline bool pressbutton(float x, float y, float w, float h);
 	inline void queryinfo();
 	inline void queryname(const std::string& fullpath);
+	inline bool isFileexists(const std::string& filepath);
 
 
 public:

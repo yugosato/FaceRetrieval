@@ -13,6 +13,7 @@ class Mapping:
         self.inputdir_ = inputdir
         self.init_pos_ = os.path.join(inputdir, init_pos)
         self.query_log_ = os.path.join(inputdir, query_log)
+        print self.query_log_
         self.newinput_ = False
         self.firstinput_ = True
         self.temp_query_ = -1
@@ -55,7 +56,7 @@ class Mapping:
         database_z = X[:, 2]
 
         # plot database
-        database, = ax.plot(database_x, database_y, database_z, "o", color="b", alpha=0.2, ms=2.0, mew=0.5)
+        database, = ax.plot(database_x, database_y, database_z, "o", color="b", alpha=0.3, ms=2.0, mew=0.5)
 
         while True:
             self.input_check()
@@ -87,9 +88,9 @@ class Mapping:
 
 
 def main():
-    inputdir = '/home/yugo/workspace/Interface/bin/data/lfw'
-    inputfile = os.path.join(inputdir, 'lfw-vgg_center-tsne_tf.npy')
-    query_log = os.path.join(inputdir, 'person_log.txt')
+    inputdir = '../bin/data/cfd'
+    inputfile = 'cfd-vgg-tsne_tf.npy'
+    query_log = 'person_log.txt'
 
     mapping = Mapping(inputdir, inputfile, query_log)
     mapping.mapping()
