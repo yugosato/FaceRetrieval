@@ -167,6 +167,8 @@ public:
 	ofImage enterbutton0_;
 	ofImage enterbutton1_;
 	ofImage enterbutton2_;
+	ofImage submitbutton1_;
+	ofImage submitbutton2_;
 
 	// ofxUI
 	ofxUIScrollableCanvas* gui_;

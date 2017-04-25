@@ -100,6 +100,8 @@ void ofApp::setup()
 	backbutton1_.load("items/canBack1.png");
 	enterbutton0_.load("items/cantEnter.png");
 	enterbutton1_.load("items/canEnter1.png");
+	submitbutton1_.load("items/submit1.png");
+	submitbutton2_.load("items/submit2.png");
 
 	// データベース情報取得
 	input_ = new DataBase();
@@ -275,15 +277,18 @@ void ofApp::draw()
 
 		// 戻るボタン
 		if (!canBack_)
-			backbutton0_.draw(68, 240, 50, 50);
+			backbutton0_.draw(5, 240, 50, 50);
 		else
-			backbutton1_.draw(68, 240, 50, 50);
+			backbutton1_.draw(5, 240, 50, 50);
 
 		// 進むボタン
 		if (!canEnter_)
-			enterbutton0_.draw(122, 240, 50, 50);
+			enterbutton0_.draw(59, 240, 50, 50);
 		else
-			enterbutton1_.draw(122, 240, 50, 50);
+			enterbutton1_.draw(59, 240, 50, 50);
+
+		// submitボタン
+		submitbutton1_.draw(113, 240, 122, 50);
 	}
 }
 
@@ -457,11 +462,14 @@ void ofApp::mouseReleased(int x, int y, int button)
 			}
 		}
 
-		if (canBack_ && pressbutton(68, 240, 50, 50))
+		if (canBack_ && pressbutton(5, 240, 50, 50))
 			back();
 
-		if (canEnter_ && pressbutton(122, 240, 50, 50))
+		if (canEnter_ && pressbutton(59, 240, 50, 50))
 			enter();
+
+		if (pressbutton(113, 240, 122, 50))
+			std::cout << "click" << std::endl;
 	}
 	else
 		velocity_ = (float) (dragy_);	//カーソル速度取得
@@ -477,7 +485,7 @@ bool ofApp::pressbutton(float x, float y, float w, float h)
 {
 	if (clickx_ >= x && clicky_ >= y)
 	{
-		if (clickx_ <= x + h && clicky_ <= y + h)
+		if (clickx_ <= x + w && clicky_ <= y + h)
 			return true;
 	}
 	return false;
