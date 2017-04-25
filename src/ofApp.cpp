@@ -268,28 +268,28 @@ void ofApp::draw()
 
 	if (clickflag_)
 	{
-		ofSetHexColor(0xCCCCCC);
+		//ofSetHexColor(0xCCCCCC);
 		picture_.draw(inputImgposx_, inputImgposy_, inputImgsize_, inputImgsize_);
 		ofDrawRectangle(5, inputImgposy_ - 5, 5, inputImgsize_ + 10);
 		ofDrawRectangle(5, inputImgposy_ - 5, inputImgsize_ + 10, 5);
 		ofDrawRectangle(5, inputImgposy_ + inputImgsize_, inputImgsize_ + 10, 5);
 		ofDrawRectangle(inputImgposx_ + inputImgsize_, inputImgposy_ - 5, 5, inputImgsize_ + 10);
-
-		// 戻るボタン
-		if (!canBack_)
-			backbutton0_.draw(5, 240, 50, 50);
-		else
-			backbutton1_.draw(5, 240, 50, 50);
-
-		// 進むボタン
-		if (!canEnter_)
-			enterbutton0_.draw(59, 240, 50, 50);
-		else
-			enterbutton1_.draw(59, 240, 50, 50);
-
-		// submitボタン
-		submitbutton1_.draw(113, 240, 122, 50);
 	}
+
+	// 戻るボタン
+	if (!canBack_)
+		backbutton0_.draw(5, 240, 50, 50);
+	else
+		backbutton1_.draw(5, 240, 50, 50);
+
+	// 進むボタン
+	if (!canEnter_)
+		enterbutton0_.draw(59, 240, 50, 50);
+	else
+		enterbutton1_.draw(59, 240, 50, 50);
+
+	// submitボタン
+	submitbutton1_.draw(113, 240, 122, 50);
 }
 
 //--------------------------------------------------------------
