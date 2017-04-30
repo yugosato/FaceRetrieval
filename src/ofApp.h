@@ -100,6 +100,9 @@ public:
 	int clickNo_;						// クリック番号
 	bool clickflag_;					// クエリクリック
 	std::string queryname_;				// クリックした人物名
+	std::vector<int> multiple_queries_;
+	std::vector<bool> selectList_;
+	int selected_num_;
 
 	//-----------------------------------------
 	// その他/ウィンドウ設定
@@ -156,6 +159,7 @@ public:
 	inline void queryinfo();
 	inline void queryname(const std::string& fullpath);
 	inline bool isFileexists(const std::string& filepath);
+	inline void drawselected();
 
 
 public:

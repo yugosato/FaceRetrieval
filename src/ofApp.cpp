@@ -56,6 +56,11 @@ void ofApp::initparam()
 	// クエリ関連
 	clickNo_ = -1;
 	clickflag_ = false;
+	selected_num_ = 0;
+
+	selectList_.resize(picnum_);
+	for (int i = 0; i < picnum_; ++i)
+		selectList_[i] = false;
 
 	//-----------------------------------------
 	// その他/ウィンドウ設定
@@ -227,8 +232,6 @@ void ofApp::update()
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-	ofSetColor(255);
-
 	if (!isLoaded_)
 	{
 		std::string nowload = "Now Loading...\n";
@@ -255,16 +258,21 @@ void ofApp::draw()
 
 		if (!img.isAllocated())
 			break;
-		else
-			img.draw(drawx, drawy, d_size_, d_size_);
-
-		if (i == mouseover_)
+		else if (i == mouseover_ || selectList_[i])
 		{
-			ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 127.0f));
-			ofDrawRectangle(leftsize_ + d_size_ * j, topsize_ + d_size_ * k + dragh_, d_size_, d_size_);
 			ofSetColor(255);
+			img.draw(drawx, drawy, d_size_, d_size_);
+		}
+		else
+		{
+			ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
+			img.draw(drawx, drawy, d_size_, d_size_);
 		}
 	}
+
+	ofSetColor(255);
+
+	//drawselected();
 
 	if (clickflag_)
 	{
@@ -290,6 +298,33 @@ void ofApp::draw()
 
 	// submitボタン
 	submitbutton1_.draw(113, 240, 122, 50);
+}
+
+//--------------------------------------------------------------
+void ofApp::drawselected()
+{
+	ofColor red(255, 0, 0);
+	for (int i = 0; i < picnum_; ++i)
+	{
+		if (!selectList_[i])
+			continue;
+		else
+		{
+			const int j = i % colShow_;
+			const int k = i / colShow_;
+
+			if (windowHeight_ < topsize_ + d_size_ * k + dragh_)
+				break;
+			else if (0 > topsize_ + d_size_ * (k + 1) + dragh_)
+				continue;
+
+			ofSetColor(red);
+			ofDrawRectangle(leftsize_ + d_size_ * j, topsize_ + d_size_ * k + dragh_, d_size_, d_size_);
+
+		}
+	}
+	ofSetColor(255);
+
 }
 
 //--------------------------------------------------------------
@@ -342,6 +377,12 @@ void ofApp::keyPressed(int key)
 				queryhistory_.clear();
 				personhistory_.clear();
 				numberhistory_.clear();
+
+				multiple_queries_.clear();
+				selected_num_ = 0;
+
+				for (int i = 0; i < (int) selectList_.size(); ++i)
+					selectList_[i] = false;
 			}
 			break;
 		}
@@ -357,6 +398,12 @@ void ofApp::back()
 	initRange(2, 26);
 	calculate();
 	onPaint();
+
+	multiple_queries_.clear();
+	selected_num_ = 0;
+
+	for (int i = 0; i < (int) selectList_.size(); ++i)
+		selectList_[i] = false;
 }
 
 //--------------------------------------------------------------
@@ -368,6 +415,12 @@ void ofApp::enter()
 	initRange(2, 26);
 	calculate();
 	onPaint();
+
+	multiple_queries_.clear();
+	selected_num_ = 0;
+
+	for (int i = 0; i < (int) selectList_.size(); ++i)
+		selectList_[i] = false;
 }
 
 //--------------------------------------------------------------
@@ -455,9 +508,18 @@ void ofApp::mouseReleased(int x, int y, int button)
 				const int No = showList_[clickpos];
 				if (button == 0 && isLoaded_)
 				{
-					clickNo_ = No;
-					inputQuery();
-					inputHistory();
+					if (!selectList_[clickpos])
+					{
+						selected_num_ += 1;
+						selectList_[clickpos] = true;
+					}
+					else
+					{
+						selected_num_ -= 1;
+						selectList_[clickpos] = false;
+					}
+
+					multiple_queries_.push_back(No);
 				}
 			}
 		}
@@ -469,7 +531,26 @@ void ofApp::mouseReleased(int x, int y, int button)
 			enter();
 
 		if (pressbutton(113, 240, 122, 50))
-			std::cout << "click" << std::endl;
+		{
+			if (selected_num_ != 0)
+			{
+				clickNo_ = multiple_queries_[0];
+				std::cout << "-----------------------------------------------" << std::endl;
+				inputQuery();
+				inputHistory();
+				std::cout << "-----------------------------------------------" << std::endl;
+
+				multiple_queries_.clear();
+				selected_num_ = 0;
+
+				for (int i = 0; i < (int) selectList_.size(); ++i)
+					selectList_[i] = false;
+			}
+			else
+			{
+				std::cout << "[ofApp] please select queries." << std::endl;
+			}
+		}
 	}
 	else
 		velocity_ = (float) (dragy_);	//カーソル速度取得
@@ -586,7 +667,6 @@ void ofApp::queryinfo()
 {
 	const std::string fullpath = name_[clickNo_];
 	queryname(fullpath);
-	std::cout << "-----------------------------------------------" << std::endl;
 	std::cout << "[ofApp] person name: " << queryname_ << std::endl;
 	std::cout << "[ofApp] person id: " << person_ids_[clickNo_] << std::endl;
 	std::cout << "[ofApp] image id: " << clickNo_ << std::endl;
@@ -626,7 +706,6 @@ void ofApp::inputHistory()
 		std::cout << queryhistory_[i] << " ";
 	}
 	std::cout << std::endl;
-	std::cout << "-----------------------------------------------" << std::endl;
 
 	if (historysize_ > 1)
 	{

@@ -5,6 +5,7 @@
 #include <vector>
 #include <NGT/Index.h>
 
+
 class Search
 {
 public:
@@ -18,6 +19,7 @@ public:
 	const int size_ = 100;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
+
 
 public:
 	void setup(const std::string indexFile)
