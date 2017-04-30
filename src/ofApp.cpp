@@ -50,7 +50,6 @@ void ofApp::initparam()
 	d_size_ = (initWidth_ - leftsize_) / colShow_;
 	rowshort_ = false;
 	mouseover_ = -1;
-	previousmouseover_ = -1;
 
 	//-----------------------------------------
 	// クエリ関連
@@ -272,8 +271,6 @@ void ofApp::draw()
 
 	ofSetColor(255);
 
-	//drawselected();
-
 	if (clickflag_)
 	{
 		//ofSetHexColor(0xCCCCCC);
@@ -301,33 +298,6 @@ void ofApp::draw()
 }
 
 //--------------------------------------------------------------
-void ofApp::drawselected()
-{
-	ofColor red(255, 0, 0);
-	for (int i = 0; i < picnum_; ++i)
-	{
-		if (!selectList_[i])
-			continue;
-		else
-		{
-			const int j = i % colShow_;
-			const int k = i / colShow_;
-
-			if (windowHeight_ < topsize_ + d_size_ * k + dragh_)
-				break;
-			else if (0 > topsize_ + d_size_ * (k + 1) + dragh_)
-				continue;
-
-			ofSetColor(red);
-			ofDrawRectangle(leftsize_ + d_size_ * j, topsize_ + d_size_ * k + dragh_, d_size_, d_size_);
-
-		}
-	}
-	ofSetColor(255);
-
-}
-
-//--------------------------------------------------------------
 void ofApp::keyPressed(int key)
 {
 	switch (key)
@@ -346,7 +316,7 @@ void ofApp::keyPressed(int key)
 			if (canBack_)
 				back();
 			else
-				std::cout << "[ofApp] can't back." << std::endl;
+				std::cout << "[warning] can't back." << std::endl;
 			break;
 		}
 		case 13: // Enter
@@ -354,7 +324,7 @@ void ofApp::keyPressed(int key)
 			if (canEnter_)
 				enter();
 			else
-				std::cout << "[ofApp] can't enter." << std::endl;
+				std::cout << "[warning] can't enter." << std::endl;
 			break;
 		}
 		case 114: // Ctrl+r
@@ -436,11 +406,8 @@ void ofApp::mouseMoved(int x, int y)
 	const int y_dash = y - dragh_ - topsize_;
 	const int x_dash = x - dragw_ - leftsize_;
 
-	if (y_dash >= 0 && y > topsize_ && x_dash >= 0 && x > leftsize_)
-	{
-		previousmouseover_ = mouseover_;
+	if (x_dash >= 0 && y_dash >= 0 && topsize_ < y && leftsize_ < x)
 		mouseover_ = (x_dash / d_size_) + (y_dash / d_size_) * colShow_; //クリックした場所
-	}
 	else
 		mouseover_ = -1;
 }
@@ -510,12 +477,12 @@ void ofApp::mouseReleased(int x, int y, int button)
 				{
 					if (!selectList_[clickpos])
 					{
-						selected_num_ += 1;
+						selected_num_++;
 						selectList_[clickpos] = true;
 					}
 					else
 					{
-						selected_num_ -= 1;
+						selected_num_--;
 						selectList_[clickpos] = false;
 					}
 
@@ -538,7 +505,6 @@ void ofApp::mouseReleased(int x, int y, int button)
 				std::cout << "-----------------------------------------------" << std::endl;
 				inputQuery();
 				inputHistory();
-				std::cout << "-----------------------------------------------" << std::endl;
 
 				multiple_queries_.clear();
 				selected_num_ = 0;
@@ -548,7 +514,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			}
 			else
 			{
-				std::cout << "[ofApp] please select queries." << std::endl;
+				std::cout << "[warning] please select queries." << std::endl;
 			}
 		}
 	}
@@ -581,7 +547,7 @@ void ofApp::mouseEntered(int x, int y)
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y)
 {
-
+	mouseover_ = -1;
 }
 
 //--------------------------------------------------------------

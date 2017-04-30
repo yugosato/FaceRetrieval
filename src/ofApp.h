@@ -93,7 +93,6 @@ public:
 	int bottom_;						// 現在表示されている底辺座標
 	bool rowshort_;						// 表示する行数のほうが小さい時
 	int mouseover_;						// 現在のカーソルが指している画像番号
-	int previousmouseover_;				// 一つ前にカーソルが指していた画像番号
 
 	//-----------------------------------------
 	// クエリ関連
@@ -159,7 +158,6 @@ public:
 	inline void queryinfo();
 	inline void queryname(const std::string& fullpath);
 	inline bool isFileexists(const std::string& filepath);
-	inline void drawselected();
 
 
 public:
