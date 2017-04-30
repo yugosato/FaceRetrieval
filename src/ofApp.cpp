@@ -105,8 +105,8 @@ void ofApp::setup()
 	backbutton1_.load("items/canBack1.png");
 	enterbutton0_.load("items/cantEnter.png");
 	enterbutton1_.load("items/canEnter1.png");
-	submitbutton1_.load("items/submit1.png");
-	submitbutton2_.load("items/submit2.png");
+	submitbutton1_.load("items/search1.png");
+	submitbutton2_.load("items/search2.png");
 
 	// データベース情報取得
 	input_ = new DataBase();
