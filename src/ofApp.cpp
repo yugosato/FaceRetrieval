@@ -235,7 +235,7 @@ void ofApp::draw()
 	{
 		std::string nowload = "Now Loading...\n";
 		std::string process = ofToString(loading_->count_ * 100 / loading_->row_) + "%";
-		font_.drawString(nowload + process, inputImgposx_, inputImgposy_ + 15);
+		font_.drawString(nowload + process, inputImgposx_ + 5, inputImgposy_ + 22);
 	}
 
 	ofImage img;
@@ -270,15 +270,15 @@ void ofApp::draw()
 	}
 
 	ofSetColor(255);
+	ofDrawRectangle(5, inputImgposy_ - 5, 5, inputImgsize_ + 10);
+	ofDrawRectangle(5, inputImgposy_ - 5, inputImgsize_ + 10, 5);
+	ofDrawRectangle(5, inputImgposy_ + inputImgsize_, inputImgsize_ + 10, 5);
+	ofDrawRectangle(inputImgposx_ + inputImgsize_, inputImgposy_ - 5, 5, inputImgsize_ + 10);
 
 	if (clickflag_)
 	{
 		//ofSetHexColor(0xCCCCCC);
 		picture_.draw(inputImgposx_, inputImgposy_, inputImgsize_, inputImgsize_);
-		ofDrawRectangle(5, inputImgposy_ - 5, 5, inputImgsize_ + 10);
-		ofDrawRectangle(5, inputImgposy_ - 5, inputImgsize_ + 10, 5);
-		ofDrawRectangle(5, inputImgposy_ + inputImgsize_, inputImgsize_ + 10, 5);
-		ofDrawRectangle(inputImgposx_ + inputImgsize_, inputImgposy_ - 5, 5, inputImgsize_ + 10);
 	}
 
 	// 戻るボタン
