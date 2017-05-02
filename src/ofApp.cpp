@@ -78,7 +78,8 @@ void ofApp::initparam()
 
 	// 探索評価関連
 	logdir_ = "bin/log/";
-	person_logfile_ = logdir_ + "person_log.txt";
+	person_logfile_ = logdir_ + "person.txt";
+	candidate_logfile_ = logdir_ + "candidate.txt";
 }
 
 //--------------------------------------------------------------
@@ -679,8 +680,17 @@ void ofApp::inputHistory()
 		nowhistory_ = historysize_ - 1;
 	}
 
-	std::ofstream log(person_logfile_, ios::app);
-	log << person_ids_[clickNo_] << std::endl;
+	std::ofstream log1(person_logfile_, ios::app);
+	log1 << person_ids_[clickNo_] << std::endl;
+
+	std::ofstream log2(candidate_logfile_, ios::app);
+	for (int i = 0; i < picnum_; ++i)
+	{
+		if (i < picnum_ - 1)
+			log2 << number_[i+1] << " ";
+		else
+			log2 << number_[i+1] << std::endl;
+	}
 }
 
 //--------------------------------------------------------------

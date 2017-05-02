@@ -122,8 +122,10 @@ public:
 
 	// 探索評価関連
 	std::string logdir_;			// 探索ログ出力ディレクトリ
-	std::string person_logfile_;
 	std::vector<int> person_ids_;		// 各画像に対応する人物ID
+	std::string person_logfile_;
+	std::string candidate_logfile_;
+
 
 public:
 	void setup();

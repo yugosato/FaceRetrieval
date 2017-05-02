@@ -91,7 +91,7 @@ class Mapping:
 def main():
     inputdir = "../bin/data/cfd"
     inputfile = "cfd-vgg-tsne_tf.npy"
-    query_log = "../bin/log/person_log.txt"
+    query_log = "../bin/log/person.txt"
 
     mapping = Mapping(inputdir, inputfile, query_log)
     mapping.mapping()
