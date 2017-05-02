@@ -160,6 +160,7 @@ public:
 	inline void queryinfo();
 	inline void queryname(const std::string& fullpath);
 	inline bool isFileexists(const std::string& filepath);
+	inline void writelog(int init=0);
 
 
 public:

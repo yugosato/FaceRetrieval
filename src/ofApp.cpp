@@ -71,7 +71,7 @@ void ofApp::initparam()
 
 	// その他/データベース情報
 	datasetdir_ = "/home/yugo/Desktop/dataset/";
-	dataset_ = "cfd-cropped"; // [lfw-cropped, fuji-B, vgg-face-cropped, cfd-cropped]
+	dataset_ = "cfd-cropped";
 	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
 	matrixfile_ = "bin/data/cfd/cfd-vgg.tsv";
 	indexFile_ = "bin/data/cfd/index";
@@ -143,6 +143,9 @@ void ofApp::setup()
 	{
 		mkdir(logdir_.c_str(), 0777);
 	}
+
+	// 初期表示の記録
+	writelog(1);
 }
 
 //--------------------------------------------------------------
@@ -680,16 +683,38 @@ void ofApp::inputHistory()
 		nowhistory_ = historysize_ - 1;
 	}
 
-	std::ofstream log1(person_logfile_, ios::app);
-	log1 << person_ids_[clickNo_] << std::endl;
+	writelog();
+}
 
+//--------------------------------------------------------------
+void ofApp::writelog(int init)
+{
+	std::ofstream log1(person_logfile_, ios::app);
 	std::ofstream log2(candidate_logfile_, ios::app);
-	for (int i = 0; i < picnum_; ++i)
+
+	if (!init)
 	{
-		if (i < picnum_ - 1)
-			log2 << number_[i+1] << " ";
-		else
-			log2 << number_[i+1] << std::endl;
+		log1 << person_ids_[clickNo_] << std::endl;
+
+		for (int i = 0; i < picnum_; ++i)
+		{
+			if (i < picnum_ - 1)
+				log2 << number_[i+1] << " ";
+			else
+				log2 << number_[i+1] << std::endl;
+		}
+	}
+	else
+	{
+		log1 << -1 << std::endl;
+
+		for (int i = 0; i < picnum_; ++i)
+		{
+			if (i < picnum_ - 1)
+				log2 << input_->number_[i] << " ";
+			else
+				log2 << input_->number_[i] << std::endl;
+		}
 	}
 }
 
