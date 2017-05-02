@@ -15,9 +15,9 @@ class Mapping:
         self.query_log_ = query_log
         self.candidate_log_ = candidate_log
 
+        self.temp_query_ = -1
         self.newinput_ = False
         self.firstinput_ = True
-        self.temp_query_ = -1
         self.candflag1_ = True;
         self.candflag2_ = False;
         self.fileexists_ = False;
@@ -26,6 +26,7 @@ class Mapping:
     def input_check(self):
         if os.path.exists(self.query_log_) and os.path.exists(self.candidate_log_):
             self.fileexists_ = True
+
             query_logs = np.loadtxt(self.query_log_, dtype=np.int)
             candidate_logs = np.loadtxt(self.candidate_log_, dtype=np.int)
 
