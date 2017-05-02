@@ -104,12 +104,17 @@ class Mapping:
                         cand_plt.remove()
 
                 cand_plots = []
+                temp_cand = []
                 for i, cand in enumerate(self.now_candidate_):
+                    temp_cand.append(X[cand, :])
+
                     candidate_x = [X[cand, 0]]
                     candidate_y = [X[cand, 1]]
                     candidate_z = [X[cand, 2]]
                     cand_plot, = ax.plot(candidate_x, candidate_y, candidate_z, "o", color="g", ms=5.0)
                     cand_plots.append(cand_plot)
+
+                print "[Mapping] standard deviation: {}".format(np.std(temp_cand))
 
                 self.candflag1_ = False
                 self.candflag2_ = True
