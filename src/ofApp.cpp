@@ -692,7 +692,7 @@ void ofApp::writelog(int init)
 	std::ofstream log1(person_logfile_, ios::app);
 	std::ofstream log2(candidate_logfile_, ios::app);
 
-	if (!init)
+	if (init == 0)
 	{
 		log1 << person_ids_[clickNo_] << std::endl;
 
@@ -704,7 +704,7 @@ void ofApp::writelog(int init)
 				log2 << number_[i+1] << std::endl;
 		}
 	}
-	else
+	else if (init == 1)
 	{
 		log1 << -1 << std::endl;
 
