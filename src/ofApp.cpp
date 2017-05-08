@@ -74,7 +74,7 @@ void ofApp::initparam()
 	dataset_ = "cfd-cropped";
 	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
 	matrixfile_ = "bin/data/cfd/cfd-vgg.tsv";
-	indexFile_ = "bin/data/cfd/index";
+	indexFile_ = "bin/data/cfd/index-cos";
 
 	// 探索評価関連
 	logdir_ = "bin/log/";
