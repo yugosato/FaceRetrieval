@@ -1,4 +1,6 @@
 #include "ofApp.h"
+#define DEBUG
+
 
 void ofApp::initparam()
 {
@@ -22,6 +24,12 @@ void ofApp::initparam()
 	// GUI設定
 	guiHeight_ = 5400;
 	guiScrollarea_ = 280;
+
+#ifndef DEBUG
+	buttonposy_ = 240;
+#else
+	buttonposy_ = 5;
+#endif
 
 	//-----------------------------------------
 	// データベースからの返り値
@@ -105,8 +113,8 @@ void ofApp::setup()
 	backbutton1_.load("items/canBack1.png");
 	enterbutton0_.load("items/cantEnter.png");
 	enterbutton1_.load("items/canEnter1.png");
-	submitbutton1_.load("items/search1.png");
-	submitbutton2_.load("items/search2.png");
+	searchbutton1_.load("items/search1.png");
+	searchbutton2_.load("items/search2.png");
 
 	// データベース情報取得
 	input_ = new DataBase();
@@ -274,31 +282,37 @@ void ofApp::draw()
 	}
 
 	ofSetColor(255);
-	ofDrawRectangle(5, inputImgposy_ - 5, 5, inputImgsize_ + 10);
-	ofDrawRectangle(5, inputImgposy_ - 5, inputImgsize_ + 10, 5);
-	ofDrawRectangle(5, inputImgposy_ + inputImgsize_, inputImgsize_ + 10, 5);
-	ofDrawRectangle(inputImgposx_ + inputImgsize_, inputImgposy_ - 5, 5, inputImgsize_ + 10);
 
-	if (clickflag_)
+	if (isLoaded_)
 	{
-		//ofSetHexColor(0xCCCCCC);
-		picture_.draw(inputImgposx_, inputImgposy_, inputImgsize_, inputImgsize_);
+#ifndef DEBUG
+		ofDrawRectangle(5, inputImgposy_ - 5, 5, inputImgsize_ + 10);
+		ofDrawRectangle(5, inputImgposy_ - 5, inputImgsize_ + 10, 5);
+		ofDrawRectangle(5, inputImgposy_ + inputImgsize_, inputImgsize_ + 10, 5);
+		ofDrawRectangle(inputImgposx_ + inputImgsize_, inputImgposy_ - 5, 5, inputImgsize_ + 10);
+
+		if (clickflag_)
+		{
+			//ofSetHexColor(0xCCCCCC);
+			picture_.draw(inputImgposx_, inputImgposy_, inputImgsize_, inputImgsize_);
+		}
+#endif
+
+		// 戻るボタン
+		if (!canBack_)
+			backbutton0_.draw(backbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_);
+		else
+			backbutton1_.draw(backbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_);
+
+		// 進むボタン
+		if (!canEnter_)
+			enterbutton0_.draw(enterbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_);
+		else
+			enterbutton1_.draw(enterbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_);
+
+		// submitボタン
+		searchbutton1_.draw(searchbuttonposx_, buttonposy_, searchbuttonwidth_, historybuttonsize_);
 	}
-
-	// 戻るボタン
-	if (!canBack_)
-		backbutton0_.draw(5, 240, 50, 50);
-	else
-		backbutton1_.draw(5, 240, 50, 50);
-
-	// 進むボタン
-	if (!canEnter_)
-		enterbutton0_.draw(59, 240, 50, 50);
-	else
-		enterbutton1_.draw(59, 240, 50, 50);
-
-	// submitボタン
-	submitbutton1_.draw(113, 240, 122, 50);
 }
 
 //--------------------------------------------------------------
@@ -345,14 +359,20 @@ void ofApp::keyPressed(int key)
 				canEnter_ = false;
 				nowhistory_ = -1;
 				clickflag_ = false;
+				ngt_->phase_ = 0;
 
 				showList_ = firstshowlist_;
 				onPaint();
+
+#ifndef DEBUG
 				queryhistory_.clear();
 				personhistory_.clear();
+#endif
+
 				numberhistory_.clear();
 
-				multiple_queries_.clear();
+				selectedquery_.clear();
+				nonselectedquery_.clear();
 				selected_num_ = 0;
 
 				for (int i = 0; i < (int) selectList_.size(); ++i)
@@ -369,11 +389,18 @@ void ofApp::back()
 	ishistory_ = true;
 	backhistory();
 	input_->setNumber(numberhistory_[nowhistory_]);
+
+#ifndef DEBUG
 	initRange(2, 26);
+#else
+	initRange(1, 25);
+#endif
+
 	calculate();
 	onPaint();
 
-	multiple_queries_.clear();
+	selectedquery_.clear();
+	nonselectedquery_.clear();
 	selected_num_ = 0;
 
 	for (int i = 0; i < (int) selectList_.size(); ++i)
@@ -386,11 +413,18 @@ void ofApp::enter()
 	ishistory_ = true;
 	enterhistory();
 	input_->setNumber(numberhistory_[nowhistory_]);
+
+#ifndef DEBUG
 	initRange(2, 26);
+#else
+	initRange(1, 25);
+#endif
+
 	calculate();
 	onPaint();
 
-	multiple_queries_.clear();
+	selectedquery_.clear();
+	nonselectedquery_.clear();
 	selected_num_ = 0;
 
 	for (int i = 0; i < (int) selectList_.size(); ++i)
@@ -476,7 +510,6 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 			if (clickpos < (int) showList_.size())
 			{
-				const int No = showList_[clickpos];
 				if (button == 0 && isLoaded_)
 				{
 					if (!selectList_[clickpos])
@@ -489,28 +522,40 @@ void ofApp::mouseReleased(int x, int y, int button)
 						selected_num_--;
 						selectList_[clickpos] = false;
 					}
-
-					multiple_queries_.push_back(No);
 				}
 			}
 		}
 
-		if (canBack_ && pressbutton(5, 240, 50, 50))
+		if (canBack_ && pressbutton(backbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_))
 			back();
 
-		if (canEnter_ && pressbutton(59, 240, 50, 50))
+		if (canEnter_ && pressbutton(enterbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_))
 			enter();
 
-		if (pressbutton(113, 240, 122, 50))
+		if (pressbutton(searchbuttonposx_, buttonposy_, searchbuttonwidth_, historybuttonsize_))
 		{
 			if (selected_num_ != 0)
 			{
-				clickNo_ = multiple_queries_[0];
-				std::cout << "-----------------------------------------------" << std::endl;
+				for (int i = 0; i < (int) selectList_.size(); ++i)
+				{
+					const int No = showList_[i];
+
+					if (selectList_[i])
+					{
+						selectedquery_.push_back(No);
+					}
+					else
+					{
+						nonselectedquery_.push_back(No);
+					}
+				}
+
+				clickNo_ = selectedquery_[0];
 				inputQuery();
 				inputHistory();
 
-				multiple_queries_.clear();
+				selectedquery_.clear();
+				nonselectedquery_.clear();
 				selected_num_ = 0;
 
 				for (int i = 0; i < (int) selectList_.size(); ++i)
@@ -592,6 +637,7 @@ void ofApp::onPaint()
 	loader_->setShowList(showList_);
 	loader_->load();
 
+#ifndef DEBUG
 	if (clickflag_)
 	{
 		if (!ishistory_)
@@ -599,6 +645,8 @@ void ofApp::onPaint()
 		else
 			picture_.load(name_[queryhistory_[nowhistory_]]);
 	}
+#endif
+
 	ishistory_ = false;
 }
 
@@ -608,15 +656,28 @@ void ofApp::inputQuery()
 	clickflag_ = true;
 	goback_ = true;
 
+#ifndef DEBUG
 	ngt_->setInput(clickNo_);
+#else
+	ngt_->setInput_multi(selectedquery_, nonselectedquery_);
+#endif
+
 	ngt_->search();
 	ngt_->getNumber(&number_);
 	input_->setNumber(number_);
+
+#ifndef DEBUG
 	initRange(2, 26);
+#else
+	initRange(1, 25);
+#endif
 
 	calculate();
 	onPaint();
+
+#ifndef DEBUG
 	queryinfo();
+#endif
 }
 
 //--------------------------------------------------------------
@@ -652,17 +713,25 @@ void ofApp::inputHistory()
 		for (int i = 0; i < iter; ++i)
 		{
 			canEnter_ = false;
+
+#ifndef DEBUG
 			queryhistory_.pop_back();
 			personhistory_.pop_back();
+#endif
+
 			numberhistory_.pop_back();
 		}
 	}
 
+#ifdef DEBUG
 	queryhistory_.push_back(clickNo_);
 	personhistory_.push_back(person_ids_[clickNo_]);
+#endif
+
 	numberhistory_.push_back(number_);
 	historysize_ = numberhistory_.size();
 
+#ifndef DEBUG
 	std::cout << "[ofApp] person id history: ";
 	for (int i = 0; i < historysize_; ++i)
 	{
@@ -676,6 +745,7 @@ void ofApp::inputHistory()
 		std::cout << queryhistory_[i] << " ";
 	}
 	std::cout << std::endl;
+#endif
 
 	if (historysize_ > 1)
 	{
@@ -689,24 +759,41 @@ void ofApp::inputHistory()
 //--------------------------------------------------------------
 void ofApp::writelog(int init)
 {
+#ifndef DEBUG
 	std::ofstream log1(person_logfile_, ios::app);
+#endif
+
 	std::ofstream log2(candidate_logfile_, ios::app);
 
 	if (init == 0)
 	{
+#ifndef DEBUG
 		log1 << person_ids_[clickNo_] << std::endl;
+#endif
 
+#ifndef DEBUG
 		for (int i = 0; i < picnum_; ++i)
 		{
 			if (i < picnum_ - 1)
-				log2 << number_[i+1] << " ";
+				log2 << number_[i + 1] << " ";
 			else
-				log2 << number_[i+1] << std::endl;
+				log2 << number_[i + 1] << std::endl;
 		}
+#else
+		for (int i = 0; i < picnum_; ++i)
+		{
+			if (i < picnum_ - 1)
+				log2 << number_[i] << " ";
+			else
+				log2 << number_[i] << std::endl;
+		}
+#endif
 	}
 	else if (init == 1)
 	{
+#ifndef DEBUG
 		log1 << -1 << std::endl;
+#endif
 
 		for (int i = 0; i < picnum_; ++i)
 		{

@@ -12,7 +12,6 @@
 #include "loader.h"
 #include "search.h"
 
-
 const int initWidth_ = 960;				// 初期ウィンドウサイズ(幅)
 const int initHeight_ = 720;			// 初期ウィンドウサイズ(高)
 
@@ -53,6 +52,13 @@ public:
 
 	const int inputInfoposx_ = 14;		// クエリ画像情報x座標(基準)
 	const int inputInfoposy_ = 310;		// クエリ画像情報y座標(基準)
+
+	int buttonposy_;
+	const int historybuttonsize_ = 50;
+	const int backbuttonposx_ = 5;
+	const int enterbuttonposx_ = 59;
+	const int searchbuttonposx_ = 113;
+	const int searchbuttonwidth_ = 122;
 
 	const int guiWidth_ = 240;			// GUIの幅
 	int guiHeight_;						// GUIの高さ
@@ -99,7 +105,8 @@ public:
 	int clickNo_;						// クリック番号
 	bool clickflag_;					// クエリクリック
 	std::string queryname_;				// クリックした人物名
-	std::vector<int> multiple_queries_;
+	std::vector<int> selectedquery_;
+	std::vector<int> nonselectedquery_;
 	std::vector<bool> selectList_;
 	int selected_num_;
 
@@ -125,7 +132,6 @@ public:
 	std::vector<int> person_ids_;		// 各画像に対応する人物ID
 	std::string person_logfile_;
 	std::string candidate_logfile_;
-
 
 public:
 	void setup();
@@ -160,8 +166,7 @@ public:
 	inline void queryinfo();
 	inline void queryname(const std::string& fullpath);
 	inline bool isFileexists(const std::string& filepath);
-	inline void writelog(int init=0);
-
+	inline void writelog(int init = 0);
 
 public:
 	ofTrueTypeFont font_;				// フォントデータ
@@ -172,8 +177,8 @@ public:
 	ofImage enterbutton0_;
 	ofImage enterbutton1_;
 	ofImage enterbutton2_;
-	ofImage submitbutton1_;
-	ofImage submitbutton2_;
+	ofImage searchbutton1_;
+	ofImage searchbutton2_;
 
 	// ofxUI
 	ofxUIScrollableCanvas* gui_;

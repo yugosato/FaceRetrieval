@@ -142,6 +142,8 @@ OF_ROOT = /home/yugo/Library/of-0.9.8
 
 # MY INCLUDE LIBRARIES SETTINGS
 USER_CFLAGS = -I/home/yugo/Library/NGT-1.0.0/lib
+USER_CFLAGS += -I/home/yugo/Library/eigen-3.3.3/include/eigen3
+
 # USER_CFLAGS += -I/home/yugo/anaconda2/include/python2.7
 # USER_CFLAGS += -I/home/yugo/Library/boost-1.63.0/include
 

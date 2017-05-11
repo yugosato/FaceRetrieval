@@ -4,22 +4,23 @@
 #include <iostream>
 #include <vector>
 #include <NGT/Index.h>
-
+#include "rocchio.h"
 
 class Search
 {
 public:
-	std::string indexFile_;
 	NGT::Index* index_;
+	NGT::Object* query_ = 0;
+	NGT::ObjectDistances objects_;
+	std::string indexFile_;
+	std::vector<std::vector<double>> matrix_;
+	std::vector<double> updatedquery_;
+	int phase_;
 
 	int clickNo_;
-	std::vector<std::vector<double>> matrix_;
-
-	NGT::ObjectDistances objects_;
 	const int size_ = 100;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
-
 
 public:
 	void setup(const std::string indexFile)
@@ -27,11 +28,42 @@ public:
 		clickNo_ = -1;
 		indexFile_ = indexFile;
 		index_ = new NGT::Index(indexFile_);
+		phase_ = 0;
 	}
 
 	void setInput(const int clickNo)
 	{
 		clickNo_ = clickNo;
+		query_ = 0;
+		query_ = index_->allocateObject(matrix_[clickNo_]);
+	}
+
+	void setInput_multi(std::vector<int>& rel, std::vector<int>& inrel)
+	{
+		Rocchio* rocchio;
+		rocchio = new Rocchio;
+
+		std::vector<std::vector<double>> relVec;
+		std::vector<std::vector<double>> inrelVec;
+
+		for (int i = 0; i < (int) rel.size(); ++i)
+			relVec.push_back(matrix_[rel[i]]);
+
+		for (int i = 0; i < (int) inrel.size(); ++i)
+			inrelVec.push_back(matrix_[inrel[i]]);
+
+		rocchio->setRelevance(relVec);
+		rocchio->setInRelevance(inrelVec);
+		rocchio->setInitquery(updatedquery_, phase_);
+		rocchio->calcAverage();
+		rocchio->calculate(1.0f, 0.8f, 0.1f);
+		rocchio->getquery(&updatedquery_);
+
+		query_ = 0;
+		query_ = index_->allocateObject(updatedquery_);
+		phase_++;
+
+		delete rocchio;
 	}
 
 	void setMatrix(const std::vector<std::vector<double>>& matrix)
@@ -43,9 +75,7 @@ public:
 	{
 		try
 		{
-			NGT::Object *query = 0;
-			query = index_->allocateObject(matrix_[clickNo_]);
-			NGT::SearchContainer sc(*query);
+			NGT::SearchContainer sc(*query_);
 
 			sc.setResults(&objects_);
 			sc.setSize(size_);
@@ -53,7 +83,7 @@ public:
 			sc.setEpsilon(epsilon_);
 
 			index_->search(sc);
-			index_->deleteObject(query);
+			index_->deleteObject(query_);
 		}
 		catch (NGT::Exception &err)
 		{
@@ -69,7 +99,7 @@ public:
 	{
 		number->resize(size_);
 		for (int i = 0; i < size_; ++i)
-			(*number)[i] = (int)objects_[i].id - 1;
+			(*number)[i] = (int) objects_[i].id - 1;
 	}
 
 	virtual ~Search()
