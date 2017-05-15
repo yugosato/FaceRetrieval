@@ -56,7 +56,7 @@ public:
 		rocchio->setInRelevance(inrelVec);
 		rocchio->setInitquery(updatedquery_, phase_);
 		rocchio->calcAverage();
-		rocchio->calculate(1.0f, 0.8f, 0.1f);
+		rocchio->calculate(1.0f, 0.8f, 0.2f);
 		rocchio->getquery(&updatedquery_);
 
 		query_ = 0;
