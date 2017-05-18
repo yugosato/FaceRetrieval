@@ -6,7 +6,8 @@
 #include <vector>
 #include <random>
 #include <typeinfo>
-#include <NGT/Index.h>
+#include "NGT/Index.h"
+
 
 class DataBase
 {
@@ -81,6 +82,7 @@ public:
 		const int size = end - begin + 1;
 
 		showList_.clear();
+		std::vector<int>().swap(showList_);
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
@@ -95,6 +97,7 @@ public:
 		const int size = number.size();
 
 		number_.clear();
+		std::vector<int>().swap(number_);
 		number_.resize(size);
 
 		for (int i = 0; i < size; ++i)

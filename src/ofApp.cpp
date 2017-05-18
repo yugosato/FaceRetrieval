@@ -1,5 +1,5 @@
 #include "ofApp.h"
-#define DEBUG
+#define EXPERIMENT
 
 
 void ofApp::initparam()
@@ -25,7 +25,7 @@ void ofApp::initparam()
 	guiHeight_ = 5400;
 	guiScrollarea_ = 280;
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 	buttonposy_ = 240;
 #else
 	buttonposy_ = 5;
@@ -82,7 +82,7 @@ void ofApp::initparam()
 	dataset_ = "cfd-cropped";
 	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
 	matrixfile_ = "bin/data/cfd/cfd-vgg.tsv";
-	indexFile_ = "bin/data/cfd/index-cos";
+	indexFile_ = "bin/data/cfd/index-angle";
 
 	// 探索評価関連
 	logdir_ = "bin/log/";
@@ -125,7 +125,7 @@ void ofApp::setup()
 
 	guiSetup();
 
-	// 別スレッドで画像読み込み
+	// 画像読み込み
 	loader_ = new ImageLoader();
 	loader_->setRow(row_);
 	loader_->setName(name_);
@@ -285,7 +285,7 @@ void ofApp::draw()
 
 	if (isLoaded_)
 	{
-#ifndef DEBUG
+#ifndef EXPERIMENT
 		ofDrawRectangle(5, inputImgposy_ - 5, 5, inputImgsize_ + 10);
 		ofDrawRectangle(5, inputImgposy_ - 5, inputImgsize_ + 10, 5);
 		ofDrawRectangle(5, inputImgposy_ + inputImgsize_, inputImgsize_ + 10, 5);
@@ -364,15 +364,20 @@ void ofApp::keyPressed(int key)
 				showList_ = firstshowlist_;
 				onPaint();
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 				queryhistory_.clear();
 				personhistory_.clear();
+				std::vector<int>().swap(queryhistory_);
+				std::vector<int>().swap(personhistory_);
 #endif
 
 				numberhistory_.clear();
-
 				selectedquery_.clear();
 				nonselectedquery_.clear();
+
+				std::vector<std::vector<int>>().swap(numberhistory_);
+				std::vector<int>().swap(selectedquery_);
+				std::vector<int>().swap(nonselectedquery_);
 				selected_num_ = 0;
 
 				for (int i = 0; i < (int) selectList_.size(); ++i)
@@ -390,7 +395,7 @@ void ofApp::back()
 	backhistory();
 	input_->setNumber(numberhistory_[nowhistory_]);
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 	initRange(2, 26);
 #else
 	initRange(1, 25);
@@ -401,6 +406,8 @@ void ofApp::back()
 
 	selectedquery_.clear();
 	nonselectedquery_.clear();
+	std::vector<int>().swap(selectedquery_);
+	std::vector<int>().swap(nonselectedquery_);
 	selected_num_ = 0;
 
 	for (int i = 0; i < (int) selectList_.size(); ++i)
@@ -414,7 +421,7 @@ void ofApp::enter()
 	enterhistory();
 	input_->setNumber(numberhistory_[nowhistory_]);
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 	initRange(2, 26);
 #else
 	initRange(1, 25);
@@ -425,6 +432,8 @@ void ofApp::enter()
 
 	selectedquery_.clear();
 	nonselectedquery_.clear();
+	std::vector<int>().swap(selectedquery_);
+	std::vector<int>().swap(nonselectedquery_);
 	selected_num_ = 0;
 
 	for (int i = 0; i < (int) selectList_.size(); ++i)
@@ -556,6 +565,8 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 				selectedquery_.clear();
 				nonselectedquery_.clear();
+				std::vector<int>().swap(selectedquery_);
+				std::vector<int>().swap(nonselectedquery_);
 				selected_num_ = 0;
 
 				for (int i = 0; i < (int) selectList_.size(); ++i)
@@ -637,7 +648,7 @@ void ofApp::onPaint()
 	loader_->setShowList(showList_);
 	loader_->load();
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 	if (clickflag_)
 	{
 		if (!ishistory_)
@@ -656,7 +667,7 @@ void ofApp::inputQuery()
 	clickflag_ = true;
 	goback_ = true;
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 	ngt_->setInput(clickNo_);
 #else
 	ngt_->setInput_multi(selectedquery_, nonselectedquery_);
@@ -666,7 +677,7 @@ void ofApp::inputQuery()
 	ngt_->getNumber(&number_);
 	input_->setNumber(number_);
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 	initRange(2, 26);
 #else
 	initRange(1, 25);
@@ -675,7 +686,7 @@ void ofApp::inputQuery()
 	calculate();
 	onPaint();
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 	queryinfo();
 #endif
 }
@@ -714,7 +725,7 @@ void ofApp::inputHistory()
 		{
 			canEnter_ = false;
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 			queryhistory_.pop_back();
 			personhistory_.pop_back();
 #endif
@@ -723,7 +734,7 @@ void ofApp::inputHistory()
 		}
 	}
 
-#ifdef DEBUG
+#ifdef EXPERIMENT
 	queryhistory_.push_back(clickNo_);
 	personhistory_.push_back(person_ids_[clickNo_]);
 #endif
@@ -731,7 +742,7 @@ void ofApp::inputHistory()
 	numberhistory_.push_back(number_);
 	historysize_ = numberhistory_.size();
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 	std::cout << "[ofApp] person id history: ";
 	for (int i = 0; i < historysize_; ++i)
 	{
@@ -759,7 +770,7 @@ void ofApp::inputHistory()
 //--------------------------------------------------------------
 void ofApp::writelog(int init)
 {
-#ifndef DEBUG
+#ifndef EXPERIMENT
 	std::ofstream log1(person_logfile_, ios::app);
 #endif
 
@@ -767,11 +778,11 @@ void ofApp::writelog(int init)
 
 	if (init == 0)
 	{
-#ifndef DEBUG
+#ifndef EXPERIMENT
 		log1 << person_ids_[clickNo_] << std::endl;
 #endif
 
-#ifndef DEBUG
+#ifndef EXPERIMENT
 		for (int i = 0; i < picnum_; ++i)
 		{
 			if (i < picnum_ - 1)
@@ -791,7 +802,7 @@ void ofApp::writelog(int init)
 	}
 	else if (init == 1)
 	{
-#ifndef DEBUG
+#ifndef EXPERIMENT
 		log1 << -1 << std::endl;
 #endif
 

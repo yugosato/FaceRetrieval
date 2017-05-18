@@ -3,19 +3,22 @@
 
 #include <iostream>
 #include <vector>
-#include <NGT/Index.h>
+#include <stdio.h>
+#include "NGT/Index.h"
 #include "rocchio.h"
 
 class Search
 {
 public:
 	NGT::Index* index_;
-	NGT::Object* query_ = 0;
 	NGT::ObjectDistances objects_;
+
 	std::string indexFile_;
 	std::vector<std::vector<double>> matrix_;
-	std::vector<double> updatedquery_;
+	std::vector<double> queryvector_;
+
 	int phase_;
+	bool issearched_;
 
 	int clickNo_;
 	const int size_ = 100;
@@ -29,22 +32,26 @@ public:
 		indexFile_ = indexFile;
 		index_ = new NGT::Index(indexFile_);
 		phase_ = 0;
+		issearched_ = false;
 	}
 
 	void setInput(const int clickNo)
 	{
+		issearched_ = false;
 		clickNo_ = clickNo;
-		query_ = 0;
-		query_ = index_->allocateObject(matrix_[clickNo_]);
+		queryvector_ = matrix_[clickNo_];
 	}
 
-	void setInput_multi(std::vector<int>& rel, std::vector<int>& inrel)
+	void setInput_multi(const std::vector<int>& rel, const std::vector<int>& inrel)
 	{
+		issearched_ = false;
 		Rocchio* rocchio;
 		rocchio = new Rocchio;
 
 		std::vector<std::vector<double>> relVec;
 		std::vector<std::vector<double>> inrelVec;
+		relVec.reserve(rel.size());
+		inrelVec.reserve(rel.size());
 
 		for (int i = 0; i < (int) rel.size(); ++i)
 			relVec.push_back(matrix_[rel[i]]);
@@ -54,15 +61,17 @@ public:
 
 		rocchio->setRelevance(relVec);
 		rocchio->setInRelevance(inrelVec);
-		rocchio->setInitquery(updatedquery_, phase_);
+		rocchio->setInitquery(queryvector_, phase_);
 		rocchio->calcAverage();
 		rocchio->calculate(1.0f, 0.8f, 0.1f);
-		rocchio->getquery(&updatedquery_);
+		rocchio->getquery(&queryvector_);
 
-		query_ = 0;
-		query_ = index_->allocateObject(updatedquery_);
 		phase_++;
 
+		relVec.clear();
+		inrelVec.clear();
+		std::vector<std::vector<double>>().swap(relVec);
+		std::vector<std::vector<double>>().swap(inrelVec);
 		delete rocchio;
 	}
 
@@ -75,15 +84,24 @@ public:
 	{
 		try
 		{
-			NGT::SearchContainer sc(*query_);
+			NGT::Object* query = 0;
 
-			sc.setResults(&objects_);
+			NGT::ObjectDistances objects;
+			query = index_->allocateObject(queryvector_);
+			NGT::SearchContainer sc(*query);
+
+			sc.setResults(&objects);
 			sc.setSize(size_);
 			sc.setRadius(radius_);
 			sc.setEpsilon(epsilon_);
 
-			index_->search(sc);
-			index_->deleteObject(query_);
+			//index_->search(sc);
+			index_->deleteObject(query);
+
+			objects_.clear();
+			NGT::ObjectDistances().swap(objects_);
+			objects_ = objects;
+			issearched_ = true;
 		}
 		catch (NGT::Exception &err)
 		{

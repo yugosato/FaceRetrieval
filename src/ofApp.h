@@ -5,7 +5,7 @@
 #include <string>
 #include <fstream>
 #include <sys/stat.h>
-#include <NGT/Index.h>
+#include "NGT/Index.h"
 #include "ofMain.h"
 #include "ofxUI.h"
 #include "database.h"

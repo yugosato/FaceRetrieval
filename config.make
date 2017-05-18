@@ -141,12 +141,11 @@ OF_ROOT = /home/yugo/Library/of-0.9.8
 # PROJECT_CC = 
 
 # MY INCLUDE LIBRARIES SETTINGS
-USER_CFLAGS = -I/home/yugo/Library/NGT-1.0.0/lib
+USER_CFLAGS += -I/usr/local/include
 USER_CFLAGS += -I/home/yugo/Library/eigen-3.3.3/include/eigen3
+USER_LDFLAGS += -L/usr/local/lib, -lngt
 
 # USER_CFLAGS += -I/home/yugo/anaconda2/include/python2.7
 # USER_CFLAGS += -I/home/yugo/Library/boost-1.63.0/include
-
-USER_LDFLAGS = -L/home/yugo/Library/NGT-1.0.0/build/lib/NGT, -lngt
 # USER_LDFLAGS += -L/home/yugo/anaconda2/lib, -lpython2.7
 # USER_LDFLAGS += -L/home/yugo/Library/boost-1.63.0/lib, -lboost_python

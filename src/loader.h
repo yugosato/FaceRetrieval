@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include <NGT/Index.h>
+#include "NGT/Index.h"
 #include "ofMain.h"
 
 class NowLoading: public ofThread
@@ -105,9 +105,13 @@ public:
 	void setShowList(const std::vector<int>& showList)
 	{
 		showList_.clear();
+		std::vector<int>().swap(showList_);
+
 		showList_ = showList;
 		row_ = showList_.size();
+
 		picture_.clear();
+		std::vector<ofImage>().swap(picture_);
 		picture_.resize(row_);
 	}
 
