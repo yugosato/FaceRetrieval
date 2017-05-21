@@ -85,10 +85,10 @@ public:
 		try
 		{
 			NGT::Object* query = 0;
-
 			query = index_->allocateObject(queryvector_);
 			NGT::SearchContainer sc(*query);
 			NGT::ObjectDistances objects;
+
 			sc.setResults(&objects);
 			sc.setSize(size_);
 			sc.setRadius(radius_);
@@ -96,6 +96,9 @@ public:
 
 			index_->search(sc);
 			index_->deleteObject(query);
+
+			objects_.clear();
+			NGT::ObjectDistances().swap(objects_);
 
 			objects_ = objects;
 			issearched_ = true;
