@@ -12,13 +12,13 @@
 #include "loader.h"
 #include "search.h"
 
+
 const int initWidth_ = 960;				// 初期ウィンドウサイズ(幅)
 const int initHeight_ = 720;			// 初期ウィンドウサイズ(高)
 
 class ofApp: public ofBaseApp
 {
 public:
-
 	//-----------------------------------------
 	// 履歴
 	int historysize_;					// 履歴サイズ
@@ -43,23 +43,18 @@ public:
 	// GUI設定
 	const int leftsize_ = 240;			// 左に確保する領域
 	const int topsize_ = 0;				// 上に確保する領域
-
 	const int fontsize_ = 18;			// フォントサイズ
-
 	const int inputImgposx_ = 10;		// クエリ画像表示x座標
 	const int inputImgposy_ = 10;		// クエリ画像表示y座標
 	const int inputImgsize_ = 220;		// クエリ画像サイズ
-
 	const int inputInfoposx_ = 14;		// クエリ画像情報x座標(基準)
 	const int inputInfoposy_ = 310;		// クエリ画像情報y座標(基準)
-
 	int buttonposy_;
 	const int historybuttonsize_ = 50;
 	const int backbuttonposx_ = 5;
 	const int enterbuttonposx_ = 59;
 	const int searchbuttonposx_ = 113;
 	const int searchbuttonwidth_ = 122;
-
 	const int guiWidth_ = 240;			// GUIの幅
 	int guiHeight_;						// GUIの高さ
 	int guiScrollarea_;					// ?
@@ -81,13 +76,11 @@ public:
 	int dragy_;							// ドラッグ後のy座標
 	int dragh_;							// ドラッグの縦の移動量
 	int dragw_;							// ドラッグの横の移動量
-
 	bool click_;						// クリックフラグ
 	bool dontmove_;						// 動かさない時
 	bool goback_;						// 一番上に戻るとき
 	bool leftside_;						// 左サイドをクリックした時
 	float velocity_;					// フリック速度
-
 	int presstime_;						// プレス時間
 	const int pressthreshold_ = 20;		// プレス時間制限
 
@@ -133,11 +126,11 @@ public:
 	std::string person_logfile_;
 	std::string candidate_logfile_;
 
+
 public:
 	void setup();
 	void update();
 	void draw();
-
 	void keyPressed(int key);
 	void keyReleased(int key);
 	void mouseMoved(int x, int y);
@@ -149,6 +142,7 @@ public:
 	void windowResized(int w, int h);
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
+
 
 public:
 	inline void initparam();
@@ -167,6 +161,7 @@ public:
 	inline void queryname(const std::string& fullpath);
 	inline bool isFileexists(const std::string& filepath);
 	inline void writelog(int init = 0);
+
 
 public:
 	ofTrueTypeFont font_;				// フォントデータ

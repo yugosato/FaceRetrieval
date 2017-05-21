@@ -7,23 +7,22 @@
 #include "NGT/Index.h"
 #include "rocchio.h"
 
+
 class Search
 {
 public:
 	NGT::Index* index_;
 	NGT::ObjectDistances objects_;
-
 	std::string indexFile_;
 	std::vector<std::vector<double>> matrix_;
 	std::vector<double> queryvector_;
-
 	int phase_;
 	bool issearched_;
-
 	int clickNo_;
 	const int size_ = 100;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
+
 
 public:
 	void setup(const std::string indexFile)
@@ -72,6 +71,7 @@ public:
 		inrelVec.clear();
 		std::vector<std::vector<double>>().swap(relVec);
 		std::vector<std::vector<double>>().swap(inrelVec);
+
 		delete rocchio;
 	}
 
@@ -86,20 +86,17 @@ public:
 		{
 			NGT::Object* query = 0;
 
-			NGT::ObjectDistances objects;
 			query = index_->allocateObject(queryvector_);
 			NGT::SearchContainer sc(*query);
-
+			NGT::ObjectDistances objects;
 			sc.setResults(&objects);
 			sc.setSize(size_);
 			sc.setRadius(radius_);
 			sc.setEpsilon(epsilon_);
 
-			//index_->search(sc);
+			index_->search(sc);
 			index_->deleteObject(query);
 
-			objects_.clear();
-			NGT::ObjectDistances().swap(objects_);
 			objects_ = objects;
 			issearched_ = true;
 		}

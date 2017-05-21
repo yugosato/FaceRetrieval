@@ -13,13 +13,12 @@ class DataBase
 {
 public:
 	std::string nameFile_; 						// 画像パスリストファイル
-
-public:
 	int row_;									// 枚数
 	std::vector<std::string> name_;				// ファイル名リスト(サイズ：全画像数)
 	std::vector<int> number_;					// 表示順(サイズ：全画像数)
 	std::vector<int> showList_;					// 表示する画像のリスト
 	std::vector<int> ids_;						// 各画像に対応する人物番号
+
 
 public:
 	void setup(std::string nameFile)
@@ -59,9 +58,7 @@ public:
 	void init()
 	{
 		for (int i = 0; i < row_; ++i)
-		{
 			number_[i] = i;
-		}
 	}
 
 	// ランダム初期化
@@ -86,9 +83,7 @@ public:
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
-		{
 			showList_[i] = number_[begin + i - 1];
-		}
 	}
 
 	// 表示順の更新

@@ -43,13 +43,11 @@ void ofApp::initparam()
 	dragy_ = 0;
 	dragh_ = 0;
 	dragw_ = 0;
-
 	click_ = false;
 	dontmove_ = false;
 	goback_ = false;
 	leftside_ = false;
 	velocity_ = 0;
-
 	presstime_ = 0;
 
 	//-----------------------------------------
@@ -96,9 +94,7 @@ bool ofApp::isFileexists(const std::string& filepath)
 	struct stat st;
 	int ret = stat(filepath.c_str(), &st);
 	if (ret == 0)
-	{
 		return true;
-	}
 	else
 		return false;
 }
@@ -129,7 +125,6 @@ void ofApp::setup()
 	loader_ = new ImageLoader();
 	loader_->setRow(row_);
 	loader_->setName(name_);
-
 	calculate();
 	onPaint();
 
@@ -148,9 +143,7 @@ void ofApp::setup()
 
 	// 検索ログ
 	if (!isFileexists(logdir_))
-	{
 		mkdir(logdir_.c_str(), 0777);
-	}
 
 	// 初期表示の記録
 	writelog(1);
@@ -185,6 +178,7 @@ void ofApp::exit()
 void ofApp::update()
 {
 	ofBackground(ofColor(0x000000));
+
 	//一番上に戻るとき
 	if (goback_ && dragh_ <= 0)
 	{
@@ -228,10 +222,10 @@ void ofApp::update()
 	}
 
 	//データベースが読み込めたかどうか
-	if (loading_->done_)
+	if (loading_->done_ && !isLoaded_)
 	{
 		loading_->stopThread();
-		loading_->done_ = false;
+		loading_->unlock();
 		isLoaded_ = true;
 		ngt_->setMatrix(loading_->mat_);
 	}
@@ -334,7 +328,7 @@ void ofApp::keyPressed(int key)
 			if (canBack_)
 				back();
 			else
-				std::cout << "[warning] can't back." << std::endl;
+				std::cerr << "[warning] can't back." << std::endl;
 			break;
 		}
 		case 13: // Enter
@@ -342,7 +336,7 @@ void ofApp::keyPressed(int key)
 			if (canEnter_)
 				enter();
 			else
-				std::cout << "[warning] can't enter." << std::endl;
+				std::cerr << "[warning] can't enter." << std::endl;
 			break;
 		}
 		case 114: // Ctrl+r
@@ -550,13 +544,9 @@ void ofApp::mouseReleased(int x, int y, int button)
 					const int No = showList_[i];
 
 					if (selectList_[i])
-					{
 						selectedquery_.push_back(No);
-					}
 					else
-					{
 						nonselectedquery_.push_back(No);
-					}
 				}
 
 				clickNo_ = selectedquery_[0];
@@ -574,7 +564,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			}
 			else
 			{
-				std::cout << "[warning] please select queries." << std::endl;
+				std::cerr << "[warning] please select queries." << std::endl;
 			}
 		}
 	}
@@ -615,10 +605,8 @@ void ofApp::windowResized(int w, int h)
 {
 	velocity_ = 0.0f;
 	goback_ = false;
-
 	windowWidth_ = w;
 	windowHeight_ = h;
-
 	sizeChanged();
 }
 
@@ -697,10 +685,8 @@ void ofApp::queryname(const std::string& fullpath)
 	int path_i = fullpath.find("/");
 	int path_j = fullpath.rfind("/");
 	std::string tempname = fullpath.substr(path_i, path_j);
-
 	int size = tempname.size();
 	int path_i2 = tempname.rfind("/") + 1;
-
 	queryname_ = tempname.substr(path_i2, size);
 }
 
@@ -745,16 +731,12 @@ void ofApp::inputHistory()
 #ifndef EXPERIMENT
 	std::cout << "[ofApp] person id history: ";
 	for (int i = 0; i < historysize_; ++i)
-	{
 		std::cout << personhistory_[i] << " ";
-	}
 	std::cout << std::endl;
 
 	std::cout << "[ofApp] image id history: ";
 	for (int i = 0; i < historysize_; ++i)
-	{
 		std::cout << queryhistory_[i] << " ";
-	}
 	std::cout << std::endl;
 #endif
 

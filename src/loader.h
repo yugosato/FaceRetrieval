@@ -11,13 +11,14 @@ class NowLoading: public ofThread
 {
 public:
 	std::string matFile_;
-
 	std::vector<std::vector<double>> mat_;
 	int row_;
 	int col_;
 	int count_;
 	bool done_;
 
+
+public:
 	NowLoading()
 	{
 		row_ = 0;
@@ -28,10 +29,15 @@ public:
 
 	void threadedFunction()
 	{
-		lock();
-		loadMatrix();
-		done_ = true;
-		unlock();
+		if (!done_)
+		{
+			std::cout << "[NowLoading] start loading vgg-face features." << std::endl;
+			lock();
+			loadMatrix();
+			unlock();
+			done_ = true;
+			std::cout << "[NowLoading] finished loading vgg-face features." << std::endl;
+		}
 	}
 
 	void setMatFile(const std::string& matFile)
@@ -54,12 +60,9 @@ public:
 	{
 		std::ifstream ifs(matFile_);
 		if (!ifs)
-		{
 			std::cerr << "[NowLoading] Cannot open the specified file. " << matFile_ << std::endl;
-		}
 		else
 		{
-			std::cout << "[NowLoading] start loading vgg-face features." << std::endl;
 			std::string line;
 			while (getline(ifs, line))
 			{
@@ -67,14 +70,11 @@ public:
 				NGT::Common::tokenize(line, tokens, "\t");
 				std::vector<double> obj;
 				for (std::vector<std::string>::iterator ti = tokens.begin(); ti != tokens.end(); ++ti)
-				{
 					obj.push_back(NGT::Common::strtod(*ti));
-				}
 				mat_.push_back(obj);
 				count_++;
 			}
 			col_ = mat_[0].size();
-			std::cout << "[NowLoading] finished loading vgg-face features." << std::endl;
 		}
 	}
 };
@@ -88,17 +88,17 @@ public:
 	std::vector<int> showList_;
 	int row_;
 
+
 public:
 	void load()
 	{
 		for (int i = 0; i < row_; i++)
-		{
 			picture_[i].load(name_[showList_[i]]);
-		}
 	}
 
 	void setName(const std::vector<std::string>& name)
 	{
+		name_.reserve(name.size());
 		name_ = name;
 	}
 
