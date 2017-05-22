@@ -50,7 +50,7 @@ public:
 		std::vector<std::vector<double>> relVec;
 		std::vector<std::vector<double>> inrelVec;
 		relVec.reserve(rel.size());
-		inrelVec.reserve(rel.size());
+		inrelVec.reserve(inrel.size());
 
 		for (int i = 0; i < (int) rel.size(); ++i)
 			relVec.push_back(matrix_[rel[i]]);
@@ -61,7 +61,6 @@ public:
 		rocchio->setRelevance(relVec);
 		rocchio->setInRelevance(inrelVec);
 		rocchio->setInitquery(queryvector_, phase_);
-		rocchio->calcAverage();
 		rocchio->calculate(1.0f, 0.8f, 0.1f);
 		rocchio->getquery(&queryvector_);
 

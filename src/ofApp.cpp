@@ -720,7 +720,6 @@ void ofApp::sizeChanged()
 	imagerow_ = (showList_.size() + colShow_ - 1) / colShow_;
 	if (imagerow_ < 1)
 		imagerow_ = 1;
-
 	bottom_ = -topsize_ - (d_size_ * imagerow_) + windowHeight_;
 
 	if (d_size_ * imagerow_ < windowHeight_)

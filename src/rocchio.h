@@ -27,19 +27,22 @@ public:
 	Eigen::VectorXd newquery_;
 	Eigen::VectorXd relVec_ave_;
 	Eigen::VectorXd inrelVec_ave_;
-	int dim_;
+	const int dim_ = 4096;
+	int relnum_;
+	int inrelnum_;
 
 
 public:
 	void setRelevance(const std::vector<std::vector<double>>& relVec)
 	{
 		relVec_ = relVec;
-		dim_ = relVec_[0].size();
+		relnum_ = relVec_.size();
 	}
 
 	void setInRelevance(const std::vector<std::vector<double>>& inrelVec)
 	{
 		inrelVec_ = inrelVec;
+		inrelnum_ = inrelVec_.size();
 	}
 
 	void setInitquery(const std::vector<double> initquery, const int phase)
@@ -52,8 +55,15 @@ public:
 
 	void calcAverage()
 	{
-		average(relVec_, relVec_ave_);
-		average(inrelVec_, inrelVec_ave_);
+		if (relnum_ > 0)
+			average(relVec_, relVec_ave_);
+		else
+			relVec_ave_ = Eigen::VectorXd::Zero(dim_);
+
+		if (inrelnum_ > 0)
+			average(inrelVec_, inrelVec_ave_);
+		else
+			inrelVec_ave_ = Eigen::VectorXd::Zero(dim_);
 	}
 
 	void average(const std::vector<std::vector<double>>& srcVec, Eigen::VectorXd& dstVec)
@@ -73,6 +83,7 @@ public:
 
 	void calculate(const float alpha, const float beta, const float gamma)
 	{
+		calcAverage();
 		newquery_ = Eigen::VectorXd::Zero(dim_);
 		newquery_ = (alpha * initquery_.array()) + (beta * relVec_ave_.array())
 				- (gamma * inrelVec_ave_.array());
