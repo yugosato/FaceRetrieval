@@ -11,6 +11,7 @@
 #include "database.h"
 #include "loader.h"
 #include "search.h"
+#include "writer.h"
 
 
 const int initWidth_ = 960;				// 初期ウィンドウサイズ(幅)
@@ -22,8 +23,6 @@ public:
 	//-----------------------------------------
 	// 履歴
 	int historysize_;					// 履歴サイズ
-	std::vector<int> queryhistory_;		// クリックした画像番号履歴
-	std::vector<int> personhistory_;	// クリックした人物ID履歴
 	int backcount_;						// backした回数
 	int entercount_;
 	std::vector<std::vector<int>> numberhistory_;
@@ -44,11 +43,6 @@ public:
 	const int leftsize_ = 240;			// 左に確保する領域
 	const int topsize_ = 0;				// 上に確保する領域
 	const int fontsize_ = 18;			// フォントサイズ
-	const int inputImgposx_ = 10;		// クエリ画像表示x座標
-	const int inputImgposy_ = 10;		// クエリ画像表示y座標
-	const int inputImgsize_ = 220;		// クエリ画像サイズ
-	const int inputInfoposx_ = 14;		// クエリ画像情報x座標(基準)
-	const int inputInfoposy_ = 310;		// クエリ画像情報y座標(基準)
 	int buttonposy_;
 	const int historybuttonsize_ = 50;
 	const int backbuttonposx_ = 5;
@@ -97,7 +91,6 @@ public:
 	// クエリ関連
 	int clickNo_;						// クリック番号
 	bool clickflag_;					// クエリクリック
-	std::string queryname_;				// クリックした人物名
 	std::vector<int> selectedquery_;
 	std::vector<int> nonselectedquery_;
 	std::vector<bool> selectList_;
@@ -121,10 +114,12 @@ public:
 	std::string indexFile_;				// NGTインデックス
 
 	// 探索評価関連
-	std::string logdir_;			// 探索ログ出力ディレクトリ
+	std::string logdir_;				// 探索ログ出力ディレクトリ
 	std::vector<int> person_ids_;		// 各画像に対応する人物ID
-	std::string person_logfile_;
-	std::string candidate_logfile_;
+	std::string candidatefile_;
+
+	// 訓練サンプルファイル
+	std::string samplefile_;
 
 
 public:
@@ -157,15 +152,12 @@ public:
 	inline void back();
 	inline void enter();
 	inline bool pressbutton(float x, float y, float w, float h);
-	inline void queryinfo();
-	inline void queryname(const std::string& fullpath);
 	inline bool isFileexists(const std::string& filepath);
-	inline void writelog(int init = 0);
+	inline void writelog();
 
 
 public:
 	ofTrueTypeFont font_;				// フォントデータ
-	ofImage picture_;					// クエリ画像
 	ofImage backbutton0_;
 	ofImage backbutton1_;
 	ofImage backbutton2_;
@@ -185,4 +177,6 @@ public:
 	NowLoading* loading_;				// 特徴量読み込み
 	ImageLoader* loader_; 				// 画像読み込み
 	Search* ngt_;						// NGT
+	SampleWriter* samplewriter_;		// 訓練サンプルwriter
+	Logger* logger_;
 };

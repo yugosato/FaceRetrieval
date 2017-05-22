@@ -1,5 +1,4 @@
 #include "ofApp.h"
-#define EXPERIMENT
 
 
 void ofApp::initparam()
@@ -24,12 +23,7 @@ void ofApp::initparam()
 	// GUI設定
 	guiHeight_ = 5400;
 	guiScrollarea_ = 280;
-
-#ifndef EXPERIMENT
-	buttonposy_ = 240;
-#else
 	buttonposy_ = 5;
-#endif
 
 	//-----------------------------------------
 	// データベースからの返り値
@@ -84,8 +78,10 @@ void ofApp::initparam()
 
 	// 探索評価関連
 	logdir_ = "bin/log/";
-	person_logfile_ = logdir_ + "person.txt";
-	candidate_logfile_ = logdir_ + "candidate.txt";
+	candidatefile_ = logdir_ + "candidate.txt";
+
+	// 訓練サンプルファイル
+	samplefile_ = logdir_ + "sample.txt";
 }
 
 //--------------------------------------------------------------
@@ -144,9 +140,13 @@ void ofApp::setup()
 	// 検索ログ
 	if (!isFileexists(logdir_))
 		mkdir(logdir_.c_str(), 0777);
+	logger_ = new Logger;
+	logger_->setup(candidatefile_);
+	writelog();
 
-	// 初期表示の記録
-	writelog(1);
+	// 訓練サンプルwriter
+	samplewriter_ = new SampleWriter(samplefile_);
+	samplewriter_->write_init();
 }
 
 //--------------------------------------------------------------
@@ -172,6 +172,8 @@ void ofApp::exit()
 	delete loading_;
 	delete loader_;
 	delete ngt_;
+	delete samplewriter_;
+	delete logger_;
 }
 
 //--------------------------------------------------------------
@@ -241,7 +243,7 @@ void ofApp::draw()
 	{
 		std::string nowload = "Now Loading...\n";
 		std::string process = ofToString(loading_->count_ * 100 / loading_->row_) + "%";
-		font_.drawString(nowload + process, inputImgposx_ + 5, inputImgposy_ + 22);
+		font_.drawString(nowload + process, 15, 36);
 	}
 
 	ofImage img;
@@ -279,19 +281,6 @@ void ofApp::draw()
 
 	if (isLoaded_)
 	{
-#ifndef EXPERIMENT
-		ofDrawRectangle(5, inputImgposy_ - 5, 5, inputImgsize_ + 10);
-		ofDrawRectangle(5, inputImgposy_ - 5, inputImgsize_ + 10, 5);
-		ofDrawRectangle(5, inputImgposy_ + inputImgsize_, inputImgsize_ + 10, 5);
-		ofDrawRectangle(inputImgposx_ + inputImgsize_, inputImgposy_ - 5, 5, inputImgsize_ + 10);
-
-		if (clickflag_)
-		{
-			//ofSetHexColor(0xCCCCCC);
-			picture_.draw(inputImgposx_, inputImgposy_, inputImgsize_, inputImgsize_);
-		}
-#endif
-
 		// 戻るボタン
 		if (!canBack_)
 			backbutton0_.draw(backbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_);
@@ -358,12 +347,6 @@ void ofApp::keyPressed(int key)
 				showList_ = firstshowlist_;
 				onPaint();
 
-#ifndef EXPERIMENT
-				queryhistory_.clear();
-				personhistory_.clear();
-				std::vector<int>().swap(queryhistory_);
-				std::vector<int>().swap(personhistory_);
-#endif
 
 				numberhistory_.clear();
 				selectedquery_.clear();
@@ -389,12 +372,7 @@ void ofApp::back()
 	backhistory();
 	input_->setNumber(numberhistory_[nowhistory_]);
 
-#ifndef EXPERIMENT
-	initRange(2, 26);
-#else
 	initRange(1, 25);
-#endif
-
 	calculate();
 	onPaint();
 
@@ -415,12 +393,7 @@ void ofApp::enter()
 	enterhistory();
 	input_->setNumber(numberhistory_[nowhistory_]);
 
-#ifndef EXPERIMENT
-	initRange(2, 26);
-#else
 	initRange(1, 25);
-#endif
-
 	calculate();
 	onPaint();
 
@@ -635,17 +608,6 @@ void ofApp::onPaint()
 {
 	loader_->setShowList(showList_);
 	loader_->load();
-
-#ifndef EXPERIMENT
-	if (clickflag_)
-	{
-		if (!ishistory_)
-			picture_.load(name_[clickNo_]);
-		else
-			picture_.load(name_[queryhistory_[nowhistory_]]);
-	}
-#endif
-
 	ishistory_ = false;
 }
 
@@ -655,49 +617,15 @@ void ofApp::inputQuery()
 	clickflag_ = true;
 	goback_ = true;
 
-#ifndef EXPERIMENT
-	ngt_->setInput(clickNo_);
-#else
+	samplewriter_->write(selectedquery_, nonselectedquery_);
 	ngt_->setInput_multi(selectedquery_, nonselectedquery_);
-#endif
-
 	ngt_->search();
 	ngt_->getNumber(&number_);
 	input_->setNumber(number_);
 
-#ifndef EXPERIMENT
-	initRange(2, 26);
-#else
 	initRange(1, 25);
-#endif
-
 	calculate();
 	onPaint();
-
-#ifndef EXPERIMENT
-	queryinfo();
-#endif
-}
-
-//--------------------------------------------------------------
-void ofApp::queryname(const std::string& fullpath)
-{
-	int path_i = fullpath.find("/");
-	int path_j = fullpath.rfind("/");
-	std::string tempname = fullpath.substr(path_i, path_j);
-	int size = tempname.size();
-	int path_i2 = tempname.rfind("/") + 1;
-	queryname_ = tempname.substr(path_i2, size);
-}
-
-//--------------------------------------------------------------
-void ofApp::queryinfo()
-{
-	const std::string fullpath = name_[clickNo_];
-	queryname(fullpath);
-	std::cout << "[ofApp] person name: " << queryname_ << std::endl;
-	std::cout << "[ofApp] person id: " << person_ids_[clickNo_] << std::endl;
-	std::cout << "[ofApp] image id: " << clickNo_ << std::endl;
 }
 
 //--------------------------------------------------------------
@@ -710,35 +638,12 @@ void ofApp::inputHistory()
 		for (int i = 0; i < iter; ++i)
 		{
 			canEnter_ = false;
-
-#ifndef EXPERIMENT
-			queryhistory_.pop_back();
-			personhistory_.pop_back();
-#endif
-
 			numberhistory_.pop_back();
 		}
 	}
 
-#ifdef EXPERIMENT
-	queryhistory_.push_back(clickNo_);
-	personhistory_.push_back(person_ids_[clickNo_]);
-#endif
-
 	numberhistory_.push_back(number_);
 	historysize_ = numberhistory_.size();
-
-#ifndef EXPERIMENT
-	std::cout << "[ofApp] person id history: ";
-	for (int i = 0; i < historysize_; ++i)
-		std::cout << personhistory_[i] << " ";
-	std::cout << std::endl;
-
-	std::cout << "[ofApp] image id history: ";
-	for (int i = 0; i < historysize_; ++i)
-		std::cout << queryhistory_[i] << " ";
-	std::cout << std::endl;
-#endif
 
 	if (historysize_ > 1)
 	{
@@ -750,52 +655,13 @@ void ofApp::inputHistory()
 }
 
 //--------------------------------------------------------------
-void ofApp::writelog(int init)
+void ofApp::writelog()
 {
-#ifndef EXPERIMENT
-	std::ofstream log1(person_logfile_, ios::app);
-#endif
-
-	std::ofstream log2(candidate_logfile_, ios::app);
-
-	if (init == 0)
-	{
-#ifndef EXPERIMENT
-		log1 << person_ids_[clickNo_] << std::endl;
-#endif
-
-#ifndef EXPERIMENT
-		for (int i = 0; i < picnum_; ++i)
-		{
-			if (i < picnum_ - 1)
-				log2 << number_[i + 1] << " ";
-			else
-				log2 << number_[i + 1] << std::endl;
-		}
-#else
-		for (int i = 0; i < picnum_; ++i)
-		{
-			if (i < picnum_ - 1)
-				log2 << number_[i] << " ";
-			else
-				log2 << number_[i] << std::endl;
-		}
-#endif
-	}
-	else if (init == 1)
-	{
-#ifndef EXPERIMENT
-		log1 << -1 << std::endl;
-#endif
-
-		for (int i = 0; i < picnum_; ++i)
-		{
-			if (i < picnum_ - 1)
-				log2 << input_->number_[i] << " ";
-			else
-				log2 << input_->number_[i] << std::endl;
-		}
-	}
+	std::vector<int> candidate;
+	candidate.resize(picnum_);
+	for (int i = 0; i < picnum_; ++i)
+		candidate[i] = input_->number_[i];
+	logger_->writeCandidate(candidate);
 }
 
 //--------------------------------------------------------------
