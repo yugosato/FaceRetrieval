@@ -81,7 +81,7 @@ void ofApp::initparam()
 	candidatefile_ = logdir_ + "candidate.txt";
 
 	// 訓練サンプルファイル
-	samplefile_ = logdir_ + "sample.txt";
+	samplefile_ = logdir_ + "feedback.txt";
 }
 
 //--------------------------------------------------------------
