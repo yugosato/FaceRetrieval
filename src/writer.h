@@ -30,8 +30,8 @@ public:
 			std::cerr << "[SampleWriter] Cannot open the specified file. " << samplefile_ << std::endl;
 
 		writer << "{" << std::endl;
-		writer << "  \"iter0\":[\"positive\":[]," << std::endl;
-		writer << "           \"negative\":[]]" << std::endl;
+		writer << "  \"iter0\":{\"positive\":[]," << std::endl;
+		writer << "           \"negative\":[]}" << std::endl;
 		writer << "}" << std::endl;
 	}
 
@@ -46,11 +46,11 @@ public:
 			std::cerr << "[SampleWriter] Cannot open the specified file. " << samplefile_ << std::endl;
 
 		writer << "{" << std::endl;
-		writer << "  \"iter0\":[\"positive\":[]," << std::endl;
-		writer << "           \"negative\":[]]," << std::endl;
+		writer << "  \"iter0\":{\"positive\":[]," << std::endl;
+		writer << "           \"negative\":[]}," << std::endl;
 		for (int i = 0; i < iter_; ++i)
 		{
-			writer << "  \"iter" << i + 1 << "\":[";
+			writer << "  \"iter" << i + 1 << "\":{";
 			writer << "\"positive\":[";
 			for (int j = 0; j < (int)positives_[i].size(); ++j)
 			{
@@ -67,7 +67,7 @@ public:
 				if (j < (int) negatives_[i].size() - 1)
 					writer << ", ";
 			}
-			writer << "]]";
+			writer << "]}";
 
 			if (i < iter_ - 1)
 				writer << ",";
