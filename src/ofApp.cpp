@@ -82,6 +82,9 @@ void ofApp::initparam()
 
 	// 訓練サンプルファイル
 	samplefile_ = logdir_ + "feedback.txt";
+
+	// python script
+	pythonfile_ = "/home/yugo/workspace/Interface/trainer/trainmodel.py";
 }
 
 //--------------------------------------------------------------
@@ -147,6 +150,9 @@ void ofApp::setup()
 	// 訓練サンプルwriter
 	samplewriter_ = new SampleWriter(samplefile_);
 	samplewriter_->write_init();
+
+	trainer_ = new Trainer;
+	trainer_->setupPython(pythonfile_);
 }
 
 //--------------------------------------------------------------
@@ -174,6 +180,7 @@ void ofApp::exit()
 	delete ngt_;
 	delete samplewriter_;
 	delete logger_;
+	delete trainer_;
 }
 
 //--------------------------------------------------------------
@@ -618,6 +625,7 @@ void ofApp::inputQuery()
 	goback_ = true;
 
 	samplewriter_->write(selectedquery_, nonselectedquery_);
+	trainer_->run();
 	ngt_->setInput_multi(selectedquery_, nonselectedquery_);
 	ngt_->search();
 	ngt_->getNumber(&number_);

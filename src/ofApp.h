@@ -12,6 +12,7 @@
 #include "loader.h"
 #include "search.h"
 #include "writer.h"
+#include "trainer.h"
 
 
 const int initWidth_ = 960;				// 初期ウィンドウサイズ(幅)
@@ -121,6 +122,9 @@ public:
 	// 訓練サンプルファイル
 	std::string samplefile_;
 
+	// python script
+	std::string pythonfile_;
+
 
 public:
 	void setup();
@@ -179,4 +183,5 @@ public:
 	Search* ngt_;						// NGT
 	SampleWriter* samplewriter_;		// 訓練サンプルwriter
 	Logger* logger_;
+	Trainer* trainer_;
 };

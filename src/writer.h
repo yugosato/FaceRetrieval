@@ -125,6 +125,5 @@ public:
 	}
 };
 
-
 #endif /* SRC_WRITER_H_ */
 

@@ -143,11 +143,7 @@ OF_ROOT = /home/yugo/Library/of-0.9.8
 
 # MY INCLUDE LIBRARIES SETTINGS
 USER_CFLAGS += -I/home/yugo/Library/eigen-3.3.3/include/eigen3
-
-# USER_CFLAGS += -I/usr/local/include
-# USER_CFLAGS += -I/home/yugo/anaconda2/include/python2.7
-# USER_CFLAGS += -I/home/yugo/Library/boost-1.63.0/include
-# USER_LDFLAGS += -lpthread
-# USER_LDFLAGS += -L/usr/local/lib, -lngt
-# USER_LDFLAGS += -L/home/yugo/anaconda2/lib, -lpython2.7
-# USER_LDFLAGS += -L/home/yugo/Library/boost-1.63.0/lib, -lboost_python
+USER_CFLAGS += -I/home/yugo/Library/boost-1.63.0/include
+USER_CFLAGS += -I/home/yugo/anaconda2/include/python2.7
+USER_LDFLAGS += -L/home/yugo/Library/boost-1.63.0/lib, -lboost_python
+USER_LDFLAGS += -L/home/yugo/anaconda2/lib, -lpython2.7
