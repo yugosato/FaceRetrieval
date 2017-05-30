@@ -3,6 +3,7 @@
 home_dir = "/home/yugo/workspace/Interface/trainer"
 
 import chainer
+import numpy as np
 from chainer import training
 from chainer.training import extensions
 
@@ -20,7 +21,7 @@ listfile = "/home/yugo/workspace/Interface/bin/log/feedback.txt"
 inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy"
 
 # Training parameter
-epoch = 1
+epoch = 5
 batch_size = 5
 gpu_id = 0
 
@@ -54,5 +55,5 @@ trainer.extend(extensions.PlotReport(['main/accuracy'], 'epoch', file_name='accu
 # Run trainer
 trainer.run()
 
-print model.fc2.W.data.shape
-print model.fc2.b.data.shape
+weight = model.fc2.W.data
+bias = model.fc2.b.data

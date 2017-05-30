@@ -3,9 +3,11 @@ qtcreator.qbs
 template.xml
 .cproject
 .project
+*.pyc
 
 # directories
 bin/
 obj/
 .idea/
 .settings/
+trainer/result/
