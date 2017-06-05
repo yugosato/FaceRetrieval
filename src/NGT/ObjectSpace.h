@@ -23,6 +23,7 @@
 
 #include	"Common.h"
 
+
 class ObjectSpace;
 
 namespace NGT {
@@ -227,7 +228,10 @@ namespace NGT {
 
     Comparator &getComparator() { return *comparator; }
 
-    virtual void serialize(const string &of) = 0;
+    static std::vector<std::vector<float>> weight;
+    static std::vector<float> bias;
+
+	virtual void serialize(const string &of) = 0;
     virtual void deserialize(const string &ifile) = 0;
     virtual void serializeAsText(const string &of) = 0;
     virtual void deserializeAsText(const string &of) = 0;
@@ -1028,34 +1032,53 @@ namespace NGT {
       return (double)count;
     }
 
-    inline static double compareAngleDistance(OBJECT_TYPE *a, OBJECT_TYPE *b, size_t size) {
-      // Calculate the norm of A and B (the supplied vector).
-      double normA = 0.0F;
-      double normB = 0.0F;
-      double sum = 0.0F;
-      for (size_t loc = 0; loc < size; loc++) {
-	normA += (double)a[loc] * (double)a[loc];
-	normB += (double)b[loc] * (double)b[loc];
-	sum += (double)a[loc] * (double)b[loc];
-      }
+    // customed by yg
+	inline static double compareAngleDistance(OBJECT_TYPE *a, OBJECT_TYPE *b, size_t size)
+	{
+		// Calculate the norm of A and B (the supplied vector).
+		double normA = 0.0F;
+		double normB = 0.0F;
+		double sum = 0.0F;
 
-      assert(normA > 0.0F);
-      assert(normB > 0.0F);
+		for (size_t loc = 0; loc < size; loc++)
+		{
+			double suma = 0.0F;
+			double sumb = 0.0F;
+			for (int i = 0; i < 4096; ++i)
+			{
+				suma += NGT::ObjectSpace::weight[loc][i] * (double) a[loc];
+				sumb += NGT::ObjectSpace::weight[loc][i] * (double) b[loc];
+			}
+			double outa = suma + NGT::ObjectSpace::bias[loc];
+			double outb = sumb + NGT::ObjectSpace::bias[loc];
 
-      // Compute the dot product of the two vectors. 
-      double cosine = sum / (sqrt(normA) * sqrt(normB));
-      // Compute the vector angle from the cosine value, and return.
-      // Roundoff error could have put the cosine value out of range.
-      // Handle these cases explicitly.
-      if (cosine >= 1.0F) {
-	return 0.0F;
-      } else if (cosine <= -1.0F) {
-	return acos (-1.0F);
-      } else {
-	return acos (cosine);
-      }
+			normA += (double) outa * (double) outa;
+			normB += (double) outb * (double) outb;
+			sum += (double) outa * (double) outb;
+		}
 
-    }
+		assert(normA > 0.0F);
+		assert(normB > 0.0F);
+
+		// Compute the dot product of the two vectors.
+		double cosine = sum / (sqrt(normA) * sqrt(normB));
+		// Compute the vector angle from the cosine value, and return.
+		// Roundoff error could have put the cosine value out of range.
+		// Handle these cases explicitly.
+		if (cosine >= 1.0F)
+		{
+			return 0.0F;
+		}
+		else if (cosine <= -1.0F)
+		{
+			return acos(-1.0F);
+		}
+		else
+		{
+			return acos(cosine);
+		}
+
+	}
 
     inline static double compareCosineSimilarity(OBJECT_TYPE *a, OBJECT_TYPE *b, size_t size) {
       // Calculate the norm of A and B (the supplied vector).

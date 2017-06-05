@@ -19,6 +19,8 @@ public:
 	std::string script_;
 	boost::python::object main_module_;
 	boost::python::object main_namespace_;
+	std::vector<std::vector<float>> weight_;
+	std::vector<float> bias_;
 
 
 public:
@@ -44,6 +46,9 @@ public:
 		try
 		{
 			boost::python::exec(script_.c_str(), main_namespace_);
+			getWeight();
+			getBias();
+			std::cout << 1 << std::endl;
 		}
 		catch(boost::python::error_already_set const &)
 		{
@@ -51,36 +56,37 @@ public:
 		}
 	}
 
-	void getWeight(std::vector<std::vector<float>>* weight) const
+	void getWeight()
 	{
 		auto w = main_namespace_["weight"];
 		int rows = boost::python::len(w);
 		int cols = boost::python::len(w[0]);
 
-		weight->resize(rows);
+		weight_.resize(rows);
 		for (int i = 0; i < rows; ++i)
 		{
-			weight[i].resize(cols);
+			weight_[i].resize(cols);
 			for(int j = 0; j < cols; ++j)
 			{
 				std::string str = boost::python::extract<std::string>(boost::python::str(w[i][j]));
-				(*weight)[i][j] = std::atof(str.c_str());
+				weight_[i][j] = std::atof(str.c_str());
 			}
 		}
 	}
 
-	void getBias(std::vector<float>* bias) const
+	void getBias()
 	{
 		auto b = main_namespace_["bias"];
 		int cols = boost::python::len(b);
 
-		bias->resize(cols);
+		bias_.resize(cols);
 		for (int j = 0; j < cols; ++j)
 		{
 			std::string str = boost::python::extract<std::string>(boost::python::str(b[j]));
-			(*bias)[j] = std::atof(str.c_str());
+			bias_[j] = std::atof(str.c_str());
 		}
 	}
+
 };
 
 

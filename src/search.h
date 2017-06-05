@@ -22,6 +22,8 @@ public:
 	const int size_ = 100;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
+	std::vector<std::vector<float>> weight_;
+	std::vector<float> bias_;
 
 
 public:
@@ -79,12 +81,19 @@ public:
 		matrix_ = matrix;
 	}
 
+	void setWeightAndBias(std::vector<std::vector<float>>& w, std::vector<float>& b)
+	{
+		weight_ = w;
+		bias_ = b;
+	}
+
 	void search()
 	{
 		try
 		{
 			NGT::Object* query = 0;
 			query = index_->allocateObject(queryvector_);
+
 			NGT::SearchContainer sc(*query);
 			NGT::ObjectDistances objects;
 
@@ -92,7 +101,9 @@ public:
 			sc.setSize(size_);
 			sc.setRadius(radius_);
 			sc.setEpsilon(epsilon_);
+			sc.setWeightAndBias(weight_, bias_);
 
+			index_->setWeightAndBias(weight_, bias_);
 			index_->search(sc);
 			index_->deleteObject(query);
 
@@ -116,7 +127,7 @@ public:
 	{
 		number->resize(size_);
 		for (int i = 0; i < size_; ++i)
-			(*number)[i] = (int) objects_[i].id - 1;
+			(*number)[i] = (int)objects_[i].id - 1;
 	}
 
 	virtual ~Search()

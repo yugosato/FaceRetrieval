@@ -1,5 +1,10 @@
 #include "ofMain.h"
 #include "ofApp.h"
+#include "NGT/ObjectSpace.h"
+
+
+std::vector<std::vector<float>> NGT::ObjectSpace::weight;
+std::vector<float> NGT::ObjectSpace::bias;
 
 //========================================================================
 int main()

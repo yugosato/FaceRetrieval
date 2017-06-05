@@ -1597,6 +1597,8 @@ namespace NGT {
       radius = sc.radius;
       explorationCoefficient = sc.explorationCoefficient;
       result = sc.result;
+      weight = sc.weight;
+      bias = sc.bias;
       return *this;
     }
     virtual ~SearchContainer() {}
@@ -1611,6 +1613,12 @@ namespace NGT {
     void setRadius(Distance r) { radius = r; }
     void setEpsilon(float e) { explorationCoefficient = e + 1.0; }
 
+    void setWeightAndBias(std::vector<std::vector<float>> &w, std::vector<float>& b)
+    {
+    	weight = w;
+    	bias = b;
+    }
+
     ObjectDistances &getResult() {
       if (result == 0) {
 	NGTThrowException("Inner error: results is not set");
@@ -1622,6 +1630,9 @@ namespace NGT {
     size_t		size;
     Distance		radius;
     float		explorationCoefficient;
+
+    std::vector<std::vector<float>> weight;
+    std::vector<float> bias;
 
   private:
     ObjectDistances	*result;

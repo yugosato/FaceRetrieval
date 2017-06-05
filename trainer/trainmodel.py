@@ -6,7 +6,7 @@ import chainer
 import numpy as np
 from chainer import training
 from chainer.training import extensions
-
+import gc
 import sys
 import os
 sys.path.append(home_dir)
@@ -21,9 +21,9 @@ listfile = "/home/yugo/workspace/Interface/bin/log/feedback.txt"
 inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy"
 
 # Training parameter
-epoch = 5
-batch_size = 5
-gpu_id = 0
+epoch = 1
+batch_size = 2
+gpu_id = -1
 
 # Initialize model to train
 model = mymodel.MyModel()
@@ -46,14 +46,17 @@ optimizer.setup(model)
 
 # Set up updateer and trainer
 updater = training.StandardUpdater(train_iter, optimizer, device=gpu_id)
-trainer = training.Trainer(updater, (epoch, 'epoch'), os.path.join(home_dir, 'result'))
+trainer = training.Trainer(updater, (epoch, "epoch"), os.path.join(home_dir, "result"))
 trainer.extend(extensions.LogReport())
-trainer.extend(extensions.PrintReport(['epoch', 'main/loss', 'main/accuracy']))
-trainer.extend(extensions.PlotReport(['main/loss'], 'epoch', file_name='loss.png'))
-trainer.extend(extensions.PlotReport(['main/accuracy'], 'epoch', file_name='accuracy.png'))
+# trainer.extend(extensions.PrintReport(["epoch", "main/loss", "main/accuracy"]))
+trainer.extend(extensions.PlotReport(["main/loss"], "epoch", file_name="loss.png"))
+trainer.extend(extensions.PlotReport(["main/accuracy"], "epoch", file_name="accuracy.png"))
 
 # Run trainer
 trainer.run()
 
 weight = model.fc2.W.data
 bias = model.fc2.b.data
+
+print "succceeded in neural network's training"
+

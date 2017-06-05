@@ -42,8 +42,13 @@ namespace NGT {
 
   class Index {
   public:
+	void setWeightAndBias(std::vector<std::vector<float>> &w, std::vector<float> &b)
+	{
+		NGT::ObjectSpace::weight = w;
+		NGT::ObjectSpace::bias = b;
+	}
 
-    class Property {
+	class Property {
     public:
       typedef ObjectSpace::DistanceType		DistanceType;
       typedef NeighborhoodGraph::SeedType	SeedType;

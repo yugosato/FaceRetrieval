@@ -63,6 +63,10 @@ NeighborhoodGraph::setupSeeds(NGT::SearchContainer &sc, ObjectDistances &seeds, 
       cerr << "setupseeds:fatal error " << result.id << endl;
       assert(0);
     }
+
+    NGT::ObjectSpace::weight = sc.weight;
+    NGT::ObjectSpace::bias = sc.bias;
+
     Distance d = objectSpace->getComparator()(sc.object, *getObjectRepository().get(result.id));
     result.distance = d;
     tmp.push_back(result);
@@ -125,6 +129,10 @@ NeighborhoodGraph::setupSeeds(NGT::SearchContainer &sc, ObjectDistances &seeds, 
 
     setupSeeds(sc, seeds, results, unchecked, distanceChecked);
     Distance explorationRadius = sc.explorationCoefficient * sc.radius;
+
+    NGT::ObjectSpace::weight = sc.weight;
+    NGT::ObjectSpace::bias = sc.bias;
+
     NGT::ObjectSpace::Comparator &comparator = objectSpace->getComparator();
     while (!unchecked.empty()) {
       ObjectDistance target = unchecked.top();
@@ -183,6 +191,9 @@ NeighborhoodGraph::setupSeeds(NGT::SearchContainer &sc, ObjectDistances &seeds, 
 #ifdef NGT_EXPLORATION_COEFFICIENT_OPTIMIZATION
 	sc.explorationCoefficient = exp(-(double)distanceChecked.size() / 20000.0) / 10.0 + 1.0;
 #endif
+
+	NGT::ObjectSpace::weight = sc.weight;
+	NGT::ObjectSpace::bias = sc.bias;
 
 	Distance distance = comparator(sc.object, *getObjectRepository().get(neighbor.id));
 	ObjectDistance r(neighbor.id, distance);

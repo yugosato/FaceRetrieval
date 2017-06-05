@@ -67,17 +67,17 @@ void ofApp::initparam()
 	windowHeight_ = initHeight_;
 
 	// その他/フォント
-	ttf_ = "fonts/RictyDiminished-Bold.ttf";
+	ttf_ = "/home/yugo/workspace/Interface/bin/data/fonts/RictyDiminished-Bold.ttf";
 
 	// その他/データベース情報
 	datasetdir_ = "/home/yugo/Desktop/dataset/";
 	dataset_ = "cfd-cropped";
 	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
-	matrixfile_ = "bin/data/cfd/cfd-vgg.tsv";
-	indexFile_ = "bin/data/cfd/index-angle";
+	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.tsv";
+	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/index-angle";
 
 	// 探索評価関連
-	logdir_ = "bin/log/";
+	logdir_ = "/home/yugo/workspace/Interface/bin/log/";
 	candidatefile_ = logdir_ + "candidate.txt";
 
 	// 訓練サンプルファイル
@@ -104,12 +104,12 @@ void ofApp::setup()
 	initparam();
 	ofSetWindowShape(windowWidth_, windowHeight_);
 	font_.load(ttf_, fontsize_);
-	backbutton0_.load("items/cantBack.png");
-	backbutton1_.load("items/canBack1.png");
-	enterbutton0_.load("items/cantEnter.png");
-	enterbutton1_.load("items/canEnter1.png");
-	searchbutton1_.load("items/search1.png");
-	searchbutton2_.load("items/search2.png");
+	backbutton0_.load("/home/yugo/workspace/Interface/bin/data/items/cantBack.png");
+	backbutton1_.load("/home/yugo/workspace/Interface/bin/data/items/canBack1.png");
+	enterbutton0_.load("/home/yugo/workspace/Interface/bin/data/items/cantEnter.png");
+	enterbutton1_.load("/home/yugo/workspace/Interface/bin/data/items/canEnter1.png");
+	searchbutton1_.load("/home/yugo/workspace/Interface/bin/data/items/search1.png");
+	searchbutton2_.load("/home/yugo/workspace/Interface/bin/data/items/search2.png");
 
 	// データベース情報取得
 	input_ = new DataBase();
@@ -314,7 +314,7 @@ void ofApp::keyPressed(int key)
 		{
 			ofImage img;
 			img.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-			std::string savepath = "./snapshot/" + ofGetTimestampString() + ".png";
+			std::string savepath = "/home/yugo/workspace/Interface/bin/data/snapshot/" + ofGetTimestampString() + ".png";
 			img.save(savepath);
 			std::cout << "[ofApp] saved snapshot image." << std::endl;
 			break;
@@ -626,7 +626,9 @@ void ofApp::inputQuery()
 
 	samplewriter_->write(selectedquery_, nonselectedquery_);
 	trainer_->run();
+	ngt_->setWeightAndBias(trainer_->weight_, trainer_->bias_);
 	ngt_->setInput_multi(selectedquery_, nonselectedquery_);
+
 	ngt_->search();
 	ngt_->getNumber(&number_);
 	input_->setNumber(number_);
