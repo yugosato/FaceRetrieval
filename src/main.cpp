@@ -3,8 +3,8 @@
 #include "NGT/ObjectSpace.h"
 
 
-std::vector<std::vector<float>> NGT::ObjectSpace::weight;
-std::vector<float> NGT::ObjectSpace::bias;
+std::vector<std::vector<float>> NGT::ObjectSpace::neuralWeight;
+std::vector<float> NGT::ObjectSpace::neuralBias;
 
 //========================================================================
 int main()

@@ -228,8 +228,8 @@ namespace NGT {
 
     Comparator &getComparator() { return *comparator; }
 
-    static std::vector<std::vector<float>> weight;
-    static std::vector<float> bias;
+    static std::vector<std::vector<float>> neuralWeight;
+    static std::vector<float> neuralBias;
 
 	virtual void serialize(const string &of) = 0;
     virtual void deserialize(const string &ifile) = 0;
@@ -1046,11 +1046,11 @@ namespace NGT {
 			double sumb = 0.0F;
 			for (int i = 0; i < 4096; ++i)
 			{
-				suma += NGT::ObjectSpace::weight[loc][i] * (double) a[loc];
-				sumb += NGT::ObjectSpace::weight[loc][i] * (double) b[loc];
+				suma += NGT::ObjectSpace::neuralWeight[loc][i] * (double) a[loc];
+				sumb += NGT::ObjectSpace::neuralWeight[loc][i] * (double) b[loc];
 			}
-			double outa = suma + NGT::ObjectSpace::bias[loc];
-			double outb = sumb + NGT::ObjectSpace::bias[loc];
+			double outa = suma + NGT::ObjectSpace::neuralBias[loc];
+			double outb = sumb + NGT::ObjectSpace::neuralBias[loc];
 
 			normA += (double) outa * (double) outa;
 			normB += (double) outb * (double) outb;

@@ -22,8 +22,8 @@ inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy"
 
 # Training parameter
 epoch = 1
-batch_size = 2
-gpu_id = -1
+batch_size = 5
+gpu_id = 0
 
 # Initialize model to train
 model = mymodel.MyModel()
@@ -55,8 +55,9 @@ trainer.extend(extensions.PlotReport(["main/accuracy"], "epoch", file_name="accu
 # Run trainer
 trainer.run()
 
+model.to_cpu();
 weight = model.fc2.W.data
 bias = model.fc2.b.data
 
-print "succceeded in neural network's training"
+print "finished"
 
