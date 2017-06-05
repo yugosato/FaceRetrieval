@@ -628,7 +628,6 @@ void ofApp::inputQuery()
 	trainer_->run();
 	ngt_->setWeightAndBias(trainer_->weight_, trainer_->bias_);
 	ngt_->setInput_multi(selectedquery_, nonselectedquery_);
-
 	ngt_->search();
 	ngt_->getNumber(&number_);
 	input_->setNumber(number_);

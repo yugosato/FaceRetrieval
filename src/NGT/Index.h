@@ -36,13 +36,16 @@
 #include	"NGT/ExperimentalGraph.h"
 #endif
 
+#include "boost/python.hpp"
+#include "boost/python/numpy.hpp"
+
 namespace NGT {
 
   class Property;
 
   class Index {
   public:
-	void setWeightAndBias(std::vector<std::vector<float>> &w, std::vector<float> &b)
+	void setWeightAndBias(boost::python::object &w, boost::python::object &b)
 	{
 		NGT::ObjectSpace::neuralWeight = w;
 		NGT::ObjectSpace::neuralBias = b;

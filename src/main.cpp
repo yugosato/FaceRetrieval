@@ -1,10 +1,12 @@
 #include "ofMain.h"
 #include "ofApp.h"
 #include "NGT/ObjectSpace.h"
+#include "boost/python.hpp"
+#include "boost/python/numpy.hpp"
 
 
-std::vector<std::vector<float>> NGT::ObjectSpace::neuralWeight;
-std::vector<float> NGT::ObjectSpace::neuralBias;
+boost::python::object NGT::ObjectSpace::neuralWeight;
+boost::python::object NGT::ObjectSpace::neuralBias;
 
 //========================================================================
 int main()

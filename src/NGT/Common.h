@@ -36,6 +36,8 @@
 
 #include	"NGT/defines.h"
 #include	"NGT/SharedMemoryAllocator.h"
+#include 	"boost/python.hpp"
+#include 	"boost/python/numpy.hpp"
 
 #define ADVANCED_USE_REMOVED_LIST
 #define	SHARED_REMOVED_LIST
@@ -1613,7 +1615,7 @@ namespace NGT {
     void setRadius(Distance r) { radius = r; }
     void setEpsilon(float e) { explorationCoefficient = e + 1.0; }
 
-    void setWeightAndBias(std::vector<std::vector<float>> &w, std::vector<float>& b)
+    void setWeightAndBias(boost::python::object &w, boost::python::object &b)
     {
     	weight = w;
     	bias = b;
@@ -1631,8 +1633,8 @@ namespace NGT {
     Distance		radius;
     float		explorationCoefficient;
 
-    std::vector<std::vector<float>> weight;
-    std::vector<float> bias;
+    boost::python::object weight;
+    boost::python::object bias;
 
   private:
     ObjectDistances	*result;

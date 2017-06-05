@@ -53,11 +53,12 @@ trainer.extend(extensions.PlotReport(["main/loss"], "epoch", file_name="loss.png
 trainer.extend(extensions.PlotReport(["main/accuracy"], "epoch", file_name="accuracy.png"))
 
 # Run trainer
+print "[Python] training"
 trainer.run()
 
 model.to_cpu();
 weight = model.fc2.W.data
 bias = model.fc2.b.data
 
-print "finished"
+print "[Python] finished"
 

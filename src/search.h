@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <stdio.h>
+#include "boost/python.hpp"
+#include "boost/python/numpy.hpp"
 #include "NGT/Index.h"
 #include "rocchio.h"
 
@@ -22,8 +24,8 @@ public:
 	const int size_ = 100;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
-	std::vector<std::vector<float>> weight_;
-	std::vector<float> bias_;
+	boost::python::object weight_;
+	boost::python::object bias_;
 
 
 public:
@@ -81,7 +83,7 @@ public:
 		matrix_ = matrix;
 	}
 
-	void setWeightAndBias(std::vector<std::vector<float>>& w, std::vector<float>& b)
+	void setWeightAndBias(boost::python::object& w, boost::python::object& b)
 	{
 		weight_ = w;
 		bias_ = b;

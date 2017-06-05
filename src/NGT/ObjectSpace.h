@@ -22,6 +22,8 @@
 #endif
 
 #include	"Common.h"
+#include    "boost/python.hpp"
+#include    "boost/python/numpy.hpp"
 
 
 class ObjectSpace;
@@ -228,8 +230,8 @@ namespace NGT {
 
     Comparator &getComparator() { return *comparator; }
 
-    static std::vector<std::vector<float>> neuralWeight;
-    static std::vector<float> neuralBias;
+    static boost::python::object neuralWeight;
+    static boost::python::object neuralBias;
 
 	virtual void serialize(const string &of) = 0;
     virtual void deserialize(const string &ifile) = 0;
@@ -1046,11 +1048,13 @@ namespace NGT {
 			double sumb = 0.0F;
 			for (int i = 0; i < 4096; ++i)
 			{
-				suma += NGT::ObjectSpace::neuralWeight[loc][i] * (double) a[loc];
-				sumb += NGT::ObjectSpace::neuralWeight[loc][i] * (double) b[loc];
+				std::string strw = boost::python::extract<std::string>(boost::python::str(NGT::ObjectSpace::neuralWeight[loc][i]));
+				suma += std::atof(strw.c_str()) * (double) a[loc];
+				sumb += std::atof(strw.c_str()) * (double) b[loc];
 			}
-			double outa = suma + NGT::ObjectSpace::neuralBias[loc];
-			double outb = sumb + NGT::ObjectSpace::neuralBias[loc];
+			std::string strb = boost::python::extract<std::string>(boost::python::str(NGT::ObjectSpace::neuralBias[loc]));
+			double outa = suma + std::atof(strb.c_str());
+			double outb = sumb + std::atof(strb.c_str());
 
 			normA += (double) outa * (double) outa;
 			normB += (double) outb * (double) outb;
