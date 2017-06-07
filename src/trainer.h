@@ -48,7 +48,6 @@ public:
 			boost::python::exec(script_.c_str(), main_namespace_);
 			getWeight();
 			getBias();
-			std::cout << 1 << std::endl;
 		}
 		catch(boost::python::error_already_set const &)
 		{
