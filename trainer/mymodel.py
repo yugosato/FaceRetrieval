@@ -20,7 +20,11 @@ class MyModel(Chain):
         h = F.dropout(F.relu(self.fc1(x)), train=self.train, ratio=0.5)
         h = F.dropout(F.relu(self.fc2(h)), train=self.train, ratio=0.5)
         h = self.fc3(h)
-
         loss = F.softmax_cross_entropy(h, t)
         chainer.report({'loss': loss, 'accuracy': F.accuracy(h, t)}, self)
         return loss
+
+
+    def extract(self, x):
+        h = F.dropout(F.relu(self.fc1(x)), train=False, ratio=0.5)
+        return self.fc2(h)

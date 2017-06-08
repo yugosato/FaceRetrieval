@@ -19,8 +19,10 @@ public:
 	std::string script_;
 	boost::python::object main_module_;
 	boost::python::object main_namespace_;
+	boost::python::object trainer_;
 	boost::python::object weight_;
 	boost::python::object bias_;
+	boost::python::object extracter_;
 
 
 public:
@@ -39,30 +41,23 @@ public:
 		Py_Initialize();
 		main_module_ = boost::python::import("__main__");
 		main_namespace_ = main_module_.attr("__dict__");
+		boost::python::exec(script_.c_str(), main_namespace_, main_namespace_);
+		trainer_ = main_namespace_["train_model"]; //function
+		extracter_ = main_namespace_["feature_extract"]; //function
 	}
 
 	void run()
 	{
 		try
 		{
-			boost::python::exec(script_.c_str(), main_namespace_);
-			getWeight();
-			getBias();
+			trainer_();
+			weight_ = main_namespace_["weight"]; //item
+			bias_ = main_namespace_["bias"]; //item
 		}
 		catch(boost::python::error_already_set const &)
 		{
 			PyErr_Print();
 		}
-	}
-
-	void getWeight()
-	{
-		weight_ = main_namespace_["weight"];
-	}
-
-	void getBias()
-	{
-		bias_ = main_namespace_["bias"];
 	}
 
 };

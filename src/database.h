@@ -29,7 +29,7 @@ public:
 		// メモリ確保＆初期化
 		number_.resize(row_);
 		init();
-		//random();
+		random();
 	}
 
 	// 画像パスリスト読み込み

@@ -232,6 +232,7 @@ namespace NGT {
 
     static boost::python::object neuralWeight;
     static boost::python::object neuralBias;
+    static boost::python::object neuralExtracter;
 
 	virtual void serialize(const string &of) = 0;
     virtual void deserialize(const string &ifile) = 0;
@@ -1042,23 +1043,32 @@ namespace NGT {
 		double normB = 0.0F;
 		double sum = 0.0F;
 
+		// convert into python's list
+		boost::python::list pylist_a, pylist_b;
+		for (int i = 0; i < 4096; ++i)
+		{
+			pylist_a.append((float)a[i]);
+			pylist_b.append((float)b[i]);
+		}
+
+		// features extraction
+		boost::python::object neural_a = NGT::ObjectSpace::neuralExtracter(pylist_a);
+		boost::python::object neural_b = NGT::ObjectSpace::neuralExtracter(pylist_b);
+
+		std::string a_str, b_str;
+		float a_f, b_f;
+
 		for (size_t loc = 0; loc < size; loc++)
 		{
-			double suma = 0.0F;
-			double sumb = 0.0F;
-			for (int i = 0; i < 4096; ++i)
-			{
-				std::string strw = boost::python::extract<std::string>(boost::python::str(NGT::ObjectSpace::neuralWeight[loc][i]));
-				suma += std::atof(strw.c_str()) * (double) a[loc];
-				sumb += std::atof(strw.c_str()) * (double) b[loc];
-			}
-			std::string strb = boost::python::extract<std::string>(boost::python::str(NGT::ObjectSpace::neuralBias[loc]));
-			double outa = suma + std::atof(strb.c_str());
-			double outb = sumb + std::atof(strb.c_str());
+			a_str = boost::python::extract<std::string>(boost::python::str(neural_a[loc]));
+			b_str = boost::python::extract<std::string>(boost::python::str(neural_b[loc]));
 
-			normA += (double) outa * (double) outa;
-			normB += (double) outb * (double) outb;
-			sum += (double) outa * (double) outb;
+			a_f = std::atof(a_str.c_str());
+			b_f = std::atof(b_str.c_str());
+
+			normA += a_f * a_f;
+			normB += b_f * b_f;
+			sum += a_f * b_f;
 		}
 
 		assert(normA > 0.0F);

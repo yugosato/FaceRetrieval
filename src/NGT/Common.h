@@ -1601,6 +1601,7 @@ namespace NGT {
       result = sc.result;
       weight = sc.weight;
       bias = sc.bias;
+      extracter = sc.extracter;
       return *this;
     }
     virtual ~SearchContainer() {}
@@ -1615,11 +1616,8 @@ namespace NGT {
     void setRadius(Distance r) { radius = r; }
     void setEpsilon(float e) { explorationCoefficient = e + 1.0; }
 
-    void setWeightAndBias(boost::python::object &w, boost::python::object &b)
-    {
-    	weight = w;
-    	bias = b;
-    }
+    void setWeightAndBias(const boost::python::object &w, const boost::python::object &b) { weight = w; bias = b; }
+    void setExtracter(const boost::python::object &e) { extracter = e; }
 
     ObjectDistances &getResult() {
       if (result == 0) {
@@ -1635,6 +1633,7 @@ namespace NGT {
 
     boost::python::object weight;
     boost::python::object bias;
+    boost::python::object extracter;
 
   private:
     ObjectDistances	*result;

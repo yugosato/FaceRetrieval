@@ -7,6 +7,7 @@
 
 boost::python::object NGT::ObjectSpace::neuralWeight;
 boost::python::object NGT::ObjectSpace::neuralBias;
+boost::python::object NGT::ObjectSpace::neuralExtracter;
 
 //========================================================================
 int main()

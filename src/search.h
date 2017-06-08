@@ -26,6 +26,7 @@ public:
 	const float epsilon_ = 0.1;
 	boost::python::object weight_;
 	boost::python::object bias_;
+	boost::python::object extracter_;
 
 
 public:
@@ -83,10 +84,15 @@ public:
 		matrix_ = matrix;
 	}
 
-	void setWeightAndBias(boost::python::object& w, boost::python::object& b)
+	void setWeightAndBias(const boost::python::object& w, const boost::python::object& b)
 	{
 		weight_ = w;
 		bias_ = b;
+	}
+
+	void setExtracter(const boost::python::object &e)
+	{
+		extracter_ = e;
 	}
 
 	void search()
@@ -104,8 +110,10 @@ public:
 			sc.setRadius(radius_);
 			sc.setEpsilon(epsilon_);
 			sc.setWeightAndBias(weight_, bias_);
+			sc.setExtracter(extracter_);
 
 			index_->setWeightAndBias(weight_, bias_);
+			index_->setExtracter(extracter_);
 			index_->search(sc);
 			index_->deleteObject(query);
 
