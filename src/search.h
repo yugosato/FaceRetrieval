@@ -24,8 +24,8 @@ public:
 	const int size_ = 100;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
-	boost::python::object weight_;
-	boost::python::object bias_;
+//	boost::python::object weight_;
+//	boost::python::object bias_;
 	boost::python::object extracter_;
 
 
@@ -84,11 +84,11 @@ public:
 		matrix_ = matrix;
 	}
 
-	void setWeightAndBias(const boost::python::object& w, const boost::python::object& b)
-	{
-		weight_ = w;
-		bias_ = b;
-	}
+//	void setWeightAndBias(const boost::python::object& w, const boost::python::object& b)
+//	{
+//		weight_ = w;
+//		bias_ = b;
+//	}
 
 	void setExtracter(const boost::python::object &e)
 	{

@@ -20,8 +20,8 @@ public:
 	boost::python::object main_module_;
 	boost::python::object main_namespace_;
 	boost::python::object trainer_;
-	boost::python::object weight_;
-	boost::python::object bias_;
+//	boost::python::object weight_;
+//	boost::python::object bias_;
 	boost::python::object extracter_;
 
 
@@ -51,8 +51,8 @@ public:
 		try
 		{
 			trainer_();
-			weight_ = main_namespace_["weight"]; //item
-			bias_ = main_namespace_["bias"]; //item
+//			weight_ = main_namespace_["weight"]; //item
+//			bias_ = main_namespace_["bias"]; //item
 		}
 		catch(boost::python::error_already_set const &)
 		{
