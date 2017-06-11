@@ -45,11 +45,11 @@ namespace NGT {
 
   class Index {
   public:
-	void setWeightAndBias(const boost::python::object &w, const boost::python::object &b)
-	{
-		NGT::ObjectSpace::neuralWeight = w;
-		NGT::ObjectSpace::neuralBias = b;
-	}
+//	void setWeightAndBias(const boost::python::object &w, const boost::python::object &b)
+//	{
+//		NGT::ObjectSpace::neuralWeight = w;
+//		NGT::ObjectSpace::neuralBias = b;
+//	}
 
 	void setExtracter(const boost::python::object &e)
 	{

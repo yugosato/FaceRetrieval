@@ -624,7 +624,7 @@ void ofApp::inputQuery()
 
 	samplewriter_->write(selectedquery_, nonselectedquery_);
 	trainer_->run();
-	ngt_->setWeightAndBias(trainer_->weight_, trainer_->bias_);
+//	ngt_->setWeightAndBias(trainer_->weight_, trainer_->bias_);
 	ngt_->setExtracter(trainer_->extracter_);
 	ngt_->setInput_multi(selectedquery_, nonselectedquery_);
 	ngt_->search();

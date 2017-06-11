@@ -64,8 +64,8 @@ NeighborhoodGraph::setupSeeds(NGT::SearchContainer &sc, ObjectDistances &seeds, 
       assert(0);
     }
 
-    NGT::ObjectSpace::neuralWeight = sc.weight;
-    NGT::ObjectSpace::neuralBias = sc.bias;
+//    NGT::ObjectSpace::neuralWeight = sc.weight;
+//    NGT::ObjectSpace::neuralBias = sc.bias;
     NGT::ObjectSpace::neuralExtracter = sc.extracter;
 
     Distance d = objectSpace->getComparator()(sc.object, *getObjectRepository().get(result.id));
@@ -131,8 +131,8 @@ NeighborhoodGraph::setupSeeds(NGT::SearchContainer &sc, ObjectDistances &seeds, 
     setupSeeds(sc, seeds, results, unchecked, distanceChecked);
     Distance explorationRadius = sc.explorationCoefficient * sc.radius;
 
-    NGT::ObjectSpace::neuralWeight = sc.weight;
-    NGT::ObjectSpace::neuralBias = sc.bias;
+//    NGT::ObjectSpace::neuralWeight = sc.weight;
+//    NGT::ObjectSpace::neuralBias = sc.bias;
     NGT::ObjectSpace::neuralExtracter = sc.extracter;
 
     NGT::ObjectSpace::Comparator &comparator = objectSpace->getComparator();
@@ -194,8 +194,8 @@ NeighborhoodGraph::setupSeeds(NGT::SearchContainer &sc, ObjectDistances &seeds, 
 	sc.explorationCoefficient = exp(-(double)distanceChecked.size() / 20000.0) / 10.0 + 1.0;
 #endif
 
-	NGT::ObjectSpace::neuralWeight = sc.weight;
-	NGT::ObjectSpace::neuralBias = sc.bias;
+//	NGT::ObjectSpace::neuralWeight = sc.weight;
+//	NGT::ObjectSpace::neuralBias = sc.bias;
 	NGT::ObjectSpace::neuralExtracter = sc.extracter;
 
 	Distance distance = comparator(sc.object, *getObjectRepository().get(neighbor.id));
