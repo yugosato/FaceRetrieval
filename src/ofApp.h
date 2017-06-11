@@ -90,7 +90,6 @@ public:
 
 	//-----------------------------------------
 	// クエリ関連
-	int clickNo_;						// クリック番号
 	bool clickflag_;					// クエリクリック
 	std::vector<int> selectedquery_;
 	std::vector<int> nonselectedquery_;

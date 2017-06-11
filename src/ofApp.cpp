@@ -53,7 +53,6 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// クエリ関連
-	clickNo_ = -1;
 	clickflag_ = false;
 	selected_num_ = 0;
 
@@ -529,7 +528,6 @@ void ofApp::mouseReleased(int x, int y, int button)
 						nonselectedquery_.push_back(No);
 				}
 
-				clickNo_ = selectedquery_[0];
 				inputQuery();
 				inputHistory();
 

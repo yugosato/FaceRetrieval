@@ -30,6 +30,10 @@ def train_model():
     batch_size = 1
     gpu_id = 0
 
+    print "[Python] epoch: {}".format(epoch)
+    print "[Python] mini-batch size: {}".format(batch_size)
+    print "[Python] GPU id: {}".format(gpu_id)
+
     # Initialize model to train
     global model
     model = mymodel.MyModel()
@@ -59,13 +63,14 @@ def train_model():
     trainer.extend(extensions.PlotReport(["main/accuracy"], "epoch", file_name="accuracy.png"))
 
     # Run trainer
-    print "[Python] training"
+    print "[Python] Train Model"
     trainer.run()
 
     global weight, bias
     weight = model.fc2.W.data
     bias = model.fc2.b.data
-    print "[Python] finished"
+    print "[Python] Finished"
+    print "================================="
 
 
 def feature_extract(x):

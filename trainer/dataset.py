@@ -36,13 +36,19 @@ class ImportDataset(chainer.dataset.DatasetMixin):
         if neg_num > 0:
             for neg in negatives:
                 pairs.append((self.features_[neg], 0))
-        return  pairs
+        return  pairs, pos_num, neg_num
 
 
     def setsamples(self):
         self.base_ = []
+        pos_N = 0
+        neg_N = 0
         for i in xrange(self.iter_num_):
-            self.base_.extend(self.get_split_sample(i))
+            pairs, pos_n, neg_n = self.get_split_sample(i)
+            self.base_.extend(pairs)
+            pos_N += pos_n
+            neg_N += neg_n
+        print "[Python] Total Sample Size: {} (positive: {}, negative: {})".format(len(self.base_), pos_N, neg_N)
 
 
     def get_example(self, i):
