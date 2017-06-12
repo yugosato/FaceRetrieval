@@ -78,6 +78,7 @@ public:
 	float velocity_;					// フリック速度
 	int presstime_;						// プレス時間
 	const int pressthreshold_ = 20;		// プレス時間制限
+	bool canSearch_;
 
 	//-----------------------------------------
 	// 画像表示関連
@@ -146,7 +147,6 @@ public:
 	inline void initparam();
 	inline void calculate();
 	inline void onPaint();
-	inline void inputQuery();
 	inline void inputHistory();
 	inline void initRange(const int& begin_, const int& end_);
 	inline void sizeChanged();

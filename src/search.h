@@ -10,7 +10,7 @@
 #include "rocchio.h"
 
 
-class Search
+class Search: public ofThread
 {
 public:
 	NGT::Index* index_;
@@ -19,13 +19,11 @@ public:
 	std::vector<std::vector<double>> matrix_;
 	std::vector<double> queryvector_;
 	int phase_;
-	bool issearched_;
+	bool isSearched_;
 	int clickNo_;
 	const int size_ = 100;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
-//	boost::python::object weight_;
-//	boost::python::object bias_;
 	boost::python::object extracter_;
 
 
@@ -36,19 +34,11 @@ public:
 		indexFile_ = indexFile;
 		index_ = new NGT::Index(indexFile_);
 		phase_ = 0;
-		issearched_ = false;
-	}
-
-	void setInput(const int clickNo)
-	{
-		issearched_ = false;
-		clickNo_ = clickNo;
-		queryvector_ = matrix_[clickNo_];
+		isSearched_ = false;
 	}
 
 	void setInput_multi(const std::vector<int>& rel, const std::vector<int>& inrel)
 	{
-		issearched_ = false;
 		Rocchio* rocchio;
 		rocchio = new Rocchio;
 
@@ -84,21 +74,17 @@ public:
 		matrix_ = matrix;
 	}
 
-//	void setWeightAndBias(const boost::python::object& w, const boost::python::object& b)
-//	{
-//		weight_ = w;
-//		bias_ = b;
-//	}
-
 	void setExtracter(const boost::python::object &e)
 	{
 		extracter_ = e;
 	}
 
-	void search()
+	void threadedFunction()
 	{
 		try
 		{
+			isSearched_ = false;
+			lock();
 			NGT::Object* query = 0;
 			query = index_->allocateObject(queryvector_);
 
@@ -109,10 +95,8 @@ public:
 			sc.setSize(size_);
 			sc.setRadius(radius_);
 			sc.setEpsilon(epsilon_);
-//			sc.setWeightAndBias(weight_, bias_);
 			sc.setExtracter(extracter_);
 
-//			index_->setWeightAndBias(weight_, bias_);
 			index_->setExtracter(extracter_);
 			index_->search(sc);
 			index_->deleteObject(query);
@@ -121,7 +105,8 @@ public:
 			NGT::ObjectDistances().swap(objects_);
 
 			objects_ = objects;
-			issearched_ = true;
+			unlock();
+			isSearched_ = true;
 		}
 		catch (NGT::Exception &err)
 		{

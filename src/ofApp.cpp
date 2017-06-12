@@ -43,6 +43,7 @@ void ofApp::initparam()
 	leftside_ = false;
 	velocity_ = 0;
 	presstime_ = 0;
+	canSearch_ = false;
 
 	//-----------------------------------------
 	// 画像表示関連
@@ -151,7 +152,7 @@ void ofApp::setup()
 	samplewriter_->write_init();
 
 	trainer_ = new Trainer;
-	trainer_->setupPython(pythonfile_);
+	trainer_->setup(pythonfile_);
 }
 
 //--------------------------------------------------------------
@@ -236,10 +237,45 @@ void ofApp::update()
 		loading_->unlock();
 		isLoaded_ = true;
 		ngt_->setMatrix(loading_->mat_);
+		canSearch_ = true;
 	}
 
 	if (click_)
 		presstime_++;
+
+
+	if (trainer_->isTrained_)
+	{
+		trainer_->stopThread();
+		trainer_->isTrained_ = false;
+		ngt_->setExtracter(trainer_->extracter_);
+		ngt_->setInput_multi(selectedquery_, nonselectedquery_);
+		ngt_->startThread();
+	}
+
+	if (ngt_->isSearched_)
+	{
+		ngt_->stopThread();
+		ngt_->isSearched_ = false;
+		ngt_->getNumber(&number_);
+		input_->setNumber(number_);
+		initRange(1, 25);
+		calculate();
+		onPaint();
+
+		inputHistory();
+
+		selectedquery_.clear();
+		nonselectedquery_.clear();
+		std::vector<int>().swap(selectedquery_);
+		std::vector<int>().swap(nonselectedquery_);
+		selected_num_ = 0;
+
+		for (int i = 0; i < (int) selectList_.size(); ++i)
+			selectList_[i] = false;
+
+		canSearch_ = true;
+	}
 }
 
 //--------------------------------------------------------------
@@ -514,7 +550,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 		if (canEnter_ && pressbutton(enterbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_))
 			enter();
 
-		if (pressbutton(searchbuttonposx_, buttonposy_, searchbuttonwidth_, historybuttonsize_))
+		if (canSearch_ && pressbutton(searchbuttonposx_, buttonposy_, searchbuttonwidth_, historybuttonsize_))
 		{
 			if (selected_num_ != 0)
 			{
@@ -528,17 +564,11 @@ void ofApp::mouseReleased(int x, int y, int button)
 						nonselectedquery_.push_back(No);
 				}
 
-				inputQuery();
-				inputHistory();
-
-				selectedquery_.clear();
-				nonselectedquery_.clear();
-				std::vector<int>().swap(selectedquery_);
-				std::vector<int>().swap(nonselectedquery_);
-				selected_num_ = 0;
-
-				for (int i = 0; i < (int) selectList_.size(); ++i)
-					selectList_[i] = false;
+				clickflag_ = true;
+				goback_ = true;
+				samplewriter_->write(selectedquery_, nonselectedquery_);
+				trainer_->startThread();
+				canSearch_ = false;
 			}
 			else
 			{
@@ -614,26 +644,6 @@ void ofApp::onPaint()
 	loader_->setShowList(showList_);
 	loader_->load();
 	ishistory_ = false;
-}
-
-//--------------------------------------------------------------
-void ofApp::inputQuery()
-{
-	clickflag_ = true;
-	goback_ = true;
-
-	samplewriter_->write(selectedquery_, nonselectedquery_);
-	trainer_->run();
-//	ngt_->setWeightAndBias(trainer_->weight_, trainer_->bias_);
-	ngt_->setExtracter(trainer_->extracter_);
-	ngt_->setInput_multi(selectedquery_, nonselectedquery_);
-	ngt_->search();
-	ngt_->getNumber(&number_);
-	input_->setNumber(number_);
-
-	initRange(1, 25);
-	calculate();
-	onPaint();
 }
 
 //--------------------------------------------------------------

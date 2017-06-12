@@ -230,8 +230,6 @@ namespace NGT {
 
     Comparator &getComparator() { return *comparator; }
 
-//    static boost::python::object neuralWeight;
-//    static boost::python::object neuralBias;
     static boost::python::object neuralExtracter;
 
 	virtual void serialize(const string &of) = 0;
