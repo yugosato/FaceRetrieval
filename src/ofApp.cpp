@@ -321,7 +321,7 @@ void ofApp::draw()
 
 	ofSetColor(255);
 
-	if (isLoaded_)
+	if (isLoaded_ && canSearch_)
 	{
 		// 戻るボタン
 		if (!canBack_)
@@ -337,6 +337,11 @@ void ofApp::draw()
 
 		// submitボタン
 		searchbutton1_.draw(searchbuttonposx_, buttonposy_, searchbuttonwidth_, historybuttonsize_);
+	}
+	else
+	{
+		std::string nowsearch = "Now Searching...";
+		font_.drawString(nowsearch, 15, 36);
 	}
 }
 
@@ -522,7 +527,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 		const int y_dash = y - dragh_ - topsize_;
 		const int x_dash = x - leftsize_;
 
-		if (y_dash >= 0 && y > topsize_ && x_dash >= 0 && x > leftsize_)
+		if (canSearch_ && y_dash >= 0 && y > topsize_ && x_dash >= 0 && x > leftsize_)
 		{
 			const int clickpos = (x_dash / d_size_) + (y_dash / d_size_) * colShow_;	//クリックした場所
 
