@@ -58,7 +58,7 @@ def train_model():
     updater = training.StandardUpdater(train_iter, optimizer, device=gpu_id)
     trainer = training.Trainer(updater, (epoch, "epoch"), os.path.join(home_dir, "result"))
     trainer.extend(extensions.LogReport())
-    # trainer.extend(extensions.PrintReport(["epoch", "main/loss", "main/accuracy"]))
+    trainer.extend(extensions.PrintReport(["epoch", "main/loss", "main/accuracy"]))
     trainer.extend(extensions.PlotReport(["main/loss"], "epoch", file_name="loss.png"))
     trainer.extend(extensions.PlotReport(["main/accuracy"], "epoch", file_name="accuracy.png"))
 

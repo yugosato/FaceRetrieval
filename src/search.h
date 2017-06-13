@@ -21,7 +21,7 @@ public:
 	int phase_;
 	bool isSearched_;
 	int clickNo_;
-	const int size_ = 100;
+	const int size_ = 200;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
 	boost::python::object extracter_;
