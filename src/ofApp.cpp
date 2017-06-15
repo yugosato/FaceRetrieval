@@ -641,7 +641,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 		}
 		else if (y_dash >= 0 && y > topsize_ && x_dash >= 0 && x > leftsize_)
 		{
-			std::cerr << "[warning] cannot search. please wait." << std::endl;
+			std::cerr << "[warning] cannot select. please wait." << std::endl;
 		}
 	}
 	else
@@ -751,8 +751,9 @@ void ofApp::writelog()
 	for (int i = 0; i < picnum_; ++i)
 	{
 		int num = database_->number_[i];
+		int num_rm = database_->number_removed_[i];
 		candidate[i] = num;
-		candidatehistory_.push_back(num);
+		candidatehistory_.push_back(num_rm);
 	}
 	database_->setHistory(candidatehistory_);
 	logger_->writeCandidate(candidate);
