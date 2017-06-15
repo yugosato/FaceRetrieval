@@ -16,7 +16,9 @@ public:
 	int row_;									// 枚数
 	std::vector<std::string> name_;				// ファイル名リスト(サイズ：全画像数)
 	std::vector<int> number_;					// 表示順(サイズ：全画像数)
+	std::vector<int> number_removed_;
 	std::vector<int> showList_;					// 表示する画像のリスト
+	std::vector<int> history_;					// 表示された候補履歴
 	std::vector<int> ids_;						// 各画像に対応する人物番号
 
 
@@ -84,6 +86,45 @@ public:
 
 		for (int i = 0; i < size; ++i)
 			showList_[i] = number_[begin + i - 1];
+	}
+
+	// 表示リスト更新 (重複除去)
+	void makeShowList_removed(const int begin, const int end)
+	{
+		const int size = end - begin + 1;
+
+		showList_.clear();
+		std::vector<int>().swap(showList_);
+		showList_.resize(size);
+
+		number_removed_.clear();
+		std::vector<int>().swap(number_removed_);
+		number_removed_.resize(size);
+
+		int count = 0;
+		int iter = 0;
+		while (count < size)
+		{
+			auto pos = std::find(history_.begin(), history_.end(), number_[iter]);
+			if (pos != history_.end())
+			{
+				iter++;
+				continue;
+			}
+			else
+			{
+				showList_[count] = number_[iter];
+				number_removed_[count] = number_[iter];
+				iter++;
+				count++;
+			}
+		}
+	}
+
+	// 表示された候補履歴
+	void setHistory(const std::vector<int>& history)
+	{
+		history_ = history;
 	}
 
 	// 表示順の更新

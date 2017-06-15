@@ -23,7 +23,6 @@ void ofApp::initparam()
 	// GUI設定
 	guiHeight_ = 5400;
 	guiScrollarea_ = 280;
-	buttonposy_ = 5;
 
 	//-----------------------------------------
 	// データベースからの返り値
@@ -79,6 +78,8 @@ void ofApp::initparam()
 	// 探索評価関連
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/";
 	candidatefile_ = logdir_ + "candidate.txt";
+	candidatefile_removed_ = logdir_ + "candidate_removed.txt";
+	isremove_ = true;
 
 	// 訓練サンプルファイル
 	samplefile_ = logdir_ + "feedback.txt";
@@ -110,13 +111,17 @@ void ofApp::setup()
 	enterbutton1_.load("/home/yugo/workspace/Interface/bin/data/items/canEnter1.png");
 	searchbutton1_.load("/home/yugo/workspace/Interface/bin/data/items/search1.png");
 	searchbutton2_.load("/home/yugo/workspace/Interface/bin/data/items/search2.png");
+	non_removebutton1_.load("/home/yugo/workspace/Interface/bin/data/items/non-remove1.png");
+	non_removebutton2_.load("/home/yugo/workspace/Interface/bin/data/items/non-remove2.png");
+	removebutton1_.load("/home/yugo/workspace/Interface/bin/data/items/remove1.png");
+	removebutton2_.load("/home/yugo/workspace/Interface/bin/data/items/remove2.png");
 
 	// データベース情報取得
-	input_ = new DataBase();
-	input_->setup(nameFile_);
-	row_ = input_->getRow();
-	input_->getName(&name_);
-	input_->getPersonID(&person_ids_);
+	database_ = new DataBase();
+	database_->setup(nameFile_);
+	row_ = database_->getRow();
+	database_->getName(&name_);
+	database_->getPersonID(&person_ids_);
 
 	guiSetup();
 
@@ -125,7 +130,7 @@ void ofApp::setup()
 	loader_->setRow(row_);
 	loader_->setName(name_);
 	calculate();
-	onPaint();
+	onPaint(showList_);
 
 	// 初期表示リストの登録
 	firstshowlist_ = showList_;
@@ -144,7 +149,9 @@ void ofApp::setup()
 	if (!isFileexists(logdir_))
 		mkdir(logdir_.c_str(), 0777);
 	logger_ = new Logger;
+	logger_removed_ = new Logger;
 	logger_->setup(candidatefile_);
+	logger_removed_->setup(candidatefile_removed_);
 	writelog();
 
 	// 訓練サンプルwriter
@@ -174,12 +181,13 @@ void ofApp::guiEvent(ofxUIEventArgs& e)
 void ofApp::exit()
 {
 	delete gui_;
-	delete input_;
+	delete database_;
 	delete loading_;
 	delete loader_;
 	delete ngt_;
 	delete samplewriter_;
 	delete logger_;
+	delete logger_removed_;
 	delete trainer_;
 }
 
@@ -258,10 +266,10 @@ void ofApp::update()
 		ngt_->stopThread();
 		ngt_->isSearched_ = false;
 		ngt_->getNumber(&number_);
-		input_->setNumber(number_);
+		database_->setNumber(number_);
 		initRange(1, 25);
 		calculate();
-		onPaint();
+		onPaint(showList_removed_);
 
 		inputHistory();
 
@@ -306,15 +314,25 @@ void ofApp::draw()
 		img = loader_->picture_[i];
 
 		if (!img.isAllocated())
+		{
 			break;
-		else if (i == mouseover_ || selectList_[i])
+		}
+		else if (isremove_)
+		{
+			if (i == mouseover_ || selectList_[i])
+			{
+				ofSetColor(255);
+				img.draw(drawx, drawy, d_size_, d_size_);
+			}
+			else
+			{
+				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
+				img.draw(drawx, drawy, d_size_, d_size_);
+			}
+		}
+		else if (!isremove_)
 		{
 			ofSetColor(255);
-			img.draw(drawx, drawy, d_size_, d_size_);
-		}
-		else
-		{
-			ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
 			img.draw(drawx, drawy, d_size_, d_size_);
 		}
 	}
@@ -323,20 +341,35 @@ void ofApp::draw()
 
 	if (isLoaded_ && canSearch_)
 	{
-		// 戻るボタン
-		if (!canBack_)
-			backbutton0_.draw(backbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_);
-		else
-			backbutton1_.draw(backbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_);
+//		// 戻るボタン
+//		if (!canBack_)
+//			backbutton0_.draw(backbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
+//		else
+//			backbutton1_.draw(backbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
 
-		// 進むボタン
-		if (!canEnter_)
-			enterbutton0_.draw(enterbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_);
-		else
-			enterbutton1_.draw(enterbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_);
+//		// 進むボタン
+//		if (!canEnter_)
+//			enterbutton0_.draw(enterbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
+//		else
+//			enterbutton1_.draw(enterbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
+
+		backbutton0_.draw(backbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
+		enterbutton0_.draw(enterbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
 
 		// submitボタン
-		searchbutton1_.draw(searchbuttonposx_, buttonposy_, searchbuttonwidth_, historybuttonsize_);
+		searchbutton1_.draw(searchbuttonposx_, buttonposy_1_, searchbuttonwidth_, buttonheight_);
+
+		// remove
+		if (!isremove_)
+		{
+			non_removebutton2_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+			removebutton1_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+		}
+		else if (isremove_)
+		{
+			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+			removebutton2_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+		}
 	}
 	else
 	{
@@ -359,56 +392,56 @@ void ofApp::keyPressed(int key)
 			std::cout << "[ofApp] saved snapshot image." << std::endl;
 			break;
 		}
-		case 8: // BackSpace
-		{
-			if (canBack_)
-				back();
-			else
-				std::cerr << "[warning] can't back." << std::endl;
-			break;
-		}
-		case 13: // Enter
-		{
-			if (canEnter_)
-				enter();
-			else
-				std::cerr << "[warning] can't enter." << std::endl;
-			break;
-		}
-		case 114: // Ctrl+r
-		{
-			if (clickflag_)
-			{
-				std::cout << "[ofApp] restart" << std::endl;
-
-				historysize_ = 0;
-				backcount_ = 0;
-				entercount_ = 0;
-				ishistory_ = false;
-				canBack_ = false;
-				canEnter_ = false;
-				nowhistory_ = -1;
-				clickflag_ = false;
-				ngt_->phase_ = 0;
-
-				showList_ = firstshowlist_;
-				onPaint();
-
-
-				numberhistory_.clear();
-				selectedquery_.clear();
-				nonselectedquery_.clear();
-
-				std::vector<std::vector<int>>().swap(numberhistory_);
-				std::vector<int>().swap(selectedquery_);
-				std::vector<int>().swap(nonselectedquery_);
-				selected_num_ = 0;
-
-				for (int i = 0; i < (int) selectList_.size(); ++i)
-					selectList_[i] = false;
-			}
-			break;
-		}
+//		case 8: // BackSpace
+//		{
+//			if (canBack_)
+//				back();
+//			else
+//				std::cerr << "[warning] can't back." << std::endl;
+//			break;
+//		}
+//		case 13: // Enter
+//		{
+//			if (canEnter_)
+//				enter();
+//			else
+//				std::cerr << "[warning] can't enter." << std::endl;
+//			break;
+//		}
+//		case 114: // Ctrl+r
+//		{
+//			if (clickflag_)
+//			{
+//				std::cout << "[ofApp] restart" << std::endl;
+//
+//				historysize_ = 0;
+//				backcount_ = 0;
+//				entercount_ = 0;
+//				ishistory_ = false;
+//				canBack_ = false;
+//				canEnter_ = false;
+//				nowhistory_ = -1;
+//				clickflag_ = false;
+//				ngt_->phase_ = 0;
+//
+//				showList_ = firstshowlist_;
+//				onPaint();
+//
+//
+//				numberhistory_.clear();
+//				selectedquery_.clear();
+//				nonselectedquery_.clear();
+//
+//				std::vector<std::vector<int>>().swap(numberhistory_);
+//				std::vector<int>().swap(selectedquery_);
+//				std::vector<int>().swap(nonselectedquery_);
+//				selected_num_ = 0;
+//
+//				for (int i = 0; i < (int) selectList_.size(); ++i)
+//					selectList_[i] = false;
+//			}
+//			break;
+//		}
 	}
 }
 
@@ -417,11 +450,11 @@ void ofApp::back()
 {
 	ishistory_ = true;
 	backhistory();
-	input_->setNumber(numberhistory_[nowhistory_]);
+	database_->setNumber(numberhistory_[nowhistory_]);
 
 	initRange(1, 25);
 	calculate();
-	onPaint();
+	onPaint(showList_);
 
 	selectedquery_.clear();
 	nonselectedquery_.clear();
@@ -438,11 +471,11 @@ void ofApp::enter()
 {
 	ishistory_ = true;
 	enterhistory();
-	input_->setNumber(numberhistory_[nowhistory_]);
+	database_->setNumber(numberhistory_[nowhistory_]);
 
 	initRange(1, 25);
 	calculate();
-	onPaint();
+	onPaint(showList_);
 
 	selectedquery_.clear();
 	nonselectedquery_.clear();
@@ -527,58 +560,88 @@ void ofApp::mouseReleased(int x, int y, int button)
 		const int y_dash = y - dragh_ - topsize_;
 		const int x_dash = x - leftsize_;
 
-		if (canSearch_ && y_dash >= 0 && y > topsize_ && x_dash >= 0 && x > leftsize_)
+		if (canSearch_)
 		{
-			const int clickpos = (x_dash / d_size_) + (y_dash / d_size_) * colShow_;	//クリックした場所
+			std::vector<int> *sList = &showList_removed_;
 
-			if (clickpos < (int) showList_.size())
+			if (!isremove_ && pressbutton(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
 			{
-				if (button == 0 && isLoaded_)
-				{
-					if (!selectList_[clickpos])
-					{
-						selected_num_++;
-						selectList_[clickpos] = true;
-					}
-					else
-					{
-						selected_num_--;
-						selectList_[clickpos] = false;
-					}
-				}
+				isremove_ = true;
+				onPaint(showList_removed_);
 			}
-		}
-
-		if (canBack_ && pressbutton(backbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_))
-			back();
-
-		if (canEnter_ && pressbutton(enterbuttonposx_, buttonposy_, historybuttonsize_, historybuttonsize_))
-			enter();
-
-		if (canSearch_ && pressbutton(searchbuttonposx_, buttonposy_, searchbuttonwidth_, historybuttonsize_))
-		{
-			if (selected_num_ != 0)
+			else if (isremove_ && pressbutton(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
 			{
-				for (int i = 0; i < (int) selectList_.size(); ++i)
-				{
-					const int No = showList_[i];
+				isremove_ = false;
+				onPaint(showList_);
+			}
 
-					if (selectList_[i])
-						selectedquery_.push_back(No);
-					else
-						nonselectedquery_.push_back(No);
+			if (isremove_)
+			{
+				if (y_dash >= 0 && y > topsize_ && x_dash >= 0 && x > leftsize_)
+				{
+					const int clickpos = (x_dash / d_size_) + (y_dash / d_size_) * colShow_;//クリックした場所
+
+					if (clickpos < (int) sList->size())
+					{
+						if (button == 0 && isLoaded_)
+						{
+							if (!selectList_[clickpos])
+							{
+								selected_num_++;
+								selectList_[clickpos] = true;
+							}
+							else
+							{
+								selected_num_--;
+								selectList_[clickpos] = false;
+							}
+						}
+					}
 				}
 
-				clickflag_ = true;
-				goback_ = true;
-				samplewriter_->write(selectedquery_, nonselectedquery_);
-				trainer_->startThread();
-				canSearch_ = false;
+//				if (canBack_ && pressbutton(backbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_))
+//					back();
+//
+//				if (canEnter_ && pressbutton(enterbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_))
+//					enter();
+
+				if (pressbutton(searchbuttonposx_, buttonposy_1_, searchbuttonwidth_, buttonheight_))
+				{
+					if (selected_num_ != 0)
+					{
+						for (int i = 0; i < (int) selectList_.size(); ++i)
+						{
+							const int No = (*sList)[i];
+
+							if (selectList_[i])
+								selectedquery_.push_back(No);
+							else
+								nonselectedquery_.push_back(No);
+						}
+
+						clickflag_ = true;
+						goback_ = true;
+						samplewriter_->write(selectedquery_, nonselectedquery_);
+						trainer_->startThread();
+						canSearch_ = false;
+					}
+					else
+					{
+						std::cerr << "[warning] please select queries." << std::endl;
+					}
+				}
 			}
 			else
 			{
-				std::cerr << "[warning] please select queries." << std::endl;
+				if (pressbutton(searchbuttonposx_, buttonposy_1_, searchbuttonwidth_, buttonheight_))
+				{
+					std::cerr << "[warning] cannot search. please search on state \"A\"" << std::endl;
+				}
 			}
+		}
+		else if (y_dash >= 0 && y > topsize_ && x_dash >= 0 && x > leftsize_)
+		{
+			std::cerr << "[warning] cannot search. please wait." << std::endl;
 		}
 	}
 	else
@@ -638,15 +701,19 @@ void ofApp::dragEvent(ofDragInfo dragInfo)
 //--------------------------------------------------------------
 void ofApp::calculate()
 {
-	input_->makeShowList(picA_, picB_);
-	showList_ = input_->getShowList();
+	database_->makeShowList(picA_, picB_);
+	showList_ = database_->getShowList();
+
+	database_->makeShowList_removed(picA_, picB_);
+	showList_removed_ = database_->getShowList();
+
 	sizeChanged();
 }
 
 //--------------------------------------------------------------
-void ofApp::onPaint()
+void ofApp::onPaint(const std::vector<int>& list)
 {
-	loader_->setShowList(showList_);
+	loader_->setShowList(list);
 	loader_->load();
 	ishistory_ = false;
 }
@@ -673,7 +740,6 @@ void ofApp::inputHistory()
 		canBack_ = true;
 		nowhistory_ = historysize_ - 1;
 	}
-
 	writelog();
 }
 
@@ -683,8 +749,14 @@ void ofApp::writelog()
 	std::vector<int> candidate;
 	candidate.resize(picnum_);
 	for (int i = 0; i < picnum_; ++i)
-		candidate[i] = input_->number_[i];
+	{
+		int num = database_->number_[i];
+		candidate[i] = num;
+		candidatehistory_.push_back(num);
+	}
+	database_->setHistory(candidatehistory_);
 	logger_->writeCandidate(candidate);
+	logger_removed_->writeCandidate(database_->number_removed_);
 }
 
 //--------------------------------------------------------------

@@ -21,7 +21,7 @@ public:
 	int phase_;
 	bool isSearched_;
 	int clickNo_;
-	const int size_ = 200;
+	const int size_ = 500;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
 	boost::python::object extracter_;
@@ -56,7 +56,7 @@ public:
 		rocchio->setRelevance(relVec);
 		rocchio->setInRelevance(inrelVec);
 		rocchio->setInitquery(queryvector_, phase_);
-		rocchio->calculate(1.0f, 0.8f, 0.1f);
+		rocchio->calculate(1.0f, 0.8f, 0.3f);
 		rocchio->getquery(&queryvector_);
 
 		phase_++;

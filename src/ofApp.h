@@ -27,6 +27,7 @@ public:
 	int backcount_;						// backした回数
 	int entercount_;
 	std::vector<std::vector<int>> numberhistory_;
+	std::vector<int> candidatehistory_;
 	bool ishistory_;
 	bool canBack_;
 	bool canEnter_;
@@ -44,12 +45,22 @@ public:
 	const int leftsize_ = 240;			// 左に確保する領域
 	const int topsize_ = 0;				// 上に確保する領域
 	const int fontsize_ = 18;			// フォントサイズ
-	int buttonposy_;
-	const int historybuttonsize_ = 50;
+
+	const int buttonposy_1_ = 5;
+	const int buttonheight_ = 50;
+
 	const int backbuttonposx_ = 5;
 	const int enterbuttonposx_ = 59;
+	const int historybuttonwidth_ = buttonheight_;
+
 	const int searchbuttonposx_ = 113;
 	const int searchbuttonwidth_ = 122;
+
+	const int buttonposy_2_ = buttonposy_1_ + buttonheight_ + 5;
+	const int non_removebuttonposx_ = 122;
+	const int removebuttonposx_ = 5;
+	const int removebuttonwidth_ = 113;
+
 	const int guiWidth_ = 240;			// GUIの幅
 	int guiHeight_;						// GUIの高さ
 	int guiScrollarea_;					// ?
@@ -60,6 +71,7 @@ public:
 	int col_;							// 特徴量次元数
 	std::vector<std::string> name_; 	// 画像パスリストデータ
 	std::vector<int> showList_;			// 表示リスト
+	std::vector<int> showList_removed_; // 表示リスト（重複除去）
 	std::vector<int> number_;			// 表示順
 	bool isLoaded_;						// 特徴量読み込み完了フラグ
 
@@ -118,6 +130,8 @@ public:
 	std::string logdir_;				// 探索ログ出力ディレクトリ
 	std::vector<int> person_ids_;		// 各画像に対応する人物ID
 	std::string candidatefile_;
+	std::string candidatefile_removed_;
+	bool isremove_;
 
 	// 訓練サンプルファイル
 	std::string samplefile_;
@@ -146,7 +160,7 @@ public:
 public:
 	inline void initparam();
 	inline void calculate();
-	inline void onPaint();
+	inline void onPaint(const std::vector<int>& list);
 	inline void inputHistory();
 	inline void initRange(const int& begin_, const int& end_);
 	inline void sizeChanged();
@@ -169,6 +183,10 @@ public:
 	ofImage enterbutton2_;
 	ofImage searchbutton1_;
 	ofImage searchbutton2_;
+	ofImage non_removebutton1_;
+	ofImage non_removebutton2_;
+	ofImage removebutton1_;
+	ofImage removebutton2_;
 
 	// ofxUI
 	ofxUIScrollableCanvas* gui_;
@@ -176,11 +194,12 @@ public:
 	void guiEvent(ofxUIEventArgs& e);
 	void exit();
 
-	DataBase* input_;					// データベース情報
+	DataBase* database_;					// データベース情報
 	NowLoading* loading_;				// 特徴量読み込み
 	ImageLoader* loader_; 				// 画像読み込み
 	Search* ngt_;						// NGT
 	SampleWriter* samplewriter_;		// 訓練サンプルwriter
 	Logger* logger_;
+	Logger* logger_removed_;
 	Trainer* trainer_;
 };
