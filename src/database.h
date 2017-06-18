@@ -17,6 +17,7 @@ public:
 	std::vector<std::string> name_;				// ファイル名リスト(サイズ：全画像数)
 	std::vector<int> number_;					// 表示順(サイズ：全画像数)
 	std::vector<int> number_removed_;
+	std::vector<int> number_eval_;
 	std::vector<int> showList_;					// 表示する画像のリスト
 	std::vector<int> history_;					// 表示された候補履歴
 	std::vector<int> ids_;						// 各画像に対応する人物番号
@@ -32,6 +33,7 @@ public:
 		number_.resize(row_);
 		init();
 		random();
+		number_eval_ = number_;
 	}
 
 	// 画像パスリスト読み込み
@@ -121,6 +123,18 @@ public:
 		}
 	}
 
+	void makeShowList_eval(const int begin, const int end)
+	{
+		const int size = end - begin + 1;
+
+		showList_.clear();
+		std::vector<int>().swap(showList_);
+		showList_.resize(size);
+
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_eval_[begin + i - 1];
+	}
+
 	// 表示された候補履歴
 	void setHistory(const std::vector<int>& history)
 	{
@@ -138,6 +152,18 @@ public:
 
 		for (int i = 0; i < size; ++i)
 			number_[i] = number[i];
+	}
+
+	void setNumber_eval(const std::vector<int>& number)
+	{
+		const int size = number.size();
+
+		number_eval_.clear();
+		std::vector<int>().swap(number_eval_);
+		number_eval_.resize(size);
+
+		for (int i = 0; i < size; ++i)
+			number_eval_[i] = number[i];
 	}
 
 	// 画像名を返す

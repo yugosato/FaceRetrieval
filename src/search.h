@@ -20,6 +20,7 @@ public:
 	std::vector<double> queryvector_;
 	int phase_;
 	bool isSearched_;
+	bool train_;
 	int clickNo_;
 	const int size_ = 500;
 	const float radius_ = FLT_MAX;
@@ -90,6 +91,7 @@ public:
 
 			NGT::SearchContainer sc(*query);
 			NGT::ObjectDistances objects;
+			NGT::ObjectSpace::withTrain = train_;
 
 			sc.setResults(&objects);
 			sc.setSize(size_);

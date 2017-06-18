@@ -6,6 +6,7 @@
 
 
 boost::python::object NGT::ObjectSpace::neuralExtracter;
+bool NGT::ObjectSpace::withTrain;
 
 //========================================================================
 int main()

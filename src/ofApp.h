@@ -57,9 +57,10 @@ public:
 	const int searchbuttonwidth_ = 122;
 
 	const int buttonposy_2_ = buttonposy_1_ + buttonheight_ + 5;
-	const int non_removebuttonposx_ = 122;
 	const int removebuttonposx_ = 5;
-	const int removebuttonwidth_ = 113;
+	const int non_removebuttonposx_ = 59;
+	const int evalbuttonposx_ = 113;
+	const int removebuttonwidth_ = buttonheight_;
 
 	const int guiWidth_ = 240;			// GUIの幅
 	int guiHeight_;						// GUIの高さ
@@ -72,8 +73,11 @@ public:
 	std::vector<std::string> name_; 	// 画像パスリストデータ
 	std::vector<int> showList_;			// 表示リスト
 	std::vector<int> showList_removed_; // 表示リスト（重複除去）
+	std::vector<int> showList_nonTrain_;
 	std::vector<int> number_;			// 表示順
+	std::vector<int> number_nonTrain_;
 	bool isLoaded_;						// 特徴量読み込み完了フラグ
+	bool isSearchedAll_;
 
 	//-----------------------------------------
 	// マウス＆キーボード
@@ -132,6 +136,7 @@ public:
 	std::string candidatefile_;
 	std::string candidatefile_removed_;
 	bool isremove_;
+	bool iseval_;
 
 	// 訓練サンプルファイル
 	std::string samplefile_;
@@ -187,6 +192,8 @@ public:
 	ofImage non_removebutton2_;
 	ofImage removebutton1_;
 	ofImage removebutton2_;
+	ofImage evalbutton1_;
+	ofImage evalbutton2_;
 
 	// ofxUI
 	ofxUIScrollableCanvas* gui_;

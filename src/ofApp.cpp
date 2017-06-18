@@ -27,6 +27,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	// データベースからの返り値
 	isLoaded_ = false;
+	isSearchedAll_ = false;
 
 	//-----------------------------------------
 	// マウス＆キーボード
@@ -80,6 +81,7 @@ void ofApp::initparam()
 	candidatefile_ = logdir_ + "candidate.txt";
 	candidatefile_removed_ = logdir_ + "candidate_removed.txt";
 	isremove_ = true;
+	iseval_ = false;
 
 	// 訓練サンプルファイル
 	samplefile_ = logdir_ + "feedback.txt";
@@ -115,6 +117,8 @@ void ofApp::setup()
 	non_removebutton2_.load("/home/yugo/workspace/Interface/bin/data/items/non-remove2.png");
 	removebutton1_.load("/home/yugo/workspace/Interface/bin/data/items/remove1.png");
 	removebutton2_.load("/home/yugo/workspace/Interface/bin/data/items/remove2.png");
+	evalbutton1_.load("/home/yugo/workspace/Interface/bin/data/items/eval1.png");
+	evalbutton2_.load("/home/yugo/workspace/Interface/bin/data/items/eval2.png");
 
 	// データベース情報取得
 	database_ = new DataBase();
@@ -258,19 +262,34 @@ void ofApp::update()
 		trainer_->isTrained_ = false;
 		ngt_->setExtracter(trainer_->extracter_);
 		ngt_->setInput_multi(selectedquery_, nonselectedquery_);
+		ngt_->train_ = true;
 		ngt_->startThread();
 	}
 
-	if (ngt_->isSearched_)
+	if (!isSearchedAll_ && ngt_->isSearched_)
 	{
 		ngt_->stopThread();
 		ngt_->isSearched_ = false;
-		ngt_->getNumber(&number_);
+
+		if (ngt_->train_)
+		{
+			ngt_->getNumber(&number_);
+			ngt_->train_ = false;
+			ngt_->startThread();
+		}
+		else
+		{
+			ngt_->getNumber(&number_nonTrain_);
+			isSearchedAll_ = true;
+		}
+	}
+	else if (isSearchedAll_)
+	{
 		database_->setNumber(number_);
+		database_->setNumber_eval(number_nonTrain_);
 		initRange(1, 25);
 		calculate();
 		onPaint(showList_removed_);
-
 		inputHistory();
 
 		selectedquery_.clear();
@@ -283,6 +302,7 @@ void ofApp::update()
 			selectList_[i] = false;
 
 		canSearch_ = true;
+		isSearchedAll_ = false;
 	}
 }
 
@@ -360,15 +380,23 @@ void ofApp::draw()
 		searchbutton1_.draw(searchbuttonposx_, buttonposy_1_, searchbuttonwidth_, buttonheight_);
 
 		// remove
-		if (!isremove_)
+		if (!isremove_ && !iseval_)
 		{
 			non_removebutton2_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
 			removebutton1_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+			evalbutton1_.draw(evalbuttonposx_,  buttonposy_2_, removebuttonwidth_, buttonheight_);
 		}
-		else if (isremove_)
+		else if (isremove_ && !iseval_)
 		{
 			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
 			removebutton2_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+			evalbutton1_.draw(evalbuttonposx_,  buttonposy_2_, removebuttonwidth_, buttonheight_);
+		}
+		else if (!isremove_ && iseval_)
+		{
+			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+			removebutton1_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+			evalbutton2_.draw(evalbuttonposx_,  buttonposy_2_, removebuttonwidth_, buttonheight_);
 		}
 	}
 	else
@@ -564,15 +592,23 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			std::vector<int> *sList = &showList_removed_;
 
-			if (!isremove_ && pressbutton(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
+			if (pressbutton(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = true;
+				iseval_ = false;
 				onPaint(showList_removed_);
 			}
-			else if (isremove_ && pressbutton(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
+			else if (pressbutton(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = false;
+				iseval_ = false;
 				onPaint(showList_);
+			}
+			else if (pressbutton(evalbuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
+			{
+				isremove_ = false;
+				iseval_ = true;
+				onPaint(showList_nonTrain_);
 			}
 
 			if (isremove_)
@@ -706,6 +742,9 @@ void ofApp::calculate()
 
 	database_->makeShowList_removed(picA_, picB_);
 	showList_removed_ = database_->getShowList();
+
+	database_->makeShowList_eval(picA_, picB_);
+	showList_nonTrain_ = database_->getShowList();
 
 	sizeChanged();
 }

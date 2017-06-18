@@ -231,6 +231,7 @@ namespace NGT {
     Comparator &getComparator() { return *comparator; }
 
     static boost::python::object neuralExtracter;
+    static bool withTrain;
 
 	virtual void serialize(const string &of) = 0;
     virtual void deserialize(const string &ifile) = 0;
@@ -1041,32 +1042,44 @@ namespace NGT {
 		double normB = 0.0F;
 		double sum = 0.0F;
 
-		// convert into python's list
-		boost::python::list pylist_a, pylist_b;
-		for (int i = 0; i < 4096; ++i)
+		if (NGT::ObjectSpace::withTrain)
 		{
-			pylist_a.append((float)a[i]);
-			pylist_b.append((float)b[i]);
+			// convert into python's list
+			boost::python::list pylist_a, pylist_b;
+			for (int i = 0; i < 4096; ++i)
+			{
+				pylist_a.append((float)a[i]);
+				pylist_b.append((float)b[i]);
+			}
+
+			// features extraction
+			boost::python::object neural_a = NGT::ObjectSpace::neuralExtracter(pylist_a);
+			boost::python::object neural_b = NGT::ObjectSpace::neuralExtracter(pylist_b);
+
+			std::string a_str, b_str;
+			float a_f, b_f;
+
+			for (size_t loc = 0; loc < size; loc++)
+			{
+				a_str = boost::python::extract<std::string>(boost::python::str(neural_a[loc]));
+				b_str = boost::python::extract<std::string>(boost::python::str(neural_b[loc]));
+
+				a_f = std::atof(a_str.c_str());
+				b_f = std::atof(b_str.c_str());
+
+				normA += a_f * a_f;
+				normB += b_f * b_f;
+				sum += a_f * b_f;
+			}
 		}
-
-		// features extraction
-		boost::python::object neural_a = NGT::ObjectSpace::neuralExtracter(pylist_a);
-		boost::python::object neural_b = NGT::ObjectSpace::neuralExtracter(pylist_b);
-
-		std::string a_str, b_str;
-		float a_f, b_f;
-
-		for (size_t loc = 0; loc < size; loc++)
+		else
 		{
-			a_str = boost::python::extract<std::string>(boost::python::str(neural_a[loc]));
-			b_str = boost::python::extract<std::string>(boost::python::str(neural_b[loc]));
-
-			a_f = std::atof(a_str.c_str());
-			b_f = std::atof(b_str.c_str());
-
-			normA += a_f * a_f;
-			normB += b_f * b_f;
-			sum += a_f * b_f;
+			for (size_t loc = 0; loc < size; loc++)
+			{
+				normA += (double) a[loc] * (double) a[loc];
+				normB += (double) b[loc] * (double) b[loc];
+				sum += (double) a[loc] * (double) b[loc];
+			}
 		}
 
 		assert(normA > 0.0F);
