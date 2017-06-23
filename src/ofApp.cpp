@@ -134,7 +134,7 @@ void ofApp::setup()
 	loader_->setRow(row_);
 	loader_->setName(name_);
 	calculate();
-	onPaint(showList_);
+	onPaint(showList_removed_);
 
 	// 初期表示リストの登録
 	firstshowlist_ = showList_;
@@ -317,7 +317,8 @@ void ofApp::draw()
 	}
 
 	ofImage img;
-	const int len = (int) showList_.size();
+	const int len = loader_->row_;
+
 	for (int i = 0; i < len; ++i)
 	{
 		const int j = i % colShow_;
@@ -745,13 +746,13 @@ void ofApp::calculate()
 
 	database_->makeShowList_eval(picA_, picB_);
 	showList_nonTrain_ = database_->getShowList();
-
-	sizeChanged();
 }
 
 //--------------------------------------------------------------
 void ofApp::onPaint(const std::vector<int>& list)
 {
+	sizeChanged();
+	goback_ = true;
 	loader_->setShowList(list);
 	loader_->load();
 	ishistory_ = false;
@@ -852,7 +853,15 @@ void ofApp::sizeChanged()
 		colShow_ = windowWidth_ - leftsize_;
 	}
 
-	imagerow_ = (showList_.size() + colShow_ - 1) / colShow_;
+	std::vector<int>* sList;
+	if (isremove_ && !iseval_)
+		sList = &showList_removed_;
+	else if (!isremove_ && !iseval_)
+		sList = &showList_;
+	else if (!isremove_ && iseval_)
+		sList = &showList_nonTrain_;
+
+	imagerow_ = (sList->size() + colShow_ - 1) / colShow_;
 	if (imagerow_ < 1)
 		imagerow_ = 1;
 	bottom_ = -topsize_ - (d_size_ * imagerow_) + windowHeight_;
