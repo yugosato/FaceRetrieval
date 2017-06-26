@@ -27,7 +27,7 @@ public:
 	Eigen::VectorXd newquery_;
 	Eigen::VectorXd relVec_ave_;
 	Eigen::VectorXd inrelVec_ave_;
-	const int dim_ = 4096;
+	int dim_;
 	int relnum_;
 	int inrelnum_;
 
@@ -37,6 +37,7 @@ public:
 	{
 		relVec_ = relVec;
 		relnum_ = relVec_.size();
+		dim_ = relVec_[0].size();
 	}
 
 	void setInRelevance(const std::vector<std::vector<double>>& inrelVec)
