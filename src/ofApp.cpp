@@ -74,7 +74,7 @@ void ofApp::initparam()
 	dataset_ = "cfd-cropped";
 	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
 	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.tsv";
-	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/index-angle";
+	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg_index-angle";
 
 	// 探索評価関連
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/";
