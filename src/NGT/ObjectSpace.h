@@ -1046,7 +1046,8 @@ namespace NGT {
 		{
 			// convert into python's list
 			boost::python::list pylist_a, pylist_b;
-			for (int i = 0; i < 4096; ++i)
+
+			for (int i = 0; i < size; ++i)
 			{
 				pylist_a.append((float)a[i]);
 				pylist_b.append((float)b[i]);

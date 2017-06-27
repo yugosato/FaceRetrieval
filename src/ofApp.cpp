@@ -73,9 +73,14 @@ void ofApp::initparam()
 	datasetdir_ = "/home/yugo/Desktop/dataset/";
 	dataset_ = "cfd-cropped";
 	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
-	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.tsv";
+#ifdef VGG
 	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg_index-angle";
-
+	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.tsv";
+#endif
+#ifdef HISTOGRAM
+	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram_index-angle";
+	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram.tsv";
+#endif
 	// 探索評価関連
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/";
 	candidatefile_ = logdir_ + "candidate.txt";

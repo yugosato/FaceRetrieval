@@ -7,10 +7,10 @@ from chainer import Chain
 
 
 class MyModel(Chain):
-    def __init__(self):
+    def __init__(self, unit):
         super(MyModel, self).__init__(
-            fc1=L.Linear(None, 4096),
-            fc2=L.Linear(None, 4096),
+            fc1=L.Linear(None, unit),
+            fc2=L.Linear(None, unit),
             fc3=L.Linear(None, 2)
         )
         self.train = True

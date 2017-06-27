@@ -14,6 +14,9 @@ from dataset import ImportDataset
 import mymodel
 
 
+# MODE = "VGG"
+MODE = "HISTOGRAM"
+
 xp = cuda.cupy
 
 weight = None
@@ -23,7 +26,13 @@ model = None
 def train_model():
     # File paths
     listfile = "/home/yugo/workspace/Interface/bin/log/feedback.txt"
-    inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy"
+
+    if MODE == "VGG":
+        inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy"
+        unit = 4096
+    elif MODE == "HISTOGRAM":
+        inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram.npy"
+        unit = 64
 
     # Training parameter
     epoch = 5
@@ -36,7 +45,7 @@ def train_model():
 
     # Initialize model to train
     global model
-    model = mymodel.MyModel()
+    model = mymodel.MyModel(unit)
 
     if gpu_id >= 0:
         chainer.cuda.get_device_from_id(gpu_id).use()

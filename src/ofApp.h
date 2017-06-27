@@ -1,5 +1,8 @@
 #pragma once
 
+//#define VGG
+#define HISTOGRAM
+
 #include <iostream>
 #include <vector>
 #include <string>

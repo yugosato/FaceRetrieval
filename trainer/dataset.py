@@ -20,7 +20,7 @@ class ImportDataset(chainer.dataset.DatasetMixin):
     def load(self):
         self.samplelists_ = json.load(open(self.listfile_, "r"))
         self.iter_num_ = len(self.samplelists_)
-        self.features_ = np.load(self.inputfile_)
+        self.features_ = np.load(self.inputfile_).astype(np.float32)
 
 
     def get_split_sample(self, i):
