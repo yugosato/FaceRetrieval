@@ -85,6 +85,10 @@ void ofApp::initparam()
 	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor_index-angle";
 	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor.tsv";
 #endif
+#ifdef HISTOGRAM_GABOR
+	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor_index-angle";
+	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor.tsv";
+#endif
 
 	// 探索評価関連
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/";

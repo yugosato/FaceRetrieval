@@ -16,7 +16,8 @@ import mymodel
 
 # MODE = "VGG"
 # MODE = "HISTOGRAM"
-MODE = "GABOR"
+# MODE = "GABOR"
+MODE = "HISTOGRAM_GABOR"
 
 xp = cuda.cupy
 
@@ -37,6 +38,9 @@ def train_model():
     elif MODE == "GABOR":
         inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor.npy"
         unit = 72
+    elif MODE == "HISTOGRAM_GABOR":
+        inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor.npy"
+        unit = 136
 
     # Training parameter
     epoch = 5

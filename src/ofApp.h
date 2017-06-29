@@ -2,7 +2,8 @@
 
 //#define VGG
 //#define HISTOGRAM
-#define GABOR
+//#define GABOR
+#define HISTOGRAM_GABOR
 
 #include <iostream>
 #include <vector>
