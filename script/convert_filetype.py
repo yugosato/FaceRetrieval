@@ -19,7 +19,7 @@ def tsv2npy(infile):
     np.save(os.path.join(basedir, filename(infile)+".npy"), data)
 
 def main():
-    tsv2npy("cfd-histogram.tsv")
+    tsv2npy("cfd-gabor.tsv")
 
 if __name__ == '__main__':
     main()
