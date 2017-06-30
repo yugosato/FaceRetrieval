@@ -27,7 +27,7 @@ public:
 	{
 		std::ofstream writer(samplefile_, std::ios::trunc);
 		if (!writer)
-			std::cerr << "[SampleWriter] Cannot open the specified file. " << samplefile_ << std::endl;
+			std::cerr << "[warning] cannot open the specified file. " << samplefile_ << std::endl;
 
 		writer << "{" << std::endl;
 		writer << "  \"iter0\":{\"positive\":[]," << std::endl;
@@ -43,7 +43,7 @@ public:
 
 		std::ofstream writer(samplefile_, std::ios::trunc);
 		if (!writer)
-			std::cerr << "[SampleWriter] Cannot open the specified file. " << samplefile_ << std::endl;
+			std::cerr << "[warning] Cannot open the specified file. " << samplefile_ << std::endl;
 
 		writer << "{" << std::endl;
 		writer << "  \"iter0\":{\"positive\":[]," << std::endl;
@@ -82,16 +82,21 @@ public:
 class Logger
 {
 public:
-	std::string personfile_;
 	std::string candidatefile_;
+	std::string pysettingfile_;
+	std::string npyfile_;
 	std::vector<std::vector<int>> candidates_;
+	int dim_;
 	int iter_;
 
 
 public:
-	void setup(const std::string& candidatefile)
+	void setup(const std::string& candidatefile, const std::string& pysettingfile, const std::string& npyfile, const int dim)
 	{
 		candidatefile_ = candidatefile;
+		pysettingfile_ = pysettingfile;
+		npyfile_ = npyfile;
+		dim_ = dim;
 		iter_ = 0;
 	}
 
@@ -102,7 +107,7 @@ public:
 
 		std::ofstream writer(candidatefile_, std::ios::trunc);
 		if (!writer)
-			std::cerr << "[Logger] Cannot open the specified file. " << candidatefile_ << std::endl;
+			std::cerr << "[warning] cannot open the specified file. " << candidatefile_ << std::endl;
 
 		writer << "{" << std::endl;
 		for (int i = 0; i < iter_; ++i)
@@ -120,6 +125,19 @@ public:
 				writer << ",";
 			writer << std::endl;
 		}
+		writer << "}" << std::endl;
+		writer.close();
+	}
+
+	void writePySetting()
+	{
+		std::ofstream writer(pysettingfile_, std::ios::trunc);
+		if (!writer)
+			std::cerr << "[warning] cannot open the specified file. " << candidatefile_ << std::endl;
+
+		writer << "{" << std::endl;
+		writer << "  \"input_file\":\"" << npyfile_ << "\"," << std::endl;
+		writer << "  \"unit\":" << dim_ << std::endl;
 		writer << "}" << std::endl;
 		writer.close();
 	}

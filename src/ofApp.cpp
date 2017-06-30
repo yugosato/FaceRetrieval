@@ -75,25 +75,30 @@ void ofApp::initparam()
 	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
 #ifdef VGG
 	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg_index-angle";
-	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.tsv";
+	matrixFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.tsv";
+	npyFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy";
 #endif
 #ifdef HISTOGRAM
 	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram_index-angle";
-	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram.tsv";
+	matrixFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram.tsv";
+	npyFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram.npy";
 #endif
 #ifdef GABOR
 	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor_index-angle";
-	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor.tsv";
+	matrixFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor.tsv";
+	npyFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor.npy";
 #endif
 #ifdef HISTOGRAM_GABOR
 	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor_index-angle";
-	matrixfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor.tsv";
+	matrixFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor.tsv";
+	npyFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor.npy";
 #endif
 
 	// 探索評価関連
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/";
 	candidatefile_ = logdir_ + "candidate.txt";
 	candidatefile_removed_ = logdir_ + "candidate_removed.txt";
+	pysettingfile_ = logdir_ + "py_setting.txt";
 	isremove_ = true;
 	iseval_ = false;
 
@@ -119,6 +124,7 @@ bool ofApp::isFileexists(const std::string& filepath)
 void ofApp::setup()
 {
 	initparam();
+
 	ofSetWindowShape(windowWidth_, windowHeight_);
 	font_.load(ttf_, fontsize_);
 	backbutton0_.load("/home/yugo/workspace/Interface/bin/data/items/cantBack.png");
@@ -159,18 +165,13 @@ void ofApp::setup()
 
 	// 別スレッドで特徴量読み込み
 	loading_ = new NowLoading();
-	loading_->setMatFile(matrixfile_);
+	loading_->setMatFile(matrixFile_);
 	loading_->setRow(row_);
 	loading_->startThread();
 
 	// 検索ログ
 	if (!isFileexists(logdir_))
 		mkdir(logdir_.c_str(), 0777);
-	logger_ = new Logger;
-	logger_removed_ = new Logger;
-	logger_->setup(candidatefile_);
-	logger_removed_->setup(candidatefile_removed_);
-	writelog();
 
 	// 訓練サンプルwriter
 	samplewriter_ = new SampleWriter(samplefile_);
@@ -178,6 +179,13 @@ void ofApp::setup()
 
 	trainer_ = new Trainer;
 	trainer_->setup(pythonfile_);
+
+	// print
+	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
+	std::cout << "[Setting] matrix file: \"" << matrixFile_ << "\"" << std::endl;
+	std::cout << "[Setting] npy file: \"" << npyFile_ << "\"" << std::endl;
+	std::cout << "[Setting] feedback file: \"" << samplefile_ << "\"" << std::endl;
+	std::cout << "[Setting] database size: " << database_->row_ << std::endl;
 }
 
 //--------------------------------------------------------------
@@ -264,6 +272,14 @@ void ofApp::update()
 		isLoaded_ = true;
 		ngt_->setMatrix(loading_->mat_);
 		canSearch_ = true;
+
+		logger_ = new Logger;
+		logger_removed_ = new Logger;
+		logger_->setup(candidatefile_, pysettingfile_, npyFile_, loading_->col_);
+		logger_removed_->setup(candidatefile_removed_, pysettingfile_, npyFile_, loading_->col_);
+
+		logger_->writePySetting();
+		writelog();
 	}
 
 	if (click_)
@@ -317,6 +333,7 @@ void ofApp::update()
 
 		canSearch_ = true;
 		isSearchedAll_ = false;
+		std::cout << "================================" << std::endl;
 	}
 }
 
@@ -433,6 +450,7 @@ void ofApp::keyPressed(int key)
 			std::string savepath = "/home/yugo/workspace/Interface/bin/data/snapshot/" + ofGetTimestampString() + ".png";
 			img.save(savepath);
 			std::cout << "[ofApp] saved snapshot image." << std::endl;
+			std::cout << "[ofApp] : \"" << savepath << "\"" << std::endl;
 			break;
 		}
 //		case 8: // BackSpace

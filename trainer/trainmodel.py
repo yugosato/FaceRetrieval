@@ -5,7 +5,7 @@ import chainer
 from chainer import training
 from chainer.training import extensions
 from chainer import cuda
-import numpy as np
+import json
 import sys
 import os
 sys.path.append(home_dir)
@@ -14,11 +14,6 @@ from dataset import ImportDataset
 import mymodel
 
 
-# MODE = "VGG"
-# MODE = "HISTOGRAM"
-# MODE = "GABOR"
-MODE = "HISTOGRAM_GABOR"
-
 xp = cuda.cupy
 
 weight = None
@@ -26,30 +21,26 @@ bias = None
 model = None
 
 def train_model():
+
     # File paths
     listfile = "/home/yugo/workspace/Interface/bin/log/feedback.txt"
+    py_settingfile = "/home/yugo/workspace/Interface/bin/log/py_setting.txt"
 
-    if MODE == "VGG":
-        inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy"
-        unit = 4096
-    elif MODE == "HISTOGRAM":
-        inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram.npy"
-        unit = 64
-    elif MODE == "GABOR":
-        inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor.npy"
-        unit = 72
-    elif MODE == "HISTOGRAM_GABOR":
-        inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor.npy"
-        unit = 136
+    settings = json.load(open(py_settingfile, "r"))
+    inputfile = settings["input_file"]
+    unit = settings["unit"]
 
     # Training parameter
     epoch = 5
     batch_size = 1
     gpu_id = 0
 
-    print "[Python] epoch: {}".format(epoch)
-    print "[Python] mini-batch size: {}".format(batch_size)
-    print "[Python] GPU id: {}".format(gpu_id)
+    print "[Trainer] input: \"{}\"".format(inputfile)
+    print "[Trainer] setting: \"{}\"".format(py_settingfile)
+    print "[Trainer] dim: {}".format(unit)
+    print "[Trainer] epoch: {}".format(epoch)
+    print "[Trainer] mini-batch size: {}".format(batch_size)
+    print "[Trainer] GPU id: {}".format(gpu_id)
 
     # Initialize model to train
     global model
@@ -80,14 +71,13 @@ def train_model():
     trainer.extend(extensions.PlotReport(["main/accuracy"], "epoch", file_name="accuracy.png"))
 
     # Run trainer
-    print "[Python] Train Model"
+    print "[Trainer] Train Model"
     trainer.run()
 
     global weight, bias
     weight = model.fc2.W.data
     bias = model.fc2.b.data
-    print "[Python] Finished"
-    print "================================="
+    print "[Trainer] Finished"
 
 
 def feature_extract(x):

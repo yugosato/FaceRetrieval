@@ -30,7 +30,7 @@ public:
 		pythonfile_ = pythonfile;
 		std::ifstream ifs(pythonfile_);
 		if (!ifs)
-			std::cerr << "[BoostPython] Cannot open the specified file. " << pythonfile_ << std::endl;
+			std::cerr << "[warning] cannot open the specified file. " << pythonfile_ << std::endl;
 
 		std::string script((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 		script_ = script;

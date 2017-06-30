@@ -42,7 +42,7 @@ public:
 		std::ifstream ifs(nameFile_);
 		if (!ifs)
 		{
-			std::cerr << "[DataBase] Cannot open the specified file. " << nameFile_ << std::endl;
+			std::cerr << "[warning] cannot open the specified file. " << nameFile_ << std::endl;
 		}
 		else
 		{

@@ -131,15 +131,17 @@ public:
 	std::string binData_;				// データファイルディレクトリ
 	std::string datasetdir_;			// データセットディレクトリ
 	std::string dataset_;				// データセット
-	std::string matrixfile_;			// 特徴量ファイル
+	std::string matrixFile_;			// 特徴量ファイル
 	std::string nameFile_;				// 画像パスリストファイル
 	std::string indexFile_;				// NGTインデックス
+	std::string npyFile_;
 
 	// 探索評価関連
 	std::string logdir_;				// 探索ログ出力ディレクトリ
 	std::vector<int> person_ids_;		// 各画像に対応する人物ID
 	std::string candidatefile_;
 	std::string candidatefile_removed_;
+	std::string pysettingfile_;
 	bool isremove_;
 	bool iseval_;
 

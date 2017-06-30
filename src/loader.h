@@ -60,7 +60,7 @@ public:
 	{
 		std::ifstream ifs(matFile_);
 		if (!ifs)
-			std::cerr << "[NowLoading] Cannot open the specified file. " << matFile_ << std::endl;
+			std::cerr << "[warning] Cannot open the specified file. " << matFile_ << std::endl;
 		else
 		{
 			std::string line;
