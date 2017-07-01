@@ -447,10 +447,10 @@ void ofApp::keyPressed(int key)
 		{
 			ofImage img;
 			img.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-			std::string savepath = "/home/yugo/workspace/Interface/bin/data/snapshot/" + ofGetTimestampString() + ".png";
+			std::string savepath = "/home/yugo/workspace/Interface/bin/snapshot/" + ofGetTimestampString() + ".png";
 			img.save(savepath);
 			std::cout << "[ofApp] saved snapshot image." << std::endl;
-			std::cout << "[ofApp] : \"" << savepath << "\"" << std::endl;
+			std::cout << "[ofApp] --> \"" << savepath << "\"" << std::endl;
 			break;
 		}
 //		case 8: // BackSpace

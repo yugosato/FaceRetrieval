@@ -1,9 +1,9 @@
 #pragma once
 
-//#define VGG
+#define VGG
 //#define HISTOGRAM
 //#define GABOR
-#define HISTOGRAM_GABOR
+//#define HISTOGRAM_GABOR
 
 #include <iostream>
 #include <vector>
