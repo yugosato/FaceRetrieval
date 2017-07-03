@@ -79,7 +79,7 @@ public:
 	std::vector<int> showList_;			// 表示リスト
 	std::vector<int> showList_removed_; // 表示リスト（重複除去）
 	std::vector<int> showList_nonTrain_;
-	std::vector<int> number_;			// 表示順
+	std::vector<int> number_train_;			// 表示順
 	std::vector<int> number_nonTrain_;
 	bool isLoaded_;						// 特徴量読み込み完了フラグ
 	bool isSearchedAll_;
@@ -139,8 +139,9 @@ public:
 	// 探索評価関連
 	std::string logdir_;				// 探索ログ出力ディレクトリ
 	std::vector<int> person_ids_;		// 各画像に対応する人物ID
-	std::string candidatefile_;
-	std::string candidatefile_removed_;
+	std::string candidatefile_train_;
+	std::string candidatefile_train_removed_;
+	std::string candidatefile_nontrain_;
 	std::string pysettingfile_;
 	bool isremove_;
 	bool iseval_;
@@ -213,7 +214,8 @@ public:
 	ImageLoader* loader_; 				// 画像読み込み
 	Search* ngt_;						// NGT
 	SampleWriter* samplewriter_;		// 訓練サンプルwriter
-	Logger* logger_;
+	Logger* logger_train_;
 	Logger* logger_removed_;
+	Logger* logger_nontrain_;
 	Trainer* trainer_;
 };

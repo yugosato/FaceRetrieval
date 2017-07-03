@@ -96,8 +96,9 @@ void ofApp::initparam()
 
 	// 探索評価関連
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/";
-	candidatefile_ = logdir_ + "candidate.txt";
-	candidatefile_removed_ = logdir_ + "candidate_removed.txt";
+	candidatefile_train_ = logdir_ + "candidate_train.txt";
+	candidatefile_train_removed_ = logdir_ + "candidate_train-removed.txt";
+	candidatefile_nontrain_ = logdir_ + "candidate_nontrain.txt";
 	pysettingfile_ = logdir_ + "py_setting.txt";
 	isremove_ = true;
 	iseval_ = false;
@@ -212,7 +213,8 @@ void ofApp::exit()
 	delete loader_;
 	delete ngt_;
 	delete samplewriter_;
-	delete logger_;
+	delete logger_train_;
+	delete logger_nontrain_;
 	delete logger_removed_;
 	delete trainer_;
 }
@@ -273,12 +275,15 @@ void ofApp::update()
 		ngt_->setMatrix(loading_->mat_);
 		canSearch_ = true;
 
-		logger_ = new Logger;
+		logger_train_ = new Logger;
+		logger_nontrain_ = new Logger;
 		logger_removed_ = new Logger;
-		logger_->setup(candidatefile_, pysettingfile_, npyFile_, loading_->col_);
-		logger_removed_->setup(candidatefile_removed_, pysettingfile_, npyFile_, loading_->col_);
-
-		logger_->writePySetting();
+		logger_train_->setup(candidatefile_train_, pysettingfile_, npyFile_, loading_->col_);
+		logger_removed_->setup(candidatefile_train_removed_, pysettingfile_, npyFile_, loading_->col_);
+		logger_nontrain_->setup(candidatefile_nontrain_, pysettingfile_, npyFile_, loading_->col_);
+		logger_train_->writePySetting();
+		number_train_ = database_->number_;
+		number_nonTrain_ = number_train_;
 		writelog();
 	}
 
@@ -303,7 +308,7 @@ void ofApp::update()
 
 		if (ngt_->train_)
 		{
-			ngt_->getNumber(&number_);
+			ngt_->getNumber(&number_train_);
 			ngt_->train_ = false;
 			ngt_->startThread();
 		}
@@ -315,7 +320,7 @@ void ofApp::update()
 	}
 	else if (isSearchedAll_)
 	{
-		database_->setNumber(number_);
+		database_->setNumber(number_train_);
 		database_->setNumber_eval(number_nonTrain_);
 		initRange(1, 25);
 		calculate();
@@ -804,7 +809,7 @@ void ofApp::inputHistory()
 		}
 	}
 
-	numberhistory_.push_back(number_);
+	numberhistory_.push_back(number_train_);
 	historysize_ = numberhistory_.size();
 
 	if (historysize_ > 1)
@@ -818,18 +823,22 @@ void ofApp::inputHistory()
 //--------------------------------------------------------------
 void ofApp::writelog()
 {
-	std::vector<int> candidate;
-	candidate.resize(picnum_);
+	std::vector<int> candidate_train, candidate_ntrain;;
+	candidate_train.resize(picnum_);
+	candidate_ntrain.resize(picnum_);
 	for (int i = 0; i < picnum_; ++i)
 	{
-		int num = database_->number_[i];
+		int num_train = number_train_[i];
 		int num_rm = database_->number_removed_[i];
-		candidate[i] = num;
+		int num_ntrain = number_nonTrain_[i];
+		candidate_train[i] = num_train;
+		candidate_ntrain[i] = num_ntrain;
 		candidatehistory_.push_back(num_rm);
 	}
 	database_->setHistory(candidatehistory_);
-	logger_->writeCandidate(candidate);
+	logger_train_->writeCandidate(candidate_train);
 	logger_removed_->writeCandidate(database_->number_removed_);
+	logger_nontrain_->writeCandidate(candidate_ntrain);
 }
 
 //--------------------------------------------------------------
