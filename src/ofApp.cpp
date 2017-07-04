@@ -66,33 +66,34 @@ void ofApp::initparam()
 	windowWidth_ = initWidth_;
 	windowHeight_ = initHeight_;
 
-	// その他/フォント
-	ttf_ = "/home/yugo/workspace/Interface/bin/data/fonts/RictyDiminished-Bold.ttf";
-
 	// その他/データベース情報
+	binData_ = "/home/yugo/workspace/Interface/bin/data/";
 	datasetdir_ = "/home/yugo/Desktop/dataset/";
-	dataset_ = "cfd-cropped";
-	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
+	dataset_ = "cfd-cropped/";
+	nameFile_ = datasetdir_ + dataset_ + "images_selected.txt";
 #ifdef VGG
-	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg_index-angle";
-	matrixFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.tsv";
-	npyFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy";
+	indexFile_ = binData_ + "cfd/cfd-vgg_index-angle";
+	matrixFile_ = binData_ + "cfd/cfd-vgg.tsv";
+	npyFile_ = binData_ + "cfd/cfd-vgg.npy";
 #endif
 #ifdef HISTOGRAM
-	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram_index-angle";
-	matrixFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram.tsv";
-	npyFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram.npy";
+	indexFile_ = binData_ + "cfd/cfd-histogram_index-angle";
+	matrixFile_ = binData_ + "cfd/cfd-histogram.tsv";
+	npyFile_ = binData_ + "cfd/cfd-histogram.npy";
 #endif
 #ifdef GABOR
-	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor_index-angle";
-	matrixFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor.tsv";
-	npyFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-gabor.npy";
+	indexFile_ = binData_ + "cfd/cfd-gabor_index-angle";
+	matrixFile_ = binData_ + "cfd/cfd-gabor.tsv";
+	npyFile_ = binData_ + "cfd/cfd-gabor.npy";
 #endif
 #ifdef HISTOGRAM_GABOR
-	indexFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor_index-angle";
-	matrixFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor.tsv";
-	npyFile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-histogram-gabor.npy";
+	indexFile_ = binData_ + "cfd/cfd-histogram-gabor_index-angle";
+	matrixFile_ = binData_ + "cfd/cfd-histogram-gabor.tsv";
+	npyFile_ = binData_ + "cfd/cfd-histogram-gabor.npy";
 #endif
+
+	// その他/フォント
+	ttf_ = binData_ + "fonts/RictyDiminished-Bold.ttf";
 
 	// 探索評価関連
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/";
@@ -100,6 +101,7 @@ void ofApp::initparam()
 	candidatefile_train_removed_ = logdir_ + "candidate_train-removed.txt";
 	candidatefile_nontrain_ = logdir_ + "candidate_nontrain.txt";
 	pysettingfile_ = logdir_ + "py_setting.txt";
+	init_candidatefile_ = binData_ + "cfd/initialize.txt";
 	isremove_ = true;
 	iseval_ = false;
 
@@ -128,22 +130,22 @@ void ofApp::setup()
 
 	ofSetWindowShape(windowWidth_, windowHeight_);
 	font_.load(ttf_, fontsize_);
-	backbutton0_.load("/home/yugo/workspace/Interface/bin/data/items/cantBack.png");
-	backbutton1_.load("/home/yugo/workspace/Interface/bin/data/items/canBack1.png");
-	enterbutton0_.load("/home/yugo/workspace/Interface/bin/data/items/cantEnter.png");
-	enterbutton1_.load("/home/yugo/workspace/Interface/bin/data/items/canEnter1.png");
-	searchbutton1_.load("/home/yugo/workspace/Interface/bin/data/items/search1.png");
-	searchbutton2_.load("/home/yugo/workspace/Interface/bin/data/items/search2.png");
-	non_removebutton1_.load("/home/yugo/workspace/Interface/bin/data/items/non-remove1.png");
-	non_removebutton2_.load("/home/yugo/workspace/Interface/bin/data/items/non-remove2.png");
-	removebutton1_.load("/home/yugo/workspace/Interface/bin/data/items/remove1.png");
-	removebutton2_.load("/home/yugo/workspace/Interface/bin/data/items/remove2.png");
-	evalbutton1_.load("/home/yugo/workspace/Interface/bin/data/items/eval1.png");
-	evalbutton2_.load("/home/yugo/workspace/Interface/bin/data/items/eval2.png");
+	backbutton0_.load(binData_ + "items/cantBack.png");
+	backbutton1_.load(binData_ + "items/canBack1.png");
+	enterbutton0_.load(binData_ + "items/cantEnter.png");
+	enterbutton1_.load(binData_ + "items/canEnter1.png");
+	searchbutton1_.load(binData_ + "items/search1.png");
+	searchbutton2_.load(binData_ + "items/search2.png");
+	non_removebutton1_.load(binData_ + "items/non-remove1.png");
+	non_removebutton2_.load(binData_ + "items/non-remove2.png");
+	removebutton1_.load(binData_ + "items/remove1.png");
+	removebutton2_.load(binData_ + "items/remove2.png");
+	evalbutton1_.load(binData_ + "items/eval1.png");
+	evalbutton2_.load(binData_ + "items/eval2.png");
 
 	// データベース情報取得
 	database_ = new DataBase();
-	database_->setup(nameFile_);
+	database_->setup(nameFile_, init_candidatefile_);
 	row_ = database_->getRow();
 	database_->getName(&name_);
 	database_->getPersonID(&person_ids_);

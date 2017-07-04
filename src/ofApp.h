@@ -143,6 +143,7 @@ public:
 	std::string candidatefile_train_removed_;
 	std::string candidatefile_nontrain_;
 	std::string pysettingfile_;
+	std::string init_candidatefile_;
 	bool isremove_;
 	bool iseval_;
 

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <vector>
 #include <random>
 #include <typeinfo>
@@ -13,6 +14,7 @@ class DataBase
 {
 public:
 	std::string nameFile_; 						// 画像パスリストファイル
+	std::string initFile_;
 	int row_;									// 枚数
 	std::vector<std::string> name_;				// ファイル名リスト(サイズ：全画像数)
 	std::vector<int> number_;					// 表示順(サイズ：全画像数)
@@ -24,15 +26,17 @@ public:
 
 
 public:
-	void setup(std::string nameFile)
+	void setup(const std::string nameFile, const std::string initFile)
 	{
 		nameFile_ = nameFile;
+		initFile_ = initFile;
 		loadFileName();
 
 		// メモリ確保＆初期化
 		number_.resize(row_);
-		init();
-		random();
+//		init();
+//		random();
+		init_clustering();
 		number_eval_ = number_;
 	}
 
@@ -68,12 +72,41 @@ public:
 	// ランダム初期化
 	void random()
 	{
+		init();
 		for (int i = 0; i < row_; ++i)
 		{
 			const int j = rand() % row_;
 			const int tempNo = number_[i];
 			number_[i] = number_[j];
 			number_[j] = tempNo;
+		}
+	}
+
+	// k-means clustering initialization
+	void init_clustering()
+	{
+		std::ifstream ifs(initFile_, std::ios::in);
+		if(!ifs)
+		{
+			std::cerr << "[warning] cannot open the specified file. " << initFile_ << std::endl;
+		}
+		else
+		{
+			std::string line;
+			getline(ifs, line);
+			std::vector<std::string> tokens;
+			NGT::Common::tokenize(line, tokens, " ");
+
+			std::vector<int> num;
+			for (int i = 0; i < tokens.size(); ++i)
+			{
+				num.push_back(std::atoi(tokens[i].c_str()));
+			}
+
+			for (int i = 0; i < num.size(); ++i)
+			{
+				number_[i] = num[i];
+			}
 		}
 	}
 

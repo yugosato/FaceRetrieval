@@ -24,7 +24,7 @@ def train_model():
 
     # File paths
     listfile = "/home/yugo/workspace/Interface/bin/log/feedback.txt"
-    py_settingfile = "/home/yugo/workspace/Interface/bin/log/py_setting.txt"
+    py_settingfile = "/home/yugo/workspace/Interface/bin/data/cfd/py_setting.txt"
 
     settings = json.load(open(py_settingfile, "r"))
     inputfile = settings["input_file"]
