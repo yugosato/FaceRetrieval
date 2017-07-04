@@ -71,6 +71,8 @@ void ofApp::initparam()
 	datasetdir_ = "/home/yugo/Desktop/dataset/";
 	dataset_ = "cfd-cropped/";
 	nameFile_ = datasetdir_ + dataset_ + "images_selected.txt";
+	pysettingfile_ = binData_ + "cfd/py_setting.txt";
+
 #ifdef VGG
 	indexFile_ = binData_ + "cfd/cfd-vgg_index-angle";
 	matrixFile_ = binData_ + "cfd/cfd-vgg.tsv";
@@ -100,7 +102,6 @@ void ofApp::initparam()
 	candidatefile_train_ = logdir_ + "candidate_train.txt";
 	candidatefile_train_removed_ = logdir_ + "candidate_train-removed.txt";
 	candidatefile_nontrain_ = logdir_ + "candidate_nontrain.txt";
-	pysettingfile_ = logdir_ + "py_setting.txt";
 	init_candidatefile_ = binData_ + "cfd/initialize.txt";
 	isremove_ = true;
 	iseval_ = false;
@@ -188,6 +189,7 @@ void ofApp::setup()
 	std::cout << "[Setting] matrix file: \"" << matrixFile_ << "\"" << std::endl;
 	std::cout << "[Setting] npy file: \"" << npyFile_ << "\"" << std::endl;
 	std::cout << "[Setting] feedback file: \"" << samplefile_ << "\"" << std::endl;
+	std::cout << "[Setting] python settings: \"" << pysettingfile_ << "\"" << std::endl;
 	std::cout << "[Setting] database size: " << database_->row_ << std::endl;
 }
 
