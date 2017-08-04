@@ -443,19 +443,25 @@ void ofApp::draw()
 		{
 			non_removebutton2_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
 			removebutton1_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+#ifndef EXPERIMENT
 			evalbutton1_.draw(evalbuttonposx_,  buttonposy_2_, removebuttonwidth_, buttonheight_);
+#endif
 		}
 		else if (isremove_ && !iseval_)
 		{
 			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
 			removebutton2_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+#ifndef EXPERIMENT
 			evalbutton1_.draw(evalbuttonposx_,  buttonposy_2_, removebuttonwidth_, buttonheight_);
+#endif
 		}
 		else if (!isremove_ && iseval_)
 		{
 			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
 			removebutton1_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
+#ifndef EXPERIMENT
 			evalbutton2_.draw(evalbuttonposx_,  buttonposy_2_, removebuttonwidth_, buttonheight_);
+#endif
 		}
 	}
 	else
@@ -664,12 +670,14 @@ void ofApp::mouseReleased(int x, int y, int button)
 				iseval_ = false;
 				onPaint(showList_);
 			}
+#ifndef EXPERIMENT
 			else if (pressbutton(evalbuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = false;
 				iseval_ = true;
 				onPaint(showList_nonTrain_);
 			}
+#endif
 
 			if (isremove_)
 			{

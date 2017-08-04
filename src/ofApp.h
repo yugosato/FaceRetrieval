@@ -5,6 +5,8 @@
 //#define GABOR
 //#define HISTOGRAM_GABOR
 
+#define EXPERIMENT
+
 #include <iostream>
 #include <vector>
 #include <string>
