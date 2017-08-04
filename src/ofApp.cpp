@@ -111,6 +111,8 @@ void ofApp::initparam()
 
 	// python script
 	pythonfile_ = "/home/yugo/workspace/Interface/trainer/trainmodel.py";
+
+	epoch_ = 0;
 }
 
 //--------------------------------------------------------------
@@ -297,12 +299,15 @@ void ofApp::update()
 
 	if (trainer_->isTrained_)
 	{
+		endtime_trainer_ = clock();
+		std::cout << "[ofApp] training time: " << (double)(endtime_trainer_ - starttime_trainer_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		trainer_->stopThread();
 		trainer_->isTrained_ = false;
 		ngt_->setExtracter(trainer_->extracter_);
 		ngt_->setInput_multi(selectedquery_, nonselectedquery_);
 		ngt_->train_ = true;
 		ngt_->startThread();
+		starttime_ngt_ = clock();
 	}
 
 	if (!isSearchedAll_ && ngt_->isSearched_)
@@ -324,6 +329,8 @@ void ofApp::update()
 	}
 	else if (isSearchedAll_)
 	{
+		endtime_ngt_ = clock();
+		std::cout << "[ofApp] searching time: " << (double)(endtime_ngt_ - starttime_ngt_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		database_->setNumber(number_train_);
 		database_->setNumber_eval(number_nonTrain_);
 		initRange(1, 25);
@@ -342,6 +349,8 @@ void ofApp::update()
 
 		canSearch_ = true;
 		isSearchedAll_ = false;
+		endtime_ = clock();
+		std::cout << "[ofApp] total processing time: " << (double)(endtime_ - starttime_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		std::cout << "================================" << std::endl;
 	}
 }
@@ -687,6 +696,10 @@ void ofApp::mouseReleased(int x, int y, int button)
 				{
 					if (selected_num_ != 0)
 					{
+						epoch_++;
+						std::cout << "[ofApp] " << epoch_ << " feedbacks." << std::endl;
+
+						starttime_ = clock();
 						for (int i = 0; i < (int) selectList_.size(); ++i)
 						{
 							const int No = (*sList)[i];
@@ -701,6 +714,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 						goback_ = true;
 						samplewriter_->write(selectedquery_, nonselectedquery_);
 						trainer_->startThread();
+						starttime_trainer_ = clock();
 						canSearch_ = false;
 					}
 					else

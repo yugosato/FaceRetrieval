@@ -18,6 +18,7 @@
 #include "search.h"
 #include "writer.h"
 #include "trainer.h"
+#include "time.h"
 
 
 const int initWidth_ = 960;				// 初期ウィンドウサイズ(幅)
@@ -152,6 +153,15 @@ public:
 
 	// python script
 	std::string pythonfile_;
+
+	clock_t starttime_;
+	clock_t starttime_trainer_;
+	clock_t starttime_ngt_;
+	clock_t endtime_;
+	clock_t endtime_trainer_;
+	clock_t endtime_ngt_;
+
+	int epoch_;
 
 
 public:
