@@ -113,6 +113,7 @@ void ofApp::initparam()
 	pythonfile_ = "/home/yugo/workspace/Interface/trainer/trainmodel.py";
 
 	epoch_ = 0;
+	draw_epoch_ = false;
 }
 
 //--------------------------------------------------------------
@@ -338,6 +339,7 @@ void ofApp::update()
 		onPaint(showList_removed_);
 		inputHistory();
 
+		draw_epoch_ = true;
 		selectedquery_.clear();
 		nonselectedquery_.clear();
 		std::vector<int>().swap(selectedquery_);
@@ -363,6 +365,13 @@ void ofApp::draw()
 		std::string nowload = "Now Loading...\n";
 		std::string process = ofToString(loading_->count_ * 100 / loading_->row_) + "%";
 		font_.drawString(nowload + process, 15, 36);
+	}
+
+	if (draw_epoch_ && epoch_ > 0)
+	{
+		std::string search = "Search: ";
+		std::string epoch = ofToString(epoch_);
+		font_.drawString(search + epoch, 10, 150);
 	}
 
 	ofImage img;
@@ -697,6 +706,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 					if (selected_num_ != 0)
 					{
 						epoch_++;
+						draw_epoch_ = false;
 						std::cout << "[ofApp] " << epoch_ << " feedbacks." << std::endl;
 
 						starttime_ = clock();

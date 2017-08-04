@@ -162,6 +162,7 @@ public:
 	clock_t endtime_ngt_;
 
 	int epoch_;
+	bool draw_epoch_;
 
 
 public:
