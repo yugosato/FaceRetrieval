@@ -1,2 +1,3 @@
 # Interface
-人物検索インターフェース
+Progressive Face Retrieval System with 
+Convolutional Neural Network and Relevance Feedback
