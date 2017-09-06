@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Progressive Face Retrieval
 "Progressive Face Retrieval System with 
 Convolutional Neural Network and Relevance Feedback"
@@ -16,8 +15,4 @@ C++
 
 Python 2.7.13
 * Chainer v1.24.0
-=======
-# Interface
-Progressive Face Retrieval System with 
-Convolutional Neural Network and Relevance Feedback
->>>>>>> 59b7f4ed57e4b53c8e5e29fd8e61ac8c8fb76dde
+
