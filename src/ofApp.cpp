@@ -4,79 +4,69 @@
 void ofApp::initparam()
 {
 	//-----------------------------------------
-	// 履歴
+	// History.
 	historysize_ = 0;
 	backcount_ = 0;
-	entercount_ = 0;
+	forwardcount_ = 0;
+	nowhistory_ = -1;
 	ishistory_ = false;
 	canBack_ = false;
-	canEnter_ = false;
-	nowhistory_ = -1;
+	canForward_ = false;
 
 	//-----------------------------------------
-	// 表示枚数
+	//  The number of displayed images.
 	picA_ = 1;
 	picB_ = 25;
 	picnum_ = picB_ - picA_ + 1;
 
 	//-----------------------------------------
-	// GUI設定
-	guiHeight_ = 5400;
-	guiScrollarea_ = 280;
-
-	//-----------------------------------------
-	// データベースからの返り値
-	isLoaded_ = false;
-	isSearchedAll_ = false;
-
-	//-----------------------------------------
-	// マウス＆キーボード
+	// Mouse & Keyboard.
 	clickx_ = 0;
 	clicky_ = 0;
 	dragx_ = 0;
 	dragy_ = 0;
 	dragh_ = 0;
 	dragw_ = 0;
-	click_ = false;
-	dontmove_ = false;
-	goback_ = false;
-	leftside_ = false;
-	velocity_ = 0;
 	presstime_ = 0;
-	canSearch_ = false;
+	velocity_ = 0;
+	mouseover_ = -1;
+	click_ = false;
+	leftsideclick_ = false;
 
 	//-----------------------------------------
-	// 画像表示関連
+	// Display Settings.
 	colShow_ = 5;
 	d_size_ = (initWidth_ - leftsize_) / colShow_;
 	rowshort_ = false;
-	mouseover_ = -1;
 
 	//-----------------------------------------
-	// クエリ関連
+	// Input Query.
 	clickflag_ = false;
-	selected_num_ = 0;
-
 	selectList_.resize(picnum_);
 	for (int i = 0; i < picnum_; ++i)
 		selectList_[i] = false;
+	selected_num_ = 0;
 
 	//-----------------------------------------
-	// その他/ウィンドウ設定
+	// Window Information.
 	windowWidth_ = initWidth_;
 	windowHeight_ = initHeight_;
 
-	// その他/データベース情報
+	//-----------------------------------------
+	// Font.
+	ttf_ = binData_ + "fonts/RictyDiminished-Bold.ttf";
+
+	//-----------------------------------------
+	// Path Settings.
 	binData_ = "/home/yugo/workspace/Interface/bin/data/";
 	datasetdir_ = "/home/yugo/Desktop/dataset/";
 	dataset_ = "cfd-cropped/";
 	nameFile_ = datasetdir_ + dataset_ + "images_selected.txt";
-	pysettingfile_ = binData_ + "cfd/py_setting.txt";
 
 #ifdef VGG
-	indexFile_ = binData_ + "cfd/cfd-vgg_index-angle";
 	matrixFile_ = binData_ + "cfd/cfd-vgg.tsv";
 	npyFile_ = binData_ + "cfd/cfd-vgg.npy";
+	indexFile_ = binData_ + "cfd/cfd-vgg_index-angle";
 #endif
 #ifdef HISTOGRAM
 	indexFile_ = binData_ + "cfd/cfd-histogram_index-angle";
@@ -91,29 +81,53 @@ void ofApp::initparam()
 #ifdef HISTOGRAM_GABOR
 	indexFile_ = binData_ + "cfd/cfd-histogram-gabor_index-angle";
 	matrixFile_ = binData_ + "cfd/cfd-histogram-gabor.tsv";
-	npyFile_ = binData_ + "cfd/cfd-histogram-gabor.npy";
+	npyFile_ = binData_ + "cfd/cfd-histogra"
 #endif
 
-	// その他/フォント
-	ttf_ = binData_ + "fonts/RictyDiminished-Bold.ttf";
-
-	// 探索評価関連
+	// Log Settings.
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/";
-	candidatefile_train_ = logdir_ + "candidate_train.txt";
-	candidatefile_train_removed_ = logdir_ + "candidate_train-removed.txt";
-	candidatefile_nontrain_ = logdir_ + "candidate_nontrain.txt";
+	candidatefile_main_ = logdir_ + "candidate_train.txt";
+	candidatefile_removed_ = logdir_ + "candidate_train-removed.txt";
+	candidatefile_eval_ = logdir_ + "candidate_nontrain.txt";
 	init_candidatefile_ = binData_ + "cfd/initialize.txt";
+
+	// Online Training Settings.
+	pysettingfile_ = binData_ + "cfd/py_setting.txt";
+	samplefile_ = logdir_ + "feedback.txt";
+	pythonfile_ = "/home/yugo/workspace/Interface/trainer/trainmodel.py";
+
+	//-----------------------------------------
+	// Retrieval results.
 	isremove_ = true;
 	iseval_ = false;
 
-	// 訓練サンプルファイル
-	samplefile_ = logdir_ + "feedback.txt";
-
-	// python script
-	pythonfile_ = "/home/yugo/workspace/Interface/trainer/trainmodel.py";
-
+	//-----------------------------------------
+	// Others.
+	isLoaded_ = false;
+	isSearchedAll_ = false;
+	canSearch_ = false;
+	dontmove_ = false;
+	goback_ = false;
 	epoch_ = 0;
 	draw_epoch_ = false;
+}
+
+//--------------------------------------------------------------
+void ofApp::loadImageandFont()
+{
+	font_.load(ttf_, fontsize_);
+	backbutton0_.load(binData_ + "items/cantBack.png");
+	backbutton1_.load(binData_ + "items/canBack1.png");
+	forwardbutton0_.load(binData_ + "items/cantForward.png");
+	forwardbutton1_.load(binData_ + "items/canForward1.png");
+	searchbutton1_.load(binData_ + "items/search1.png");
+	searchbutton2_.load(binData_ + "items/search2.png");
+	non_removebutton1_.load(binData_ + "items/non-remove1.png");
+	non_removebutton2_.load(binData_ + "items/non-remove2.png");
+	removebutton1_.load(binData_ + "items/remove1.png");
+	removebutton2_.load(binData_ + "items/remove2.png");
+	evalbutton1_.load(binData_ + "items/eval1.png");
+	evalbutton2_.load(binData_ + "items/eval2.png");
 }
 
 //--------------------------------------------------------------
@@ -130,64 +144,47 @@ bool ofApp::isFileexists(const std::string& filepath)
 //--------------------------------------------------------------
 void ofApp::setup()
 {
+	// Initialize.
 	initparam();
-
 	ofSetWindowShape(windowWidth_, windowHeight_);
-	font_.load(ttf_, fontsize_);
-	backbutton0_.load(binData_ + "items/cantBack.png");
-	backbutton1_.load(binData_ + "items/canBack1.png");
-	enterbutton0_.load(binData_ + "items/cantEnter.png");
-	enterbutton1_.load(binData_ + "items/canEnter1.png");
-	searchbutton1_.load(binData_ + "items/search1.png");
-	searchbutton2_.load(binData_ + "items/search2.png");
-	non_removebutton1_.load(binData_ + "items/non-remove1.png");
-	non_removebutton2_.load(binData_ + "items/non-remove2.png");
-	removebutton1_.load(binData_ + "items/remove1.png");
-	removebutton2_.load(binData_ + "items/remove2.png");
-	evalbutton1_.load(binData_ + "items/eval1.png");
-	evalbutton2_.load(binData_ + "items/eval2.png");
+	guiSetup();
+	loadImageandFont();
 
-	// データベース情報取得
+	// Get Database information.
 	database_ = new DataBase();
 	database_->setup(nameFile_, init_candidatefile_);
 	row_ = database_->getRow();
 	database_->getName(&name_);
 	database_->getPersonID(&person_ids_);
 
-	guiSetup();
-
-	// 画像読み込み
+	// Load images.
 	loader_ = new ImageLoader();
 	loader_->setRow(row_);
 	loader_->setName(name_);
 	calculate();
 	onPaint(showList_removed_);
-
-	// 初期表示リストの登録
 	firstshowlist_ = showList_;
 
-	// NGTセットアップ
+	// Setup NGT.
 	ngt_ = new Search();
 	ngt_->setup(indexFile_);
 
-	// 別スレッドで特徴量読み込み
+	// Load image features (multi thread).
 	loading_ = new NowLoading();
 	loading_->setMatFile(matrixFile_);
 	loading_->setRow(row_);
 	loading_->startThread();
 
-	// 検索ログ
+	// Setup writer.
 	if (!isFileexists(logdir_))
 		mkdir(logdir_.c_str(), 0777);
-
-	// 訓練サンプルwriter
 	samplewriter_ = new SampleWriter(samplefile_);
 	samplewriter_->write_init();
 
+	// Setup online trainer.
 	trainer_ = new Trainer;
 	trainer_->setup(pythonfile_);
 
-	// print
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] matrix file: \"" << matrixFile_ << "\"" << std::endl;
 	std::cout << "[Setting] npy file: \"" << npyFile_ << "\"" << std::endl;
@@ -199,8 +196,8 @@ void ofApp::setup()
 //--------------------------------------------------------------
 void ofApp::guiSetup()
 {
-	gui_ = new ofxUIScrollableCanvas(0, 0, guiWidth_, guiHeight_);
-	gui_->setScrollAreaHeight(guiScrollarea_);
+	gui_ = new ofxUIScrollableCanvas(0, 0, initWidth_, initHeight_);
+	gui_->setScrollAreaHeight(guiScrollarea_height_);
 	gui_->setScrollableDirections(false, false);
 	gui_->setColorBack(ofColor(0.0f, 0.0f, 0.0f, 0.0f));
 }
@@ -220,9 +217,9 @@ void ofApp::exit()
 	delete loader_;
 	delete ngt_;
 	delete samplewriter_;
-	delete logger_train_;
-	delete logger_nontrain_;
+	delete logger_main_;
 	delete logger_removed_;
+	delete logger_eval_;
 	delete trainer_;
 }
 
@@ -231,10 +228,8 @@ void ofApp::update()
 {
 	ofBackground(ofColor(0x000000));
 
-	//一番上に戻るとき
 	if (goback_ && dragh_ <= 0)
 	{
-		//速度は0にしておく
 		velocity_ = 0.0f;
 
 		const float v = (float) ((-dragh_ / 20.0f) + 1.0f);
@@ -245,25 +240,18 @@ void ofApp::update()
 			goback_ = false;
 		}
 	}
-
-	//速度減衰
 	velocity_ = velocity_ * 0.98f;
 
-	//速度が一定値より低かったら0にする
 	if (-0.5f < velocity_ && velocity_ < 0.5f)
 		velocity_ = 0.0f;
 
-	//速度を加算
 	dragh_ += velocity_;
 
-	//draghが0より大きくならないように
 	if (dragh_ > 0)
 		dragh_ = 0;
 
-	//draghがbottomより小さくならないように
 	else if (dragh_ < bottom_)
 	{
-		//行数が少ない場合は動かさない
 		if (rowshort_)
 		{
 			dragh_ = 0;
@@ -273,7 +261,6 @@ void ofApp::update()
 			dragh_ = bottom_;
 	}
 
-	//データベースが読み込めたかどうか
 	if (loading_->done_ && !isLoaded_)
 	{
 		loading_->stopThread();
@@ -282,21 +269,20 @@ void ofApp::update()
 		ngt_->setMatrix(loading_->mat_);
 		canSearch_ = true;
 
-		logger_train_ = new Logger;
-		logger_nontrain_ = new Logger;
+		logger_main_ = new Logger;
 		logger_removed_ = new Logger;
-		logger_train_->setup(candidatefile_train_, pysettingfile_, npyFile_, loading_->col_);
-		logger_removed_->setup(candidatefile_train_removed_, pysettingfile_, npyFile_, loading_->col_);
-		logger_nontrain_->setup(candidatefile_nontrain_, pysettingfile_, npyFile_, loading_->col_);
-		logger_train_->writePySetting();
-		number_train_ = database_->number_;
-		number_nonTrain_ = number_train_;
+		logger_eval_ = new Logger;
+		logger_main_->setup(candidatefile_main_, pysettingfile_, npyFile_, loading_->col_);
+		logger_removed_->setup(candidatefile_removed_, pysettingfile_, npyFile_, loading_->col_);
+		logger_eval_->setup(candidatefile_eval_, pysettingfile_, npyFile_, loading_->col_);
+		logger_main_->writePySetting();
+		number_main_ = database_->number_;
+		number_eval_ = number_main_;
 		writelog();
 	}
 
 	if (click_)
 		presstime_++;
-
 
 	if (trainer_->isTrained_)
 	{
@@ -318,13 +304,13 @@ void ofApp::update()
 
 		if (ngt_->train_)
 		{
-			ngt_->getNumber(&number_train_);
+			ngt_->getNumber(&number_main_);
 			ngt_->train_ = false;
 			ngt_->startThread();
 		}
 		else
 		{
-			ngt_->getNumber(&number_nonTrain_);
+			ngt_->getNumber(&number_eval_);
 			isSearchedAll_ = true;
 		}
 	}
@@ -332,8 +318,8 @@ void ofApp::update()
 	{
 		endtime_ngt_ = clock();
 		std::cout << "[ofApp] searching time: " << (double)(endtime_ngt_ - starttime_ngt_) / CLOCKS_PER_SEC << "sec." << std::endl;
-		database_->setNumber(number_train_);
-		database_->setNumber_eval(number_nonTrain_);
+		database_->setNumber(number_main_);
+		database_->setNumber_eval(number_eval_);
 		initRange(1, 25);
 		calculate();
 		onPaint(showList_removed_);
@@ -420,48 +406,39 @@ void ofApp::draw()
 
 	if (isLoaded_ && canSearch_)
 	{
-//		// 戻るボタン
+//		// Forward button.
 //		if (!canBack_)
-//			backbutton0_.draw(backbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
+//			backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
 //		else
-//			backbutton1_.draw(backbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
+//			backbutton1_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
 
-//		// 進むボタン
-//		if (!canEnter_)
-//			enterbutton0_.draw(enterbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
+//		// Back button.
+//		if (!canForward_)
+//			forwardbutton0_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
 //		else
-//			enterbutton1_.draw(enterbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
+//			forwardbutton1_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
 
-		backbutton0_.draw(backbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
-		enterbutton0_.draw(enterbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_);
+		backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
+		forwardbutton0_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
+		searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
 
-		// submitボタン
-		searchbutton1_.draw(searchbuttonposx_, buttonposy_1_, searchbuttonwidth_, buttonheight_);
-
-		// remove
 		if (!isremove_ && !iseval_)
 		{
-			non_removebutton2_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
-			removebutton1_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
-#ifndef EXPERIMENT
-			evalbutton1_.draw(evalbuttonposx_,  buttonposy_2_, removebuttonwidth_, buttonheight_);
-#endif
+			non_removebutton2_.draw(non_removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
+			removebutton1_.draw(removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
+			evalbutton1_.draw(evalbuttonposx_,  buttonposy_line2_, removebuttonwidth_, buttonheight_);
 		}
 		else if (isremove_ && !iseval_)
 		{
-			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
-			removebutton2_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
-#ifndef EXPERIMENT
-			evalbutton1_.draw(evalbuttonposx_,  buttonposy_2_, removebuttonwidth_, buttonheight_);
-#endif
+			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
+			removebutton2_.draw(removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
+			evalbutton1_.draw(evalbuttonposx_,  buttonposy_line2_, removebuttonwidth_, buttonheight_);
 		}
 		else if (!isremove_ && iseval_)
 		{
-			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
-			removebutton1_.draw(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_);
-#ifndef EXPERIMENT
-			evalbutton2_.draw(evalbuttonposx_,  buttonposy_2_, removebuttonwidth_, buttonheight_);
-#endif
+			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
+			removebutton1_.draw(removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
+			evalbutton2_.draw(evalbuttonposx_,  buttonposy_line2_, removebuttonwidth_, buttonheight_);
 		}
 	}
 	else
@@ -491,15 +468,15 @@ void ofApp::keyPressed(int key)
 //			if (canBack_)
 //				back();
 //			else
-//				std::cerr << "[warning] can't back." << std::endl;
+//				std::cerr << "[warning] can't step back." << std::endl;
 //			break;
 //		}
-//		case 13: // Enter
+//		case 13: // Forward
 //		{
-//			if (canEnter_)
-//				enter();
+//			if (canForward_)
+//				forward();
 //			else
-//				std::cerr << "[warning] can't enter." << std::endl;
+//				std::cerr << "[warning] can't step forward." << std::endl;
 //			break;
 //		}
 //		case 114: // Ctrl+r
@@ -510,10 +487,10 @@ void ofApp::keyPressed(int key)
 //
 //				historysize_ = 0;
 //				backcount_ = 0;
-//				entercount_ = 0;
+//				forwardcount_ = 0;
 //				ishistory_ = false;
 //				canBack_ = false;
-//				canEnter_ = false;
+//				canForward_ = false;
 //				nowhistory_ = -1;
 //				clickflag_ = false;
 //				ngt_->phase_ = 0;
@@ -561,10 +538,10 @@ void ofApp::back()
 }
 
 //--------------------------------------------------------------
-void ofApp::enter()
+void ofApp::forward()
 {
 	ishistory_ = true;
-	enterhistory();
+	forwardhistory();
 	database_->setNumber(numberhistory_[nowhistory_]);
 
 	initRange(1, 25);
@@ -595,7 +572,7 @@ void ofApp::mouseMoved(int x, int y)
 	const int x_dash = x - dragw_ - leftsize_;
 
 	if (x_dash >= 0 && y_dash >= 0 && topsize_ < y && leftsize_ < x)
-		mouseover_ = (x_dash / d_size_) + (y_dash / d_size_) * colShow_; //クリックした場所
+		mouseover_ = (x_dash / d_size_) + (y_dash / d_size_) * colShow_;
 	else
 		mouseover_ = -1;
 }
@@ -605,7 +582,7 @@ void ofApp::mouseDragged(int x, int y, int button)
 {
 	click_ = false;
 
-	if (!dontmove_ && x > leftsize_ && !leftside_)
+	if (!dontmove_ && x > leftsize_ && !leftsideclick_)
 	{
 		dragx_ = x - clickx_;
 		dragy_ = y - clicky_;
@@ -633,9 +610,9 @@ void ofApp::mouseDragged(int x, int y, int button)
 void ofApp::mousePressed(int x, int y, int button)
 {
 	if (x < leftsize_)
-		leftside_ = true;
+		leftsideclick_ = true;
 	else
-		leftside_ = false;
+		leftsideclick_ = false;
 
 	clickx_ = x;
 	clicky_ = y;
@@ -658,20 +635,20 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			std::vector<int> *sList = &showList_removed_;
 
-			if (pressbutton(removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
+			if (pressbutton(removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = true;
 				iseval_ = false;
 				onPaint(showList_removed_);
 			}
-			else if (pressbutton(non_removebuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
+			else if (pressbutton(non_removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = false;
 				iseval_ = false;
 				onPaint(showList_);
 			}
 #ifndef EXPERIMENT
-			else if (pressbutton(evalbuttonposx_, buttonposy_2_, removebuttonwidth_, buttonheight_))
+			else if (pressbutton(evalbuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = false;
 				iseval_ = true;
@@ -683,7 +660,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			{
 				if (y_dash >= 0 && y > topsize_ && x_dash >= 0 && x > leftsize_)
 				{
-					const int clickpos = (x_dash / d_size_) + (y_dash / d_size_) * colShow_;//クリックした場所
+					const int clickpos = (x_dash / d_size_) + (y_dash / d_size_) * colShow_;
 
 					if (clickpos < (int) sList->size())
 					{
@@ -703,13 +680,13 @@ void ofApp::mouseReleased(int x, int y, int button)
 					}
 				}
 
-//				if (canBack_ && pressbutton(backbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_))
+//				if (canBack_ && pressbutton(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
 //					back();
 //
-//				if (canEnter_ && pressbutton(enterbuttonposx_, buttonposy_1_, historybuttonwidth_, buttonheight_))
-//					enter();
+//				if (canForward_ && pressbutton(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
+//					forward();
 
-				if (pressbutton(searchbuttonposx_, buttonposy_1_, searchbuttonwidth_, buttonheight_))
+				if (pressbutton(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 				{
 					if (selected_num_ != 0)
 					{
@@ -743,7 +720,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			}
 			else
 			{
-				if (pressbutton(searchbuttonposx_, buttonposy_1_, searchbuttonwidth_, buttonheight_))
+				if (pressbutton(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 				{
 					std::cerr << "[warning] cannot search. please search on state \"A\"" << std::endl;
 				}
@@ -755,7 +732,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 		}
 	}
 	else
-		velocity_ = (float) (dragy_);	//カーソル速度取得
+		velocity_ = (float) (dragy_);
 
 	clickx_ = 0;
 	clicky_ = 0;
@@ -834,18 +811,17 @@ void ofApp::onPaint(const std::vector<int>& list)
 //--------------------------------------------------------------
 void ofApp::inputHistory()
 {
-	// 戻ってる途中でクエリをクリックしたら一部の履歴削除
-	if (canEnter_)
+	if (canForward_)
 	{
 		int iter = historysize_ - 1 - nowhistory_;
 		for (int i = 0; i < iter; ++i)
 		{
-			canEnter_ = false;
+			canForward_ = false;
 			numberhistory_.pop_back();
 		}
 	}
 
-	numberhistory_.push_back(number_train_);
+	numberhistory_.push_back(number_main_);
 	historysize_ = numberhistory_.size();
 
 	if (historysize_ > 1)
@@ -864,17 +840,17 @@ void ofApp::writelog()
 	candidate_ntrain.resize(picnum_);
 	for (int i = 0; i < picnum_; ++i)
 	{
-		int num_train = number_train_[i];
+		int num_train = number_main_[i];
 		int num_rm = database_->number_removed_[i];
-		int num_ntrain = number_nonTrain_[i];
+		int num_ntrain = number_eval_[i];
 		candidate_train[i] = num_train;
 		candidate_ntrain[i] = num_ntrain;
 		candidatehistory_.push_back(num_rm);
 	}
 	database_->setHistory(candidatehistory_);
-	logger_train_->writeCandidate(candidate_train);
+	logger_main_->writeCandidate(candidate_train);
 	logger_removed_->writeCandidate(database_->number_removed_);
-	logger_nontrain_->writeCandidate(candidate_ntrain);
+	logger_eval_->writeCandidate(candidate_ntrain);
 }
 
 //--------------------------------------------------------------
@@ -882,30 +858,30 @@ void ofApp::backhistory()
 {
 	if (nowhistory_ < 2)
 	{
-		canEnter_ = true;
+		canForward_ = true;
 		canBack_ = false;
 		nowhistory_ = 0;
 	}
 	else
 	{
-		canEnter_ = true;
+		canForward_ = true;
 		canBack_ = true;
 		nowhistory_ += -1;
 	}
 }
 
 //--------------------------------------------------------------
-void ofApp::enterhistory()
+void ofApp::forwardhistory()
 {
 	if (nowhistory_ > historysize_ - 3)
 	{
-		canEnter_ = false;
+		canForward_ = false;
 		canBack_ = true;
 		nowhistory_ = historysize_ - 1;
 	}
 	else
 	{
-		canEnter_ = true;
+		canForward_ = true;
 		canBack_ = true;
 		nowhistory_ += 1;
 	}
@@ -938,12 +914,12 @@ void ofApp::sizeChanged()
 	else if (!isremove_ && iseval_)
 		sList = &showList_nonTrain_;
 
-	imagerow_ = (sList->size() + colShow_ - 1) / colShow_;
-	if (imagerow_ < 1)
-		imagerow_ = 1;
-	bottom_ = -topsize_ - (d_size_ * imagerow_) + windowHeight_;
+	rowShow_ = (sList->size() + colShow_ - 1) / colShow_;
+	if (rowShow_ < 1)
+		rowShow_ = 1;
+	bottom_ = -topsize_ - (d_size_ * rowShow_) + windowHeight_;
 
-	if (d_size_ * imagerow_ < windowHeight_)
+	if (d_size_ * rowShow_ < windowHeight_)
 		rowshort_ = true;
 	else
 		rowshort_ = false;

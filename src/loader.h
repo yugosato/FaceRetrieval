@@ -55,7 +55,6 @@ public:
 		return col_;
 	}
 
-	// 特徴量の読み込み
 	void loadMatrix()
 	{
 		std::ifstream ifs(matFile_);

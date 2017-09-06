@@ -1,11 +1,11 @@
 #pragma once
 
+
 #define VGG
 //#define HISTOGRAM
 //#define GABOR
 //#define HISTOGRAM_GABOR
 
-#define EXPERIMENT
 
 #include <iostream>
 #include <vector>
@@ -23,148 +23,150 @@
 #include "time.h"
 
 
-const int initWidth_ = 960;				// 初期ウィンドウサイズ(幅)
-const int initHeight_ = 720;			// 初期ウィンドウサイズ(高)
+const int initWidth_ = 960;				// Initial window size: Width.
+const int initHeight_ = 720;			// Initial window size: Height.
 
+
+// openFrameworks base class.
 class ofApp: public ofBaseApp
 {
 public:
 	//-----------------------------------------
-	// 履歴
-	int historysize_;					// 履歴サイズ
-	int backcount_;						// backした回数
-	int entercount_;
-	std::vector<std::vector<int>> numberhistory_;
-	std::vector<int> candidatehistory_;
-	bool ishistory_;
-	bool canBack_;
-	bool canEnter_;
-	int nowhistory_;
-	std::vector<int> firstshowlist_;
+	// History.
+	int historysize_;					// The number of saved history.
+	int backcount_;						// Back count.
+	int forwardcount_;                  // Forward count.
+	std::vector<std::vector<int>> numberhistory_; // Histories (images' ids).
+	std::vector<int> candidatehistory_; // Histories (images' ids; removed duplication).
+	int nowhistory_;					// Current history position.
+	std::vector<int> firstshowlist_;	// Initial showlist (images' ids).
+	bool ishistory_;                    // Flag: History showed.
+	bool canBack_;                      // Flag: User can step back to previous results.
+	bool canForward_;                   // Flag: User can step forward to next results.
 
 	//-----------------------------------------
-	// 表示枚数(表示範囲[picA - picB])
-	int picA_;							// スタート番号
-	int picB_;							// エンド番号
-	int picnum_;						// 総数
+	// The number of displayed images (display range [picA - picB]).
+	int picA_;							// Start.
+	int picB_;							// End.
+	int picnum_;						// Total size.
 
 	//-----------------------------------------
-	// GUI設定
-	const int leftsize_ = 240;			// 左に確保する領域
-	const int topsize_ = 0;				// 上に確保する領域
-	const int fontsize_ = 18;			// フォントサイズ
-
-	const int buttonposy_1_ = 5;
-	const int buttonheight_ = 50;
-
-	const int backbuttonposx_ = 5;
-	const int enterbuttonposx_ = 59;
-	const int historybuttonwidth_ = buttonheight_;
-
-	const int searchbuttonposx_ = 113;
-	const int searchbuttonwidth_ = 122;
-
-	const int buttonposy_2_ = buttonposy_1_ + buttonheight_ + 5;
-	const int removebuttonposx_ = 5;
-	const int non_removebuttonposx_ = 59;
-	const int evalbuttonposx_ = 113;
-	const int removebuttonwidth_ = buttonheight_;
-
-	const int guiWidth_ = 240;			// GUIの幅
-	int guiHeight_;						// GUIの高さ
-	int guiScrollarea_;					// ?
+	// GUI settings' parameters.
+	const int leftsize_ = 240;			// Left region.
+	const int topsize_ = 0;				// Upper region.
+	const int fontsize_ = 18;			// Font size.
+	const int buttonheight_ = 50;       			// Button height.
+	const int historybuttonwidth_ = buttonheight_;  // History button width.
+	const int removebuttonwidth_ = buttonheight_;   // Remove button width.
+	const int buttonposy_line1_ = 5;    // The Y-coordinate of buttons on the 1st line.
+	const int backbuttonposx_ = 5;      // The X-coordinate of step back button.
+	const int forwardbuttonposx_ = 59;  // The X-coordinate of step forward button.
+	const int searchbuttonposx_ = 113;	// The X-coordinate of search button.
+	const int searchbuttonwidth_ = 122; // Search button width.
+	const int buttonposy_line2_ = buttonposy_line1_ + buttonheight_ + 5; // The Y-coordinate of buttons on the 1st line.
+	const int removebuttonposx_ = 5;				// The X-coordinate of button displays the results removed duplication.
+	const int non_removebuttonposx_ = 59;			// The X-coordinate of button displays the results remain duplication.
+	const int evalbuttonposx_ = 113;				// The X-coordinate of button displays the camparison results.
+	const int guiScrollarea_height_ = 280;			// ScrollableCanvas's height (ofxUI).
 
 	//-----------------------------------------
-	// データベースからの返り値
-	int row_;							// 画像枚数
-	int col_;							// 特徴量次元数
-	std::vector<std::string> name_; 	// 画像パスリストデータ
-	std::vector<int> showList_;			// 表示リスト
-	std::vector<int> showList_removed_; // 表示リスト（重複除去）
-	std::vector<int> showList_nonTrain_;
-	std::vector<int> number_train_;			// 表示順
-	std::vector<int> number_nonTrain_;
-	bool isLoaded_;						// 特徴量読み込み完了フラグ
-	bool isSearchedAll_;
+	// Database information.
+	int row_;							// The number of database images.
+	int col_;							// The number of features' dimensions.
+	std::vector<std::string> name_; 	// Image full-path.
+	std::vector<int> person_ids_;		// Person ids corresponding to each image.
 
 	//-----------------------------------------
-	// マウス＆キーボード
-	int clickx_;						// クリック時のx座標
-	int clicky_;						// クリック時のy座標
-	int dragx_;							// ドラッグ後のx座標
-	int dragy_;							// ドラッグ後のy座標
-	int dragh_;							// ドラッグの縦の移動量
-	int dragw_;							// ドラッグの横の移動量
-	bool click_;						// クリックフラグ
-	bool dontmove_;						// 動かさない時
-	bool goback_;						// 一番上に戻るとき
-	bool leftside_;						// 左サイドをクリックした時
-	float velocity_;					// フリック速度
-	int presstime_;						// プレス時間
-	const int pressthreshold_ = 20;		// プレス時間制限
-	bool canSearch_;
+	// Mouse & Keyboard.
+	int clickx_;						// The X-coordinate of mouse click.
+	int clicky_;						// The Y-coordinate of mouse click.
+	int dragx_;							// The X-coordinate of mouse drag.
+	int dragy_;							// The Y-coordinate of mouse drag.
+	int dragh_;							// Movement: Height.
+	int dragw_;							// Movement: Width.
+	int presstime_;						// Press time.
+	float velocity_;					// Flick Verocity.
+	const int pressthreshold_ = 20;		// Press time limitation.
+	int mouseover_;						// Current mouseovered image ids.
+	bool click_;						// Flag: Clicked.
+	bool leftsideclick_;				// Flag: Left side clicked.
 
 	//-----------------------------------------
-	// 画像表示関連
-	int colShow_;						// 表示する列数
-	int d_size_;						// 表示する画像サイズ
-	int imagerow_;						// 表示列数
-	int bottom_;						// 現在表示されている底辺座標
-	bool rowshort_;						// 表示する行数のほうが小さい時
-	int mouseover_;						// 現在のカーソルが指している画像番号
+	// Display Settings.
+	int colShow_;						// The number of cols.
+	int rowShow_;						// The number of rows.
+	int d_size_;						// Size of each displayed image.
+	int bottom_;						// The Y-coordinate of current bottom.
+	bool rowshort_;						// Flag: Small displayed rows.
 
 	//-----------------------------------------
-	// クエリ関連
-	bool clickflag_;					// クエリクリック
-	std::vector<int> selectedquery_;
-	std::vector<int> nonselectedquery_;
-	std::vector<bool> selectList_;
-	int selected_num_;
+	// Input Query.
+	bool clickflag_;					// Flag: Query clicked.
+	std::vector<bool> selectList_;		// Selected (true) or Non-selected (false).
+	std::vector<int> selectedquery_;    // Position number of current selected images.
+	std::vector<int> nonselectedquery_; // Position number of current non-celected images.
+	int selected_num_;					// The number of selected image.
 
 	//-----------------------------------------
-	// その他/ウィンドウ設定
-	int windowWidth_;					// ウィンドウの幅
-	int windowHeight_;					// ウィンドウの高さ
-	bool onoff_;						// フルスクリーンフラグ
+	// Window Information.
+	int windowWidth_;					// Current window width.
+	int windowHeight_;					// Current window height.
+	bool onoff_;						// Switch: Full-Screen.
 
-	// その他/フォント
-	std::string ttf_;					// フォントデータ
+	//-----------------------------------------
+	// Font.
+	std::string ttf_;					// Font data.
 
-	// その他/パス
-	std::string binData_;				// データファイルディレクトリ
-	std::string datasetdir_;			// データセットディレクトリ
-	std::string dataset_;				// データセット
-	std::string matrixFile_;			// 特徴量ファイル
-	std::string nameFile_;				// 画像パスリストファイル
-	std::string indexFile_;				// NGTインデックス
-	std::string npyFile_;
+	//-----------------------------------------
+	// Path Settings.
+	std::string binData_;				// Data (ofApp) directory.
+	std::string datasetdir_;			// Dataset directory.
+	std::string dataset_;				// Dataset name.
+	std::string nameFile_;				// Image list file.
+	std::string matrixFile_;			// Image features file (tsv).
+	std::string npyFile_;				// Image features file (npy).
+	std::string indexFile_;				// Index directory (for NGT).
 
-	// 探索評価関連
-	std::string logdir_;				// 探索ログ出力ディレクトリ
-	std::vector<int> person_ids_;		// 各画像に対応する人物ID
-	std::string candidatefile_train_;
-	std::string candidatefile_train_removed_;
-	std::string candidatefile_nontrain_;
-	std::string pysettingfile_;
-	std::string init_candidatefile_;
-	bool isremove_;
-	bool iseval_;
+	// Log Settings.
+	std::string logdir_;				// Log output directory.
+	std::string candidatefile_main_;   	// Candidate list (main).
+	std::string candidatefile_removed_;	// Candidate list (removed duplication).
+	std::string candidatefile_eval_;	// Candidate list (comparison).
+	std::string init_candidatefile_;	// Initial candidates list.
 
-	// 訓練サンプルファイル
-	std::string samplefile_;
+	// Online Training Settings.
+	std::string pysettingfile_;			// Python settings.
+	std::string samplefile_;			// Training sample list.
+	std::string pythonfile_;			// Script file.
 
-	// python script
-	std::string pythonfile_;
+	//-----------------------------------------
+	// Others.
+	bool isLoaded_;			// Flag: Finished loading image features file.
+	bool isSearchedAll_;	// Flag: Finished searching.
+	bool canSearch_;		// Flag: Ready to search.
+	bool dontmove_;			// Switch: Scroll lock.
+	bool goback_;			// Switch: Return the head of results.
+	int epoch_;				// The number of current search iteration.
+	bool draw_epoch_;		// Flag: draw current search epoch.
 
-	clock_t starttime_;
-	clock_t starttime_trainer_;
-	clock_t starttime_ngt_;
-	clock_t endtime_;
-	clock_t endtime_trainer_;
-	clock_t endtime_ngt_;
+	//-----------------------------------------
+	// Retrieval results.
+	std::vector<int> number_main_;			// Retrieval results (main: images' ids).
+	std::vector<int> number_eval_;			// Retrieval results (comparison: images' ids).
+	std::vector<int> showList_;			 	// Retrieval results (main: full-paths).
+	std::vector<int> showList_removed_;  	// Retrieval results (removeed duplication: full-paths).
+	std::vector<int> showList_nonTrain_; 	// Retrieval results (comparison: full-paths).
+	bool isremove_;	// Switch: Display results removeed duplication.
+	bool iseval_;	// Switch: Display comparison results.
 
-	int epoch_;
-	bool draw_epoch_;
+	//-----------------------------------------
+	// Time Record.
+	clock_t starttime_;			// Total processing time (start).
+	clock_t starttime_trainer_; // Online Training processing time (start).
+	clock_t starttime_ngt_;     // NGT searching time (start).
+	clock_t endtime_;           // Total processing time (end).
+	clock_t endtime_trainer_;  	// Online Training processing time (end).
+	clock_t endtime_ngt_;		// NGT searching time (end).
 
 
 public:
@@ -192,22 +194,30 @@ public:
 	inline void initRange(const int& begin_, const int& end_);
 	inline void sizeChanged();
 	inline void backhistory();
-	inline void enterhistory();
+	inline void forwardhistory();
 	inline void back();
-	inline void enter();
+	inline void forward();
 	inline bool pressbutton(float x, float y, float w, float h);
 	inline bool isFileexists(const std::string& filepath);
 	inline void writelog();
+	inline void loadImageandFont();
 
 
 public:
-	ofTrueTypeFont font_;				// フォントデータ
+	ofxUIScrollableCanvas* gui_;
+	void guiSetup();
+	void guiEvent(ofxUIEventArgs& e);
+	void exit();
+
+
+public:
+	ofTrueTypeFont font_;
 	ofImage backbutton0_;
 	ofImage backbutton1_;
 	ofImage backbutton2_;
-	ofImage enterbutton0_;
-	ofImage enterbutton1_;
-	ofImage enterbutton2_;
+	ofImage forwardbutton0_;
+	ofImage forwardbutton1_;
+	ofImage forwardbutton2_;
 	ofImage searchbutton1_;
 	ofImage searchbutton2_;
 	ofImage non_removebutton1_;
@@ -217,19 +227,13 @@ public:
 	ofImage evalbutton1_;
 	ofImage evalbutton2_;
 
-	// ofxUI
-	ofxUIScrollableCanvas* gui_;
-	void guiSetup();
-	void guiEvent(ofxUIEventArgs& e);
-	void exit();
-
-	DataBase* database_;					// データベース情報
-	NowLoading* loading_;				// 特徴量読み込み
-	ImageLoader* loader_; 				// 画像読み込み
-	Search* ngt_;						// NGT
-	SampleWriter* samplewriter_;		// 訓練サンプルwriter
-	Logger* logger_train_;
-	Logger* logger_removed_;
-	Logger* logger_nontrain_;
-	Trainer* trainer_;
+	DataBase* database_;			// Database information.
+	NowLoading* loading_;			// Load Image features.
+	ImageLoader* loader_; 			// Load Images
+	Search* ngt_;					// NGT
+	SampleWriter* samplewriter_;	// Training sample writer
+	Logger* logger_main_;			// Logger (main).
+	Logger* logger_removed_;		// Logger (removed).
+	Logger* logger_eval_;			// Logger (comparison method).
+	Trainer* trainer_;				// Run Python script.
 };

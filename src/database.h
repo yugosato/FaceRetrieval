@@ -13,16 +13,16 @@
 class DataBase
 {
 public:
-	std::string nameFile_; 						// 画像パスリストファイル
+	std::string nameFile_;
 	std::string initFile_;
-	int row_;									// 枚数
-	std::vector<std::string> name_;				// ファイル名リスト(サイズ：全画像数)
-	std::vector<int> number_;					// 表示順(サイズ：全画像数)
+	int row_;
+	std::vector<std::string> name_;
+	std::vector<int> number_;
 	std::vector<int> number_removed_;
 	std::vector<int> number_eval_;
-	std::vector<int> showList_;					// 表示する画像のリスト
-	std::vector<int> history_;					// 表示された候補履歴
-	std::vector<int> ids_;						// 各画像に対応する人物番号
+	std::vector<int> showList_;
+	std::vector<int> history_;
+	std::vector<int> ids_;
 
 
 public:
@@ -32,7 +32,7 @@ public:
 		initFile_ = initFile;
 		loadFileName();
 
-		// メモリ確保＆初期化
+		// Allocate memory & initialize.
 		number_.resize(row_);
 //		init();
 //		random();
@@ -40,7 +40,7 @@ public:
 		number_eval_ = number_;
 	}
 
-	// 画像パスリスト読み込み
+	// Load image list.
 	void loadFileName()
 	{
 		std::ifstream ifs(nameFile_);
@@ -62,14 +62,12 @@ public:
 		}
 	}
 
-	// 初期化
 	void init()
 	{
 		for (int i = 0; i < row_; ++i)
 			number_[i] = i;
 	}
 
-	// ランダム初期化
 	void random()
 	{
 		init();
@@ -98,19 +96,18 @@ public:
 			NGT::Common::tokenize(line, tokens, " ");
 
 			std::vector<int> num;
-			for (int i = 0; i < tokens.size(); ++i)
+			for (int i = 0; i < (int) tokens.size(); ++i)
 			{
 				num.push_back(std::atoi(tokens[i].c_str()));
 			}
 
-			for (int i = 0; i < num.size(); ++i)
+			for (int i = 0; i < (int) num.size(); ++i)
 			{
 				number_[i] = num[i];
 			}
 		}
 	}
 
-	// 表示リスト更新
 	void makeShowList(const int begin, const int end)
 	{
 		const int size = end - begin + 1;
@@ -123,7 +120,6 @@ public:
 			showList_[i] = number_[begin + i - 1];
 	}
 
-	// 表示リスト更新 (重複除去)
 	void makeShowList_removed(const int begin, const int end)
 	{
 		const int size = end - begin + 1;
@@ -168,13 +164,11 @@ public:
 			showList_[i] = number_eval_[begin + i - 1];
 	}
 
-	// 表示された候補履歴
 	void setHistory(const std::vector<int>& history)
 	{
 		history_ = history;
 	}
 
-	// 表示順の更新
 	void setNumber(const std::vector<int>& number)
 	{
 		const int size = number.size();
@@ -199,7 +193,6 @@ public:
 			number_eval_[i] = number[i];
 	}
 
-	// 画像名を返す
 	void getName(std::vector<std::string>* nameList) const
 	{
 		nameList->resize(row_);
@@ -207,7 +200,6 @@ public:
 			(*nameList)[i] = name_[i];
 	}
 
-	// 画像に対応する人物IDを返す
 	void getPersonID(std::vector<int>* person_ids) const
 	{
 		person_ids->resize(row_);
@@ -215,13 +207,11 @@ public:
 			(*person_ids)[i] = ids_[i];
 	}
 
-	// 画像枚数を返す
 	const int& getRow() const
 	{
 		return row_;
 	}
 
-	// 表示リストを返す
 	const std::vector<int>& getShowList() const
 	{
 		return showList_;
