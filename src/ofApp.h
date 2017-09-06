@@ -35,14 +35,14 @@ public:
 	// History.
 	int historysize_;					// The number of saved history.
 	int backcount_;						// Back count.
-	int forwardcount_;                  // Forward count.
-	std::vector<std::vector<int>> numberhistory_; // Histories (images' ids).
-	std::vector<int> candidatehistory_; // Histories (images' ids; removed duplication).
+	int forwardcount_;					// Forward count.
+	std::vector<std::vector<int>> numberhistory_;	// Histories (images' ids).
+	std::vector<int> candidatehistory_;	// Histories (images' ids; removed duplication).
 	int nowhistory_;					// Current history position.
 	std::vector<int> firstshowlist_;	// Initial showlist (images' ids).
-	bool ishistory_;                    // Flag: History showed.
-	bool canBack_;                      // Flag: User can step back to previous results.
-	bool canForward_;                   // Flag: User can step forward to next results.
+	bool ishistory_;					// Flag: History showed.
+	bool canBack_;						// Flag: User can step back to previous results.
+	bool canForward_;					// Flag: User can step forward to next results.
 
 	//-----------------------------------------
 	// The number of displayed images (display range [picA - picB]).
@@ -55,25 +55,25 @@ public:
 	const int leftsize_ = 240;			// Left region.
 	const int topsize_ = 0;				// Upper region.
 	const int fontsize_ = 18;			// Font size.
-	const int buttonheight_ = 50;       			// Button height.
-	const int historybuttonwidth_ = buttonheight_;  // History button width.
-	const int removebuttonwidth_ = buttonheight_;   // Remove button width.
-	const int buttonposy_line1_ = 5;    // The Y-coordinate of buttons on the 1st line.
-	const int backbuttonposx_ = 5;      // The X-coordinate of step back button.
-	const int forwardbuttonposx_ = 59;  // The X-coordinate of step forward button.
+	const int buttonheight_ = 50;		// Button height.
+	const int historybuttonwidth_ = buttonheight_;	// History button width.
+	const int removebuttonwidth_ = buttonheight_;	// Remove button width.
+	const int buttonposy_line1_ = 5;	// The Y-coordinate of buttons on the 1st line.
+	const int backbuttonposx_ = 5;		// The X-coordinate of step back button.
+	const int forwardbuttonposx_ = 59;	// The X-coordinate of step forward button.
 	const int searchbuttonposx_ = 113;	// The X-coordinate of search button.
-	const int searchbuttonwidth_ = 122; // Search button width.
-	const int buttonposy_line2_ = buttonposy_line1_ + buttonheight_ + 5; // The Y-coordinate of buttons on the 1st line.
-	const int removebuttonposx_ = 5;				// The X-coordinate of button displays the results removed duplication.
-	const int non_removebuttonposx_ = 59;			// The X-coordinate of button displays the results remain duplication.
-	const int evalbuttonposx_ = 113;				// The X-coordinate of button displays the camparison results.
-	const int guiScrollarea_height_ = 280;			// ScrollableCanvas's height (ofxUI).
+	const int searchbuttonwidth_ = 122;	// Search button width.
+	const int buttonposy_line2_ = buttonposy_line1_ + buttonheight_ + 5;	// The Y-coordinate of buttons on the 1st line.
+	const int removebuttonposx_ = 5;		// The X-coordinate of button displays the results removed duplication.
+	const int non_removebuttonposx_ = 59;	// The X-coordinate of button displays the results remain duplication.
+	const int evalbuttonposx_ = 113;		// The X-coordinate of button displays the camparison results.
+	const int guiScrollarea_height_ = 280;	// ScrollableCanvas's height (ofxUI).
 
 	//-----------------------------------------
 	// Database information.
 	int row_;							// The number of database images.
 	int col_;							// The number of features' dimensions.
-	std::vector<std::string> name_; 	// Image full-path.
+	std::vector<std::string> name_;		// Image full-path.
 	std::vector<int> person_ids_;		// Person ids corresponding to each image.
 
 	//-----------------------------------------
@@ -103,8 +103,8 @@ public:
 	// Input Query.
 	bool clickflag_;					// Flag: Query clicked.
 	std::vector<bool> selectList_;		// Selected (true) or Non-selected (false).
-	std::vector<int> selectedquery_;    // Position number of current selected images.
-	std::vector<int> nonselectedquery_; // Position number of current non-celected images.
+	std::vector<int> selectedquery_;	// Position number of current selected images.
+	std::vector<int> nonselectedquery_;	// Position number of current non-celected images.
 	int selected_num_;					// The number of selected image.
 
 	//-----------------------------------------
@@ -129,7 +129,7 @@ public:
 
 	// Log Settings.
 	std::string logdir_;				// Log output directory.
-	std::string candidatefile_main_;   	// Candidate list (main).
+	std::string candidatefile_main_;	// Candidate list (main).
 	std::string candidatefile_removed_;	// Candidate list (removed duplication).
 	std::string candidatefile_eval_;	// Candidate list (comparison).
 	std::string init_candidatefile_;	// Initial candidates list.
@@ -154,7 +154,7 @@ public:
 	std::vector<int> number_main_;			// Retrieval results (main: images' ids).
 	std::vector<int> number_eval_;			// Retrieval results (comparison: images' ids).
 	std::vector<int> showList_;			 	// Retrieval results (main: full-paths).
-	std::vector<int> showList_removed_;  	// Retrieval results (removeed duplication: full-paths).
+	std::vector<int> showList_removed_;		// Retrieval results (removeed duplication: full-paths).
 	std::vector<int> showList_nonTrain_; 	// Retrieval results (comparison: full-paths).
 	bool isremove_;	// Switch: Display results removeed duplication.
 	bool iseval_;	// Switch: Display comparison results.
@@ -163,9 +163,9 @@ public:
 	// Time Record.
 	clock_t starttime_;			// Total processing time (start).
 	clock_t starttime_trainer_; // Online Training processing time (start).
-	clock_t starttime_ngt_;     // NGT searching time (start).
-	clock_t endtime_;           // Total processing time (end).
-	clock_t endtime_trainer_;  	// Online Training processing time (end).
+	clock_t starttime_ngt_;		// NGT searching time (start).
+	clock_t endtime_;			// Total processing time (end).
+	clock_t endtime_trainer_;	// Online Training processing time (end).
 	clock_t endtime_ngt_;		// NGT searching time (end).
 
 
