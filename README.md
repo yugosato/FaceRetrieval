@@ -1,6 +1,8 @@
 # Progressive Face Retrieval
-"Progressive Face Retrieval System with 
+"Progressive Face Retrieval System with
 Convolutional Neural Network and Relevance Feedback"
+
+_Version: September 6, 2017_
 
 ### Development Environment
 * Linux Ubuntu 16.04
