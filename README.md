@@ -5,7 +5,7 @@ Convolutional Neural Network and Relevance Feedback"
 <img src=https://user-images.githubusercontent.com/20763586/30205865-2947d260-94c5-11e7-9991-bf0d8878a7a4.png width=620px>  
 <img src=https://user-images.githubusercontent.com/20763586/30205866-2a39697c-94c5-11e7-8fc5-436a939ab6ea.png width=320px>  
 
-_Version: September 6, 2017_  
+_Version: September 6, 2017._  
 
 ### Development Environment
 * Linux Ubuntu 16.04
