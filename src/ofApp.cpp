@@ -370,44 +370,50 @@ void ofApp::draw()
     ofDrawRectangle(1000, 0, 600, 40);
 
 	ofSetColor(255);
-	if (isLoaded_ && canSearch_)
+
+//	// Forward button.
+//	if (!canBack_)
+//		backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
+//	else
+//		backbutton1_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
+//
+//	// Back button.
+//	if (!canForward_)
+//		forwardbutton0_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_,
+//				buttonheight_);
+//	else
+//		forwardbutton1_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
+
+	backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
+	forwardbutton0_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
+	searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
+
+	if (!isremove_ && !iseval_)
 	{
-//		// Forward button.
-//		if (!canBack_)
-//			backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
-//		else
-//			backbutton1_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
-
-//		// Back button.
-//		if (!canForward_)
-//			forwardbutton0_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
-//		else
-//			forwardbutton1_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
-
-		backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
-		forwardbutton0_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
-		searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
-
-		if (!isremove_ && !iseval_)
-		{
-			non_removebutton2_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-			removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-			evalbutton1_.draw(evalbuttonposx_,  buttonposy_line1_, removebuttonwidth_, buttonheight_);
-		}
-		else if (isremove_ && !iseval_)
-		{
-			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-			removebutton2_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-			evalbutton1_.draw(evalbuttonposx_,  buttonposy_line1_, removebuttonwidth_, buttonheight_);
-		}
-		else if (!isremove_ && iseval_)
-		{
-			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-			removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-			evalbutton2_.draw(evalbuttonposx_,  buttonposy_line1_, removebuttonwidth_, buttonheight_);
-		}
+		non_removebutton2_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
+				buttonheight_);
+		removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
+				buttonheight_);
+		evalbutton1_.draw(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
 	}
-	else
+	else if (isremove_ && !iseval_)
+	{
+		non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
+				buttonheight_);
+		removebutton2_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
+				buttonheight_);
+		evalbutton1_.draw(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+	}
+	else if (!isremove_ && iseval_)
+	{
+		non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
+				buttonheight_);
+		removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
+				buttonheight_);
+		evalbutton2_.draw(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+	}
+
+	if (!canSearch_)
 	{
 		std::string nowsearch = "Now Searching...";
 		font_.drawString(nowsearch, 15, 36);
