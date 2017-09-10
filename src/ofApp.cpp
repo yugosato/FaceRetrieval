@@ -16,27 +16,21 @@ void ofApp::initparam()
 	//-----------------------------------------
 	//  The number of displayed images.
 	picA_ = 1;
-	picB_ = 25;
+	picB_ = 200;
 	picnum_ = picB_ - picA_ + 1;
 
 	//-----------------------------------------
 	// Mouse & Keyboard.
 	clickx_ = 0;
 	clicky_ = 0;
-	dragx_ = 0;
-	dragy_ = 0;
-	dragh_ = 0;
-	dragw_ = 0;
-	presstime_ = 0;
-	velocity_ = 0;
 	mouseover_ = -1;
 	click_ = false;
 	leftsideclick_ = false;
 
 	//-----------------------------------------
 	// Display Settings.
-	colShow_ = 5;
-	d_size_ = (initWidth_ - leftsize_) / colShow_;
+	colShow_ = 8;
+	d_size_ = (initWidth_ - leftsize_ - ScrollBarWidth_) / colShow_;
 	rowshort_ = false;
 
 	//-----------------------------------------
@@ -107,7 +101,6 @@ void ofApp::initparam()
 	isSearchedAll_ = false;
 	canSearch_ = false;
 	dontmove_ = false;
-	goback_ = false;
 	epoch_ = 0;
 	draw_epoch_ = false;
 }
@@ -157,6 +150,9 @@ void ofApp::setup()
 	database_->getName(&name_);
 	database_->getPersonID(&person_ids_);
 
+	// Initialize scroll bar.
+	initializeBars();
+
 	// Load images.
 	loader_ = new ImageLoader();
 	loader_->setRow(row_);
@@ -196,7 +192,7 @@ void ofApp::setup()
 //--------------------------------------------------------------
 void ofApp::guiSetup()
 {
-	gui_ = new ofxUIScrollableCanvas(0, 0, initWidth_, initHeight_);
+	gui_ = new ofxUIScrollableCanvas(0, 0, windowWidth_, windowHeight_);
 	gui_->setScrollAreaHeight(guiScrollarea_height_);
 	gui_->setScrollableDirections(false, false);
 	gui_->setColorBack(ofColor(0.0f, 0.0f, 0.0f, 0.0f));
@@ -228,39 +224,6 @@ void ofApp::update()
 {
 	ofBackground(ofColor(0x000000));
 
-	if (goback_ && dragh_ <= 0)
-	{
-		velocity_ = 0.0f;
-
-		const float v = (float) ((-dragh_ / 20.0f) + 1.0f);
-		dragh_ += v;
-		if (dragh_ > 0)
-		{
-			dragh_ = 0;
-			goback_ = false;
-		}
-	}
-	velocity_ = velocity_ * 0.98f;
-
-	if (-0.5f < velocity_ && velocity_ < 0.5f)
-		velocity_ = 0.0f;
-
-	dragh_ += velocity_;
-
-	if (dragh_ > 0)
-		dragh_ = 0;
-
-	else if (dragh_ < bottom_)
-	{
-		if (rowshort_)
-		{
-			dragh_ = 0;
-			velocity_ = 0.0f;
-		}
-		else
-			dragh_ = bottom_;
-	}
-
 	if (loading_->done_ && !isLoaded_)
 	{
 		loading_->stopThread();
@@ -280,9 +243,6 @@ void ofApp::update()
 		number_eval_ = number_main_;
 		writelog();
 	}
-
-	if (click_)
-		presstime_++;
 
 	if (trainer_->isTrained_)
 	{
@@ -320,7 +280,6 @@ void ofApp::update()
 		std::cout << "[ofApp] searching time: " << (double)(endtime_ngt_ - starttime_ngt_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		database_->setNumber(number_main_);
 		database_->setNumber_eval(number_eval_);
-		initRange(1, 25);
 		calculate();
 		onPaint(showList_removed_);
 		inputHistory();
@@ -340,7 +299,12 @@ void ofApp::update()
 		endtime_ = clock();
 		std::cout << "[ofApp] total processing time: " << (double)(endtime_ - starttime_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		std::cout << "================================" << std::endl;
+
+		vscroll_areaA_.current(0);
 	}
+
+	scroll_areaA_ = - vscroll_areaA_.current();
+	vscroll_areaA_.update();
 }
 
 //--------------------------------------------------------------
@@ -368,13 +332,13 @@ void ofApp::draw()
 		const int j = i % colShow_;
 		const int k = i / colShow_;
 
-		if (windowHeight_ < topsize_ + d_size_ * k + dragh_)
+		if (windowHeight_ < topsize_ + d_size_ * k + scroll_areaA_)
 			break;
-		else if (0 > topsize_ + d_size_ * (k + 1) + dragh_)
+		else if (0 > topsize_ + d_size_ * (k + 1) + scroll_areaA_)
 			continue;
 
 		int drawx = leftsize_ + d_size_ * j;
-		int drawy = topsize_ + d_size_ * k + dragh_;
+		int drawy = topsize_ + d_size_ * k + scroll_areaA_;
 
 		img = loader_->picture_[i];
 
@@ -402,8 +366,10 @@ void ofApp::draw()
 		}
 	}
 
-	ofSetColor(255);
+    ofSetColor(0);
+    ofDrawRectangle(1000, 0, 600, 40);
 
+	ofSetColor(255);
 	if (isLoaded_ && canSearch_)
 	{
 //		// Forward button.
@@ -424,21 +390,21 @@ void ofApp::draw()
 
 		if (!isremove_ && !iseval_)
 		{
-			non_removebutton2_.draw(non_removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
-			removebutton1_.draw(removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
-			evalbutton1_.draw(evalbuttonposx_,  buttonposy_line2_, removebuttonwidth_, buttonheight_);
+			non_removebutton2_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+			removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+			evalbutton1_.draw(evalbuttonposx_,  buttonposy_line1_, removebuttonwidth_, buttonheight_);
 		}
 		else if (isremove_ && !iseval_)
 		{
-			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
-			removebutton2_.draw(removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
-			evalbutton1_.draw(evalbuttonposx_,  buttonposy_line2_, removebuttonwidth_, buttonheight_);
+			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+			removebutton2_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+			evalbutton1_.draw(evalbuttonposx_,  buttonposy_line1_, removebuttonwidth_, buttonheight_);
 		}
 		else if (!isremove_ && iseval_)
 		{
-			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
-			removebutton1_.draw(removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_);
-			evalbutton2_.draw(evalbuttonposx_,  buttonposy_line2_, removebuttonwidth_, buttonheight_);
+			non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+			removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+			evalbutton2_.draw(evalbuttonposx_,  buttonposy_line1_, removebuttonwidth_, buttonheight_);
 		}
 	}
 	else
@@ -446,6 +412,8 @@ void ofApp::draw()
 		std::string nowsearch = "Now Searching...";
 		font_.drawString(nowsearch, 15, 36);
 	}
+
+	vscroll_areaA_.draw();
 }
 
 //--------------------------------------------------------------
@@ -463,56 +431,6 @@ void ofApp::keyPressed(int key)
 			std::cout << "[ofApp] --> \"" << savepath << "\"" << std::endl;
 			break;
 		}
-//		case 8: // BackSpace
-//		{
-//			if (canBack_)
-//				back();
-//			else
-//				std::cerr << "[warning] can't step back." << std::endl;
-//			break;
-//		}
-//		case 13: // Forward
-//		{
-//			if (canForward_)
-//				forward();
-//			else
-//				std::cerr << "[warning] can't step forward." << std::endl;
-//			break;
-//		}
-//		case 114: // Ctrl+r
-//		{
-//			if (clickflag_)
-//			{
-//				std::cout << "[ofApp] restart" << std::endl;
-//
-//				historysize_ = 0;
-//				backcount_ = 0;
-//				forwardcount_ = 0;
-//				ishistory_ = false;
-//				canBack_ = false;
-//				canForward_ = false;
-//				nowhistory_ = -1;
-//				clickflag_ = false;
-//				ngt_->phase_ = 0;
-//
-//				showList_ = firstshowlist_;
-//				onPaint();
-//
-//
-//				numberhistory_.clear();
-//				selectedquery_.clear();
-//				nonselectedquery_.clear();
-//
-//				std::vector<std::vector<int>>().swap(numberhistory_);
-//				std::vector<int>().swap(selectedquery_);
-//				std::vector<int>().swap(nonselectedquery_);
-//				selected_num_ = 0;
-//
-//				for (int i = 0; i < (int) selectList_.size(); ++i)
-//					selectList_[i] = false;
-//			}
-//			break;
-//		}
 	}
 }
 
@@ -523,7 +441,6 @@ void ofApp::back()
 	backhistory();
 	database_->setNumber(numberhistory_[nowhistory_]);
 
-	initRange(1, 25);
 	calculate();
 	onPaint(showList_);
 
@@ -544,7 +461,6 @@ void ofApp::forward()
 	forwardhistory();
 	database_->setNumber(numberhistory_[nowhistory_]);
 
-	initRange(1, 25);
 	calculate();
 	onPaint(showList_);
 
@@ -561,17 +477,16 @@ void ofApp::forward()
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key)
 {
-	velocity_ = 0.0f;
-	presstime_ = 0;
+
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y)
 {
-	const int y_dash = y - dragh_ - topsize_;
-	const int x_dash = x - dragw_ - leftsize_;
+	const int x_dash = x - leftsize_;
+	const int y_dash = y - scroll_areaA_ - topsize_;
 
-	if (x_dash >= 0 && y_dash >= 0 && topsize_ < y && leftsize_ < x)
+	if (x_dash >= 0 && y_dash >= 0 && topsize_ < y && leftsize_ < x && (windowWidth_ - ScrollBarWidth_) > x)
 		mouseover_ = (x_dash / d_size_) + (y_dash / d_size_) * colShow_;
 	else
 		mouseover_ = -1;
@@ -582,27 +497,10 @@ void ofApp::mouseDragged(int x, int y, int button)
 {
 	click_ = false;
 
-	if (!dontmove_ && x > leftsize_ && !leftsideclick_)
+	if (vscroll_areaA_.mouseDragged(x, y))
 	{
-		dragx_ = x - clickx_;
-		dragy_ = y - clicky_;
-		dragh_ += dragy_;
-
-		if (dragh_ > 0)
-			dragh_ = 0;
-
-		if (dragh_ < bottom_)
-		{
-			if (rowshort_)
-			{
-				dragh_ = 0;
-				velocity_ = 0.0f;
-			}
-			else
-				dragh_ = bottom_;
-		}
-		clickx_ = x;
-		clicky_ = y;
+		// do nothing else
+		return;
 	}
 }
 
@@ -618,6 +516,12 @@ void ofApp::mousePressed(int x, int y, int button)
 	clicky_ = y;
 	click_ = true;
 	dontmove_ = false;
+
+	if (vscroll_areaA_.mousePressed(x, y))
+	{
+		// do nothing else
+		return;
+	}
 }
 
 //--------------------------------------------------------------
@@ -625,30 +529,27 @@ void ofApp::mouseReleased(int x, int y, int button)
 {
 	if (click_ == true)
 	{
-		velocity_ = 0.0f;
-		goback_ = false;
-
-		const int y_dash = y - dragh_ - topsize_;
 		const int x_dash = x - leftsize_;
+		const int y_dash = y - scroll_areaA_ - topsize_;
 
 		if (canSearch_)
 		{
 			std::vector<int> *sList = &showList_removed_;
 
-			if (pressbutton(removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_))
+			if (pressbutton(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = true;
 				iseval_ = false;
 				onPaint(showList_removed_);
 			}
-			else if (pressbutton(non_removebuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_))
+			else if (pressbutton(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = false;
 				iseval_ = false;
 				onPaint(showList_);
 			}
 #ifndef EXPERIMENT
-			else if (pressbutton(evalbuttonposx_, buttonposy_line2_, removebuttonwidth_, buttonheight_))
+			else if (pressbutton(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = false;
 				iseval_ = true;
@@ -706,7 +607,6 @@ void ofApp::mouseReleased(int x, int y, int button)
 						}
 
 						clickflag_ = true;
-						goback_ = true;
 						samplewriter_->write(selectedquery_, nonselectedquery_);
 						trainer_->startThread();
 						starttime_trainer_ = clock();
@@ -731,13 +631,16 @@ void ofApp::mouseReleased(int x, int y, int button)
 			std::cerr << "[warning] cannot select. please wait." << std::endl;
 		}
 	}
-	else
-		velocity_ = (float) (dragy_);
 
 	clickx_ = 0;
 	clicky_ = 0;
 	click_ = false;
-	presstime_ = 0;
+
+	if (vscroll_areaA_.mouseReleased(x, y))
+	{
+		// do nothing else
+		return;
+	}
 }
 
 //--------------------------------------------------------------
@@ -766,8 +669,6 @@ void ofApp::mouseExited(int x, int y)
 //--------------------------------------------------------------
 void ofApp::windowResized(int w, int h)
 {
-	velocity_ = 0.0f;
-	goback_ = false;
 	windowWidth_ = w;
 	windowHeight_ = h;
 	sizeChanged();
@@ -802,10 +703,20 @@ void ofApp::calculate()
 void ofApp::onPaint(const std::vector<int>& list)
 {
 	sizeChanged();
-	goback_ = true;
 	loader_->setShowList(list);
 	loader_->load();
 	ishistory_ = false;
+
+	int len = loader_->row_;
+	int draw_rows;
+
+	if (len % colShow_ > 0)
+		draw_rows = len / colShow_ + 1;
+	else
+		draw_rows = len / colShow_;
+
+	drawHeight_areaA_ = d_size_ * draw_rows;
+	updateScrollBars();
 }
 
 //--------------------------------------------------------------
@@ -898,12 +809,12 @@ void ofApp::initRange(const int& begin, const int& end)
 //--------------------------------------------------------------
 void ofApp::sizeChanged()
 {
-	d_size_ = (windowWidth_ - leftsize_) / colShow_;
+	d_size_ = (windowWidth_ - leftsize_ - ScrollBarWidth_) / colShow_;
 
 	if (d_size_ < 1)
 	{
 		d_size_ = 1;
-		colShow_ = windowWidth_ - leftsize_;
+		colShow_ = windowWidth_ - leftsize_ - ScrollBarWidth_;
 	}
 
 	std::vector<int>* sList;
@@ -917,12 +828,31 @@ void ofApp::sizeChanged()
 	rowShow_ = (sList->size() + colShow_ - 1) / colShow_;
 	if (rowShow_ < 1)
 		rowShow_ = 1;
-	bottom_ = -topsize_ - (d_size_ * rowShow_) + windowHeight_;
+	bottom_ = - topsize_ - (d_size_ * rowShow_) + windowHeight_;
 
 	if (d_size_ * rowShow_ < windowHeight_)
 		rowshort_ = true;
 	else
 		rowshort_ = false;
+}
 
-	dragw_ = 0;
+//--------------------------------------------------------------
+// Update the displayed size, scroll size, etc. of the scroll bars
+// (Called when the window size or the image size is changed)
+void ofApp::updateScrollBars()
+{
+	vscroll_areaA_.bar_length(windowHeight_ - topsize_);
+	vscroll_areaA_.max(std::max<float>(drawHeight_areaA_ - vscroll_areaA_.bar_length(), 0));
+	vscroll_areaA_.change_by_bar(vscroll_areaA_.max() / 10);
+}
+
+//--------------------------------------------------------------
+void ofApp::initializeBars()
+{
+	scroll_areaA_ = 0;
+	vscroll_areaA_.min(0);
+	vscroll_areaA_.bar_width(ScrollBarWidth_);
+	vscroll_areaA_.bar_pos_widthdir(windowWidth_ - ScrollBarWidth_);
+	vscroll_areaA_.bar_pos_lengthdir(topsize_);
+	vscroll_areaA_.change_by_button(30);
 }

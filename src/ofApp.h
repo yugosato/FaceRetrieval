@@ -6,7 +6,6 @@
 //#define GABOR
 //#define HISTOGRAM_GABOR
 
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -21,10 +20,11 @@
 #include "writer.h"
 #include "trainer.h"
 #include "time.h"
+#include "ScrollBar4OF.hpp"
 
 
-const int initWidth_ = 960;				// Initial window size: Width.
-const int initHeight_ = 720;			// Initial window size: Height.
+const int initWidth_ = 1600;			// Initial window size: Width.
+const int initHeight_ = 1000;			// Initial window size: Height.
 
 
 // openFrameworks base class.
@@ -52,21 +52,21 @@ public:
 
 	//-----------------------------------------
 	// GUI settings' parameters.
-	const int leftsize_ = 240;			// Left region.
-	const int topsize_ = 0;				// Upper region.
-	const int fontsize_ = 18;			// Font size.
-	const int buttonheight_ = 50;		// Button height.
+	const int leftsize_ = 1000;			// Left region.
+	const int topsize_ = 40;				// Upper region.
+	const int fontsize_ = 16;			// Font size.
+	const int buttonheight_ = 30;		// Button height.
 	const int historybuttonwidth_ = buttonheight_;	// History button width.
 	const int removebuttonwidth_ = buttonheight_;	// Remove button width.
 	const int buttonposy_line1_ = 5;	// The Y-coordinate of buttons on the 1st line.
-	const int backbuttonposx_ = 5;		// The X-coordinate of step back button.
-	const int forwardbuttonposx_ = 59;	// The X-coordinate of step forward button.
-	const int searchbuttonposx_ = 113;	// The X-coordinate of search button.
-	const int searchbuttonwidth_ = 122;	// Search button width.
+	const int backbuttonposx_ = 1505;	// The X-coordinate of step back button.
+	const int forwardbuttonposx_ = 1540;// The X-coordinate of step forward button.
+	const int searchbuttonposx_ = 1000;	// The X-coordinate of search button.
+	const int searchbuttonwidth_ = 90;	// Search button width.
 	const int buttonposy_line2_ = buttonposy_line1_ + buttonheight_ + 5;	// The Y-coordinate of buttons on the 1st line.
-	const int removebuttonposx_ = 5;		// The X-coordinate of button displays the results removed duplication.
-	const int non_removebuttonposx_ = 59;	// The X-coordinate of button displays the results remain duplication.
-	const int evalbuttonposx_ = 113;		// The X-coordinate of button displays the camparison results.
+	const int removebuttonposx_ = 1095;		// The X-coordinate of button displays the results removed duplication.
+	const int non_removebuttonposx_ = 1130;	// The X-coordinate of button displays the results remain duplication.
+	const int evalbuttonposx_ = 1165;		// The X-coordinate of button displays the camparison results.
 	const int guiScrollarea_height_ = 280;	// ScrollableCanvas's height (ofxUI).
 
 	//-----------------------------------------
@@ -80,13 +80,6 @@ public:
 	// Mouse & Keyboard.
 	int clickx_;						// The X-coordinate of mouse click.
 	int clicky_;						// The Y-coordinate of mouse click.
-	int dragx_;							// The X-coordinate of mouse drag.
-	int dragy_;							// The Y-coordinate of mouse drag.
-	int dragh_;							// Movement: Height.
-	int dragw_;							// Movement: Width.
-	int presstime_;						// Press time.
-	float velocity_;					// Flick Verocity.
-	const int pressthreshold_ = 20;		// Press time limitation.
 	int mouseover_;						// Current mouseovered image ids.
 	bool click_;						// Flag: Clicked.
 	bool leftsideclick_;				// Flag: Left side clicked.
@@ -145,7 +138,6 @@ public:
 	bool isSearchedAll_;	// Flag: Finished searching.
 	bool canSearch_;		// Flag: Ready to search.
 	bool dontmove_;			// Switch: Scroll lock.
-	bool goback_;			// Switch: Return the head of results.
 	int epoch_;				// The number of current search iteration.
 	bool draw_epoch_;		// Flag: draw current search epoch.
 
@@ -156,8 +148,8 @@ public:
 	std::vector<int> showList_;			 	// Retrieval results (main: full-paths).
 	std::vector<int> showList_removed_;		// Retrieval results (removeed duplication: full-paths).
 	std::vector<int> showList_nonTrain_; 	// Retrieval results (comparison: full-paths).
-	bool isremove_;	// Switch: Display results removeed duplication.
-	bool iseval_;	// Switch: Display comparison results.
+	bool isremove_;							// Switch: Display results removeed duplication.
+	bool iseval_;							// Switch: Display comparison results.
 
 	//-----------------------------------------
 	// Time Record.
@@ -167,6 +159,15 @@ public:
 	clock_t endtime_;			// Total processing time (end).
 	clock_t endtime_trainer_;	// Online Training processing time (end).
 	clock_t endtime_ngt_;		// NGT searching time (end).
+
+
+public:
+	VerticalScrollBar vscroll_areaA_;		// ScrollBar: All results viewer.
+	const int ScrollBarWidth_ = 30;			// ScrollBar width.
+	int drawHeight_areaA_;
+	int scroll_areaA_;
+	inline void updateScrollBars();
+	inline void initializeBars();
 
 
 public:
@@ -237,3 +238,4 @@ public:
 	Logger* logger_eval_;			// Logger (comparison method).
 	Trainer* trainer_;				// Run Python script.
 };
+
