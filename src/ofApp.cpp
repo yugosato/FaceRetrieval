@@ -489,10 +489,10 @@ void ofApp::keyReleased(int key)
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y)
 {
-	const int x_dash = x - leftsize_;
+	const int x_dash = x - leftsize_ - ScrollBarWidth_;
 	const int y_dash = y - scroll_areaA_ - topsize_;
 
-	if (x_dash >= 0 && y_dash >= 0 && topsize_ < y && leftsize_ < x && (windowWidth_ - ScrollBarWidth_) > x)
+	if (x_dash >= 0 && y_dash >= 0 && topsize_ < y && leftsize_ < x && x < (windowWidth_ - ScrollBarWidth_))
 		mouseover_ = (x_dash / d_size_) + (y_dash / d_size_) * colShow_;
 	else
 		mouseover_ = -1;
