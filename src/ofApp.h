@@ -104,7 +104,6 @@ public:
 	// Window Information.
 	int windowWidth_;					// Current window width.
 	int windowHeight_;					// Current window height.
-	bool onoff_;						// Switch: Full-Screen.
 
 	//-----------------------------------------
 	// Font.
