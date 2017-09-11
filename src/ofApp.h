@@ -159,14 +159,12 @@ public:
 	clock_t endtime_trainer_;	// Online Training processing time (end).
 	clock_t endtime_ngt_;		// NGT searching time (end).
 
-
-public:
+	//-----------------------------------------
+	// Scroll Bar..
 	VerticalScrollBar vscroll_areaA_;		// ScrollBar: All results viewer.
 	const int ScrollBarWidth_ = 30;			// ScrollBar width.
-	int drawHeight_areaA_;
-	int scroll_areaA_;
-	inline void updateScrollBars();
-	inline void initializeBars();
+	int drawHeight_areaA_;					// Scrollable area height.
+	int scroll_areaA_;						// Current scroll position.
 
 
 public:
@@ -201,6 +199,8 @@ public:
 	inline bool isFileexists(const std::string& filepath);
 	inline void writelog();
 	inline void loadImageandFont();
+	inline void updateScrollBars();
+	inline void initializeBars();
 
 
 public:
