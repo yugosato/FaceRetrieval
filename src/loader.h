@@ -31,12 +31,12 @@ public:
 	{
 		if (!done_)
 		{
-			std::cout << "[NowLoading] start loading vgg-face features." << std::endl;
+			std::cout << "[NowLoading] Start loading vgg-face features." << std::endl;
 			lock();
 			loadMatrix();
 			unlock();
 			done_ = true;
-			std::cout << "[NowLoading] finished loading vgg-face features." << std::endl;
+			std::cout << "[NowLoading] Finished loading vgg-face features." << std::endl;
 		}
 	}
 
@@ -59,7 +59,7 @@ public:
 	{
 		std::ifstream ifs(matFile_);
 		if (!ifs)
-			std::cerr << "[warning] Cannot open the specified file. " << matFile_ << std::endl;
+			std::cerr << "[Warning] Cannot open the specified file. " << matFile_ << std::endl;
 		else
 		{
 			std::string line;

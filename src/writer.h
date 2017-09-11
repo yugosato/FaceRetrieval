@@ -27,7 +27,7 @@ public:
 	{
 		std::ofstream writer(samplefile_, std::ios::trunc);
 		if (!writer)
-			std::cerr << "[warning] cannot open the specified file. " << samplefile_ << std::endl;
+			std::cerr << "[Warning] Cannot open the specified file. " << samplefile_ << std::endl;
 
 		writer << "{" << std::endl;
 		writer << "  \"iter0\":{\"positive\":[]," << std::endl;
@@ -43,7 +43,7 @@ public:
 
 		std::ofstream writer(samplefile_, std::ios::trunc);
 		if (!writer)
-			std::cerr << "[warning] Cannot open the specified file. " << samplefile_ << std::endl;
+			std::cerr << "[Warning] Cannot open the specified file. " << samplefile_ << std::endl;
 
 		writer << "{" << std::endl;
 		writer << "  \"iter0\":{\"positive\":[]," << std::endl;
@@ -107,7 +107,7 @@ public:
 
 		std::ofstream writer(candidatefile_, std::ios::trunc);
 		if (!writer)
-			std::cerr << "[warning] cannot open the specified file. " << candidatefile_ << std::endl;
+			std::cerr << "[Warning] Cannot open the specified file. " << candidatefile_ << std::endl;
 
 		writer << "{" << std::endl;
 		for (int i = 0; i < iter_; ++i)
@@ -133,7 +133,7 @@ public:
 	{
 		std::ofstream writer(pysettingfile_, std::ios::trunc);
 		if (!writer)
-			std::cerr << "[warning] cannot open the specified file. " << candidatefile_ << std::endl;
+			std::cerr << "[Warning] Cannot open the specified file. " << candidatefile_ << std::endl;
 
 		writer << "{" << std::endl;
 		writer << "  \"input_file\":\"" << npyfile_ << "\"," << std::endl;

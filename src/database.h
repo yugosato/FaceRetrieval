@@ -46,7 +46,7 @@ public:
 		std::ifstream ifs(nameFile_);
 		if (!ifs)
 		{
-			std::cerr << "[warning] cannot open the specified file. " << nameFile_ << std::endl;
+			std::cerr << "[Warning] Cannot open the specified file. " << nameFile_ << std::endl;
 		}
 		else
 		{
@@ -86,7 +86,7 @@ public:
 		std::ifstream ifs(initFile_, std::ios::in);
 		if(!ifs)
 		{
-			std::cerr << "[warning] cannot open the specified file. " << initFile_ << std::endl;
+			std::cerr << "[Warning] Cannot open the specified file. " << initFile_ << std::endl;
 		}
 		else
 		{

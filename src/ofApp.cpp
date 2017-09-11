@@ -186,11 +186,11 @@ void ofApp::setup()
 	trainer_->setup(pythonfile_);
 
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
-	std::cout << "[Setting] matrix file: \"" << matrixFile_ << "\"" << std::endl;
-	std::cout << "[Setting] npy file: \"" << npyFile_ << "\"" << std::endl;
-	std::cout << "[Setting] feedback file: \"" << samplefile_ << "\"" << std::endl;
-	std::cout << "[Setting] python settings: \"" << pysettingfile_ << "\"" << std::endl;
-	std::cout << "[Setting] database size: " << database_->row_ << std::endl;
+	std::cout << "[Setting] Matrix file: \"" << matrixFile_ << "\"" << std::endl;
+	std::cout << "[Setting] Npy file: \"" << npyFile_ << "\"" << std::endl;
+	std::cout << "[Setting] Feedback file: \"" << samplefile_ << "\"" << std::endl;
+	std::cout << "[Setting] Python settings: \"" << pysettingfile_ << "\"" << std::endl;
+	std::cout << "[Setting] Database size: " << database_->row_ << std::endl;
 }
 
 //--------------------------------------------------------------
@@ -251,7 +251,7 @@ void ofApp::update()
 	if (trainer_->isTrained_)
 	{
 		endtime_trainer_ = clock();
-		std::cout << "[ofApp] training time: " << (double)(endtime_trainer_ - starttime_trainer_) / CLOCKS_PER_SEC << "sec." << std::endl;
+		std::cout << "[ofApp] Training time: " << (double)(endtime_trainer_ - starttime_trainer_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		trainer_->stopThread();
 		trainer_->isTrained_ = false;
 		ngt_->setExtracter(trainer_->extracter_);
@@ -281,7 +281,7 @@ void ofApp::update()
 	else if (isSearchedAll_)
 	{
 		endtime_ngt_ = clock();
-		std::cout << "[ofApp] searching time: " << (double)(endtime_ngt_ - starttime_ngt_) / CLOCKS_PER_SEC << "sec." << std::endl;
+		std::cout << "[ofApp] Searching time: " << (double)(endtime_ngt_ - starttime_ngt_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		database_->setNumber(number_main_);
 		database_->setNumber_eval(number_eval_);
 		calculate();
@@ -301,7 +301,7 @@ void ofApp::update()
 		canSearch_ = true;
 		isSearchedAll_ = false;
 		endtime_ = clock();
-		std::cout << "[ofApp] total processing time: " << (double)(endtime_ - starttime_) / CLOCKS_PER_SEC << "sec." << std::endl;
+		std::cout << "[ofApp] Total processing time: " << (double)(endtime_ - starttime_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		std::cout << "================================" << std::endl;
 
 		vscroll_areaA_.current(0);
@@ -439,7 +439,7 @@ void ofApp::keyPressed(int key)
 			img.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
 			std::string savepath = "/home/yugo/workspace/Interface/bin/snapshot/" + ofGetTimestampString() + ".jpeg";
 			img.save(savepath);
-			std::cout << "[ofApp] saved snapshot image." << std::endl;
+			std::cout << "[ofApp] Saved snapshot image." << std::endl;
 			std::cout << "[ofApp] --> \"" << savepath << "\"" << std::endl;
 			break;
 		}
@@ -554,6 +554,9 @@ void ofApp::mouseReleased(int x, int y, int button)
 	isHolding_areaA_ = false;
 	holdImgNum_ = -1;
 
+	if (x < leftsize_ || (leftsize_ + width_areaA_) < x || y < uppersize_)
+		mouseover_ = -1;
+
 	if (click_ == true)
 	{
 		const int x_dash = x - leftsize_;
@@ -644,7 +647,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 					}
 					else
 					{
-						std::cerr << "[warning] please select queries." << std::endl;
+						std::cerr << "[Warning] Please select queries." << std::endl;
 					}
 				}
 			}
@@ -652,13 +655,13 @@ void ofApp::mouseReleased(int x, int y, int button)
 			{
 				if (isClickedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 				{
-					std::cerr << "[warning] cannot search. please search on state \"A\"" << std::endl;
+					std::cerr << "[Warning] Cannot search. Please search on state \"A\"" << std::endl;
 				}
 			}
 		}
 		else if (y_dash >= 0 && y > uppersize_ && x_dash >= 0 && x > leftsize_)
 		{
-			std::cerr << "[warning] cannot select. please wait." << std::endl;
+			std::cerr << "[Warning] Cannot select. please wait." << std::endl;
 		}
 	}
 

@@ -112,11 +112,11 @@ public:
 		}
 		catch (NGT::Exception &err)
 		{
-			std::cerr << "[warning]" << err.what() << std::endl;
+			std::cerr << "[Warning]" << err.what() << std::endl;
 		}
 		catch (...)
 		{
-			std::cerr << "[warning] unknown error in searching" << std::endl;
+			std::cerr << "[Warning] Unknown error in searching" << std::endl;
 		}
 	}
 

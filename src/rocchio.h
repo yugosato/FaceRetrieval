@@ -84,7 +84,7 @@ public:
 
 	void calculate(const float alpha, const float beta, const float gamma)
 	{
-		std::cout << "[Rocchio] alpha: " << alpha << ", beta: " << beta << ", gamma: " << gamma << std::endl;
+		std::cout << "[Rocchio] Alpha: " << alpha << ", Beta: " << beta << ", Gamma: " << gamma << std::endl;
 		calcAverage();
 		newquery_ = Eigen::VectorXd::Zero(dim_);
 		newquery_ = (alpha * initquery_.array()) + (beta * relVec_ave_.array())
