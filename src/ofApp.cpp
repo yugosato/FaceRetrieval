@@ -24,13 +24,17 @@ void ofApp::initparam()
 	clickx_ = 0;
 	clicky_ = 0;
 	mouseover_ = -1;
+	holdImgNum_ = -1;
 	click_ = false;
 	leftsideclick_ = false;
+	isHolding_areaA_ = false;
+	isHoldAndDrag_ = false;
 
 	//-----------------------------------------
 	// Display Settings.
 	colShow_ = 8;
 	d_size_ = (initWidth_ - leftsize_ - ScrollBarWidth_) / colShow_;
+	width_areaA_ = 0;
 	rowshort_ = false;
 
 	//-----------------------------------------
@@ -97,11 +101,10 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Others.
+	epoch_ = 0;
 	isLoaded_ = false;
 	isSearchedAll_ = false;
 	canSearch_ = false;
-	dontmove_ = false;
-	epoch_ = 0;
 	draw_epoch_ = false;
 }
 
@@ -332,13 +335,13 @@ void ofApp::draw()
 		const int j = i % colShow_;
 		const int k = i / colShow_;
 
-		if (windowHeight_ < topsize_ + d_size_ * k + scroll_areaA_)
+		if (windowHeight_ < uppersize_ + d_size_ * k + scroll_areaA_)
 			break;
-		else if (0 > topsize_ + d_size_ * (k + 1) + scroll_areaA_)
+		else if (0 > uppersize_ + d_size_ * (k + 1) + scroll_areaA_)
 			continue;
 
 		int drawx = leftsize_ + d_size_ * j;
-		int drawy = topsize_ + d_size_ * k + scroll_areaA_;
+		int drawy = uppersize_ + d_size_ * k + scroll_areaA_;
 
 		img = loader_->picture_[i];
 
@@ -419,6 +422,13 @@ void ofApp::draw()
 		font_.drawString(nowsearch, 15, 36);
 	}
 
+	if (isHolding_areaA_ && isHoldAndDrag_)
+	{
+		ofImage holdImg;
+		holdImg = loader_->picture_[holdImgNum_];
+	    holdImg.draw(holding_x_, holding_y_, d_size_, d_size_);
+	}
+
 	vscroll_areaA_.draw();
 }
 
@@ -490,11 +500,14 @@ void ofApp::keyReleased(int key)
 void ofApp::mouseMoved(int x, int y)
 {
 	const int x_dash = x - leftsize_;
-	const int y_dash = y - scroll_areaA_ - topsize_;
+	const int y_dash = y - scroll_areaA_ - uppersize_;
 
-	if (x_dash >= 0 && y_dash >= 0 && topsize_ < y && x <= (windowWidth_ - ScrollBarWidth_))
-		mouseover_ = (x_dash - ScrollBarWidth_) / d_size_ + y_dash / d_size_ * colShow_;
+	if (x_dash >= 0 && y_dash >= 0 && uppersize_ < y)
+		mouseover_ = x_dash / d_size_ + y_dash / d_size_ * colShow_;
 	else
+		mouseover_ = -1;
+
+	if ((windowWidth_ - ScrollBarWidth_ - 2) <= x)
 		mouseover_ = -1;
 }
 
@@ -502,11 +515,15 @@ void ofApp::mouseMoved(int x, int y)
 void ofApp::mouseDragged(int x, int y, int button)
 {
 	click_ = false;
+	isHoldAndDrag_ = true;
 
 	if (vscroll_areaA_.mouseDragged(x, y))
-	{
-		// do nothing else
 		return;
+
+	if (isHolding_areaA_)
+	{
+		calculateHoldingOriginPoint(x, y);
+		holdImgNum_ = mouseover_;
 	}
 }
 
@@ -521,41 +538,45 @@ void ofApp::mousePressed(int x, int y, int button)
 	clickx_ = x;
 	clicky_ = y;
 	click_ = true;
-	dontmove_ = false;
+	isHoldAndDrag_ = false;
 
 	if (vscroll_areaA_.mousePressed(x, y))
-	{
-		// do nothing else
 		return;
-	}
+
+	if (isClickedArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
+		isHolding_areaA_ = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button)
 {
+	isHoldAndDrag_ = false;
+	isHolding_areaA_ = false;
+	holdImgNum_ = -1;
+
 	if (click_ == true)
 	{
 		const int x_dash = x - leftsize_;
-		const int y_dash = y - scroll_areaA_ - topsize_;
+		const int y_dash = y - scroll_areaA_ - uppersize_;
 
 		if (canSearch_)
 		{
 			std::vector<int> *sList = &showList_removed_;
 
-			if (pressbutton(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
+			if (isClickedArea(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = true;
 				iseval_ = false;
 				onPaint(showList_removed_);
 			}
-			else if (pressbutton(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
+			else if (isClickedArea(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = false;
 				iseval_ = false;
 				onPaint(showList_);
 			}
 #ifndef EXPERIMENT
-			else if (pressbutton(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
+			else if (isClickedArea(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = false;
 				iseval_ = true;
@@ -565,35 +586,38 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 			if (isremove_)
 			{
-				if (x_dash >= 0 && y_dash >= 0 && y > topsize_ && x < (windowWidth_ - ScrollBarWidth_))
+				if (x_dash >= 0 && y_dash >= 0 && y > uppersize_ && x < (windowWidth_ - ScrollBarWidth_))
 				{
-					const int clickpos = (x_dash - ScrollBarWidth_) / d_size_ + y_dash / d_size_ * colShow_;
-
-					if (clickpos < (int) sList->size())
+					if (x < (windowWidth_ - ScrollBarWidth_ - 2))
 					{
-						if (button == 0 && isLoaded_)
+						const int clickpos = mouseover_;
+
+						if (clickpos < (int) sList->size())
 						{
-							if (!selectList_[clickpos])
+							if (button == 0 && isLoaded_)
 							{
-								selected_num_++;
-								selectList_[clickpos] = true;
-							}
-							else
-							{
-								selected_num_--;
-								selectList_[clickpos] = false;
+								if (!selectList_[clickpos])
+								{
+									selected_num_++;
+									selectList_[clickpos] = true;
+								}
+								else
+								{
+									selected_num_--;
+									selectList_[clickpos] = false;
+								}
 							}
 						}
 					}
 				}
 
-//				if (canBack_ && pressbutton(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
+//				if (canBack_ && isClickedArea(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
 //					back();
 //
-//				if (canForward_ && pressbutton(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
+//				if (canForward_ && isClickedArea(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
 //					forward();
 
-				if (pressbutton(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
+				if (isClickedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 				{
 					if (selected_num_ != 0)
 					{
@@ -626,13 +650,13 @@ void ofApp::mouseReleased(int x, int y, int button)
 			}
 			else
 			{
-				if (pressbutton(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
+				if (isClickedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 				{
 					std::cerr << "[warning] cannot search. please search on state \"A\"" << std::endl;
 				}
 			}
 		}
-		else if (y_dash >= 0 && y > topsize_ && x_dash >= 0 && x > leftsize_)
+		else if (y_dash >= 0 && y > uppersize_ && x_dash >= 0 && x > leftsize_)
 		{
 			std::cerr << "[warning] cannot select. please wait." << std::endl;
 		}
@@ -650,7 +674,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 }
 
 //--------------------------------------------------------------
-bool ofApp::pressbutton(float x, float y, float w, float h)
+bool ofApp::isClickedArea(float x, float y, float w, float h)
 {
 	if (clickx_ >= x && clicky_ >= y)
 	{
@@ -721,6 +745,7 @@ void ofApp::onPaint(const std::vector<int>& list)
 	else
 		draw_rows = len / colShow_;
 
+	width_areaA_ = d_size_ * colShow_;
 	drawHeight_areaA_ = d_size_ * draw_rows;
 	updateScrollBars();
 }
@@ -834,7 +859,7 @@ void ofApp::sizeChanged()
 	rowShow_ = (sList->size() + colShow_ - 1) / colShow_;
 	if (rowShow_ < 1)
 		rowShow_ = 1;
-	bottom_ = - topsize_ - (d_size_ * rowShow_) + windowHeight_;
+	bottom_ = - uppersize_ - (d_size_ * rowShow_) + windowHeight_;
 
 	if (d_size_ * rowShow_ < windowHeight_)
 		rowshort_ = true;
@@ -847,7 +872,7 @@ void ofApp::sizeChanged()
 // (Called when the window size or the image size is changed)
 void ofApp::updateScrollBars()
 {
-	vscroll_areaA_.bar_length(windowHeight_ - topsize_);
+	vscroll_areaA_.bar_length(windowHeight_ - uppersize_);
 	vscroll_areaA_.max(std::max<float>(drawHeight_areaA_ - vscroll_areaA_.bar_length(), 0));
 	vscroll_areaA_.change_by_bar(vscroll_areaA_.max() / 10);
 }
@@ -859,6 +884,13 @@ void ofApp::initializeBars()
 	vscroll_areaA_.min(0);
 	vscroll_areaA_.bar_width(ScrollBarWidth_);
 	vscroll_areaA_.bar_pos_widthdir(windowWidth_ - ScrollBarWidth_);
-	vscroll_areaA_.bar_pos_lengthdir(topsize_);
+	vscroll_areaA_.bar_pos_lengthdir(uppersize_);
 	vscroll_areaA_.change_by_button(30);
+}
+
+//--------------------------------------------------------------
+void ofApp::calculateHoldingOriginPoint(const int center_x, const int center_y)
+{
+	holding_x_ = center_x - d_size_ / 2;
+	holding_y_ = center_y - d_size_ / 2;
 }

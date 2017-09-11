@@ -53,7 +53,7 @@ public:
 	//-----------------------------------------
 	// GUI settings' parameters.
 	const int leftsize_ = 1000;			// Left region.
-	const int topsize_ = 40;				// Upper region.
+	const int uppersize_ = 40;				// Upper region.
 	const int fontsize_ = 16;			// Font size.
 	const int buttonheight_ = 30;		// Button height.
 	const int historybuttonwidth_ = buttonheight_;	// History button width.
@@ -80,9 +80,14 @@ public:
 	// Mouse & Keyboard.
 	int clickx_;						// The X-coordinate of mouse click.
 	int clicky_;						// The Y-coordinate of mouse click.
+	int holding_x_;						// The X-coordinate of held image.
+	int holding_y_;						// The Y-coordinate of held image.
 	int mouseover_;						// Current mouseovered image ids.
+	int holdImgNum_;					// Holding image number;
 	bool click_;						// Flag: Clicked.
 	bool leftsideclick_;				// Flag: Left side clicked.
+	bool isHolding_areaA_;				// Flag: Clicked areaA.
+	bool isHoldAndDrag_;				// Flag: Holding and draging image.
 
 	//-----------------------------------------
 	// Display Settings.
@@ -90,6 +95,7 @@ public:
 	int rowShow_;						// The number of rows.
 	int d_size_;						// Size of each displayed image.
 	int bottom_;						// The Y-coordinate of current bottom.
+	int width_areaA_;					// Area A's width.
 	bool rowshort_;						// Flag: Small displayed rows.
 
 	//-----------------------------------------
@@ -136,7 +142,6 @@ public:
 	bool isLoaded_;			// Flag: Finished loading image features file.
 	bool isSearchedAll_;	// Flag: Finished searching.
 	bool canSearch_;		// Flag: Ready to search.
-	bool dontmove_;			// Switch: Scroll lock.
 	int epoch_;				// The number of current search iteration.
 	bool draw_epoch_;		// Flag: draw current search epoch.
 
@@ -195,12 +200,13 @@ public:
 	inline void forwardhistory();
 	inline void back();
 	inline void forward();
-	inline bool pressbutton(float x, float y, float w, float h);
+	inline bool isClickedArea(float x, float y, float w, float h);
 	inline bool isFileexists(const std::string& filepath);
 	inline void writelog();
 	inline void loadImageandFont();
 	inline void updateScrollBars();
 	inline void initializeBars();
+	inline void calculateHoldingOriginPoint(const int center_x, const int center_y);
 
 
 public:
