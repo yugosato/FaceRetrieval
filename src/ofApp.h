@@ -88,6 +88,7 @@ public:
 	bool leftsideclick_;				// Flag: Left side clicked.
 	bool isHolding_areaA_;				// Flag: Clicked areaA.
 	bool isHoldAndDrag_;				// Flag: Holding and draging image.
+	bool isInsideWindow_;				// Flag: Mouse pointer is inside window.
 
 	//-----------------------------------------
 	// Display Settings.
@@ -139,10 +140,10 @@ public:
 
 	//-----------------------------------------
 	// Others.
+	int epoch_;				// The number of current search iteration.
 	bool isLoaded_;			// Flag: Finished loading image features file.
 	bool isSearchedAll_;	// Flag: Finished searching.
 	bool canSearch_;		// Flag: Ready to search.
-	int epoch_;				// The number of current search iteration.
 	bool draw_epoch_;		// Flag: draw current search epoch.
 
 	//-----------------------------------------

@@ -29,6 +29,7 @@ void ofApp::initparam()
 	leftsideclick_ = false;
 	isHolding_areaA_ = false;
 	isHoldAndDrag_ = false;
+	isInsideWindow_ = false;
 
 	//-----------------------------------------
 	// Display Settings.
@@ -393,26 +394,20 @@ void ofApp::draw()
 
 	if (!isremove_ && !iseval_)
 	{
-		non_removebutton2_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
-				buttonheight_);
-		removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
-				buttonheight_);
+		non_removebutton2_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+		removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
 		evalbutton1_.draw(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
 	}
 	else if (isremove_ && !iseval_)
 	{
-		non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
-				buttonheight_);
-		removebutton2_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
-				buttonheight_);
+		non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+		removebutton2_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
 		evalbutton1_.draw(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
 	}
 	else if (!isremove_ && iseval_)
 	{
-		non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
-				buttonheight_);
-		removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_,
-				buttonheight_);
+		non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+		removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
 		evalbutton2_.draw(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
 	}
 
@@ -422,14 +417,15 @@ void ofApp::draw()
 		font_.drawString(nowsearch, 15, 36);
 	}
 
+	vscroll_areaA_.draw();
+
 	if (isHolding_areaA_ && isHoldAndDrag_)
 	{
+		ofSetColor(255);
 		ofImage holdImg;
 		holdImg = loader_->picture_[holdImgNum_];
 	    holdImg.draw(holding_x_, holding_y_, d_size_, d_size_);
 	}
-
-	vscroll_areaA_.draw();
 }
 
 //--------------------------------------------------------------
@@ -515,15 +511,19 @@ void ofApp::mouseMoved(int x, int y)
 void ofApp::mouseDragged(int x, int y, int button)
 {
 	click_ = false;
-	isHoldAndDrag_ = true;
 
 	if (vscroll_areaA_.mouseDragged(x, y))
 		return;
 
-	if (isHolding_areaA_)
+	if (isremove_ && isHolding_areaA_)
 	{
-		calculateHoldingOriginPoint(x, y);
+		isHoldAndDrag_ = true;
 		holdImgNum_ = mouseover_;
+
+		int center_x, center_y;
+		center_x = x;
+		center_y = y;
+		calculateHoldingOriginPoint(center_x, center_y);
 	}
 }
 
@@ -543,7 +543,7 @@ void ofApp::mousePressed(int x, int y, int button)
 	if (vscroll_areaA_.mousePressed(x, y))
 		return;
 
-	if (isClickedArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
+	if (isremove_ && isClickedArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
 		isHolding_areaA_ = true;
 }
 
@@ -667,10 +667,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 	click_ = false;
 
 	if (vscroll_areaA_.mouseReleased(x, y))
-	{
-		// do nothing else
 		return;
-	}
 }
 
 //--------------------------------------------------------------
@@ -687,13 +684,16 @@ bool ofApp::isClickedArea(float x, float y, float w, float h)
 //--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y)
 {
-
+	isInsideWindow_ = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseExited(int x, int y)
 {
 	mouseover_ = -1;
+	isInsideWindow_ = false;
+	isHoldAndDrag_ = false;
+	isHolding_areaA_ = false;
 }
 
 //--------------------------------------------------------------
@@ -891,6 +891,10 @@ void ofApp::initializeBars()
 //--------------------------------------------------------------
 void ofApp::calculateHoldingOriginPoint(const int center_x, const int center_y)
 {
-	holding_x_ = center_x - d_size_ / 2;
-	holding_y_ = center_y - d_size_ / 2;
+	int x, y;
+	x = center_x - d_size_ / 2;
+	y = center_y - d_size_ / 2;
+
+	holding_x_ = x;
+	holding_y_ = y;
 }
