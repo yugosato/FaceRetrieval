@@ -489,11 +489,11 @@ void ofApp::keyReleased(int key)
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y)
 {
-	const int x_dash = x - leftsize_ - ScrollBarWidth_;
+	const int x_dash = x - leftsize_;
 	const int y_dash = y - scroll_areaA_ - topsize_;
 
-	if (x_dash >= 0 && y_dash >= 0 && topsize_ < y && leftsize_ < x && x < (windowWidth_ - ScrollBarWidth_))
-		mouseover_ = (x_dash / d_size_) + (y_dash / d_size_) * colShow_;
+	if (x_dash >= 0 && y_dash >= 0 && topsize_ < y && x <= (windowWidth_ - ScrollBarWidth_))
+		mouseover_ = (x_dash - ScrollBarWidth_) / d_size_ + y_dash / d_size_ * colShow_;
 	else
 		mouseover_ = -1;
 }
@@ -565,9 +565,9 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 			if (isremove_)
 			{
-				if (y_dash >= 0 && y > topsize_ && x_dash >= 0 && x > leftsize_)
+				if (x_dash >= 0 && y_dash >= 0 && y > topsize_ && x < (windowWidth_ - ScrollBarWidth_))
 				{
-					const int clickpos = (x_dash / d_size_) + (y_dash / d_size_) * colShow_;
+					const int clickpos = (x_dash - ScrollBarWidth_) / d_size_ + y_dash / d_size_ * colShow_;
 
 					if (clickpos < (int) sList->size())
 					{
