@@ -53,7 +53,7 @@ public:
 	//-----------------------------------------
 	// GUI settings' parameters.
 	const int leftsize_ = 1000;			// Left region.
-	const int uppersize_ = 40;				// Upper region.
+	const int uppersize_ = 40;			// Upper region.
 	const int fontsize_ = 16;			// Font size.
 	const int buttonheight_ = 30;		// Button height.
 	const int historybuttonwidth_ = buttonheight_;	// History button width.
@@ -80,15 +80,11 @@ public:
 	// Mouse & Keyboard.
 	int clickx_;						// The X-coordinate of mouse click.
 	int clicky_;						// The Y-coordinate of mouse click.
-	int holding_x_;						// The X-coordinate of held image.
-	int holding_y_;						// The Y-coordinate of held image.
+	int dragx_;							// The X-coordinate of mouse draging.
+	int dragy_;							// The Y-coordinate of mouse draging.
 	int mouseover_;						// Current mouseovered image ids.
-	int holdImgNum_;					// Holding image number;
 	bool click_;						// Flag: Clicked.
 	bool leftsideclick_;				// Flag: Left side clicked.
-	bool isHolding_areaA_;				// Flag: Clicked areaA.
-	bool isHoldAndDrag_;				// Flag: Holding and draging image.
-	bool isInsideWindow_;				// Flag: Mouse pointer is inside window.
 
 	//-----------------------------------------
 	// Display Settings.
@@ -96,7 +92,6 @@ public:
 	int rowShow_;						// The number of rows.
 	int d_size_;						// Size of each displayed image.
 	int bottom_;						// The Y-coordinate of current bottom.
-	int width_areaA_;					// Area A's width.
 	bool rowshort_;						// Flag: Small displayed rows.
 
 	//-----------------------------------------
@@ -137,6 +132,27 @@ public:
 	std::string pysettingfile_;			// Python settings.
 	std::string samplefile_;			// Training sample list.
 	std::string pythonfile_;			// Script file.
+
+	//-----------------------------------------
+	// Overview Settings.
+	bool isHolding_areaA_;				// Flag: Holding areaA.
+	bool isHolding_areaP_;				// Flag: Holding areaP.
+	bool isHolding_areaN_;				// Flag: Holding areaN.
+	bool isHoldAndDrag_;				// Flag: Holding and draging image.
+	bool isInsideWindow_;				// Flag: Mouse pointer is inside window.
+	bool isInside_areaA_;				// Flag: Holding inside area A.
+	bool isInside_areaP_;				// Flag: Holding inside area P.
+	bool isInside_areaN_;				// Flag: Holding inside area N.
+	int holdImgNum_;					// Holding image number;
+	int holding_x_;						// The X-coordinate of held image.
+	int holding_y_;						// The Y-coordinate of held image.
+	int width_areaA_;					// Area A width.
+	int overview_margin_;				// Margin of Overview area.
+	int overviewP_posy_;				// The Y-coordinate of positive overview.
+	int overviewN_posy_;				// The Y-coordinate of negative overview.
+	int overviewR_posy_;				// The Y-coordinate of reliability overview.
+	int overview_width_;				// Every overview width.
+	int overview_height_;				// Every overview height.
 
 	//-----------------------------------------
 	// Others.
@@ -202,12 +218,13 @@ public:
 	inline void back();
 	inline void forward();
 	inline bool isClickedArea(float x, float y, float w, float h);
+	inline bool isInsideDragingArea(float x, float y, float w, float h);
 	inline bool isFileexists(const std::string& filepath);
 	inline void writelog();
 	inline void loadImageandFont();
 	inline void updateScrollBars();
 	inline void initializeBars();
-	inline void calculateHoldingOriginPoint(const int center_x, const int center_y);
+	inline void calculateHoldingOriginPoint();
 
 
 public:

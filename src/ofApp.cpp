@@ -21,8 +21,10 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Mouse & Keyboard.
-	clickx_ = 0;
-	clicky_ = 0;
+	clickx_ = -1;
+	clicky_ = -1;
+	dragx_ = -1;
+	dragy_= -1;
 	mouseover_ = -1;
 	holdImgNum_ = -1;
 	click_ = false;
@@ -35,6 +37,7 @@ void ofApp::initparam()
 	// Display Settings.
 	colShow_ = 8;
 	d_size_ = (initWidth_ - leftsize_ - ScrollBarWidth_) / colShow_;
+	overview_margin_ = 15;
 	width_areaA_ = 0;
 	rowshort_ = false;
 
@@ -99,6 +102,20 @@ void ofApp::initparam()
 	// Retrieval results.
 	isremove_ = true;
 	iseval_ = false;
+
+	//-----------------------------------------
+	// Overview Settings.
+	isHolding_areaA_ = false;
+	isHolding_areaP_ = false;
+	isHolding_areaN_ = false;
+	isHoldAndDrag_ = false;
+	isInsideWindow_ = false;
+	isInside_areaA_ = false;
+	isInside_areaP_ = false;
+	isInside_areaN_ = false;
+	holdImgNum_ = -1;
+	holding_x_ = -1;
+	holding_y_ = -1;
 
 	//-----------------------------------------
 	// Others.
@@ -374,7 +391,6 @@ void ofApp::draw()
     ofDrawRectangle(1000, 0, 600, 40);
 
 	ofSetColor(255);
-
 //	// Forward button.
 //	if (!canBack_)
 //		backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
@@ -419,9 +435,44 @@ void ofApp::draw()
 
 	vscroll_areaA_.draw();
 
+	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
+	if (isInside_areaP_)
+	{
+		ofDrawRectangle(overview_margin_, overviewP_posy_, overview_width_, overview_height_);
+	}
+	else if (isInside_areaN_)
+	{
+		ofDrawRectangle(overview_margin_, overviewN_posy_, overview_width_, overview_height_);
+	}
+	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+	ofDrawRectangle(overview_margin_, overviewR_posy_, overview_width_, overview_height_);
+
+	if (isLoaded_)
+	{
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+		std::string positive = "Positive Sample";
+		std::string negative = "Negative Sample";
+		std::string reliability = "Reliability Graph";
+
+		int perHeight = windowHeight_ / 3;
+		int posy_positive_txt = 25;
+		int posy_negative_txt = 25 + perHeight;
+		int posy_reliability_txt = 25 + 2 * perHeight;
+
+		overviewP_posy_ = posy_positive_txt + 10;
+		overviewN_posy_ = posy_negative_txt + 10;
+		overviewR_posy_ = posy_reliability_txt + 10;
+		overview_width_ = leftsize_ - 2 * overview_margin_;
+		overview_height_ = d_size_ * 4;
+
+		font_.drawString(positive, overview_margin_, posy_positive_txt);
+		font_.drawString(negative, overview_margin_, posy_negative_txt);
+		font_.drawString(reliability, overview_margin_, posy_reliability_txt);
+	}
+
 	if (isHolding_areaA_ && isHoldAndDrag_)
 	{
-		ofSetColor(255);
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 		ofImage holdImg;
 		holdImg = loader_->picture_[holdImgNum_];
 	    holdImg.draw(holding_x_, holding_y_, d_size_, d_size_);
@@ -510,6 +561,8 @@ void ofApp::mouseMoved(int x, int y)
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button)
 {
+	dragx_ = x;
+	dragy_ = y;
 	click_ = false;
 
 	if (vscroll_areaA_.mouseDragged(x, y))
@@ -519,39 +572,75 @@ void ofApp::mouseDragged(int x, int y, int button)
 	{
 		isHoldAndDrag_ = true;
 		holdImgNum_ = mouseover_;
+		calculateHoldingOriginPoint();
 
-		int center_x, center_y;
-		center_x = x;
-		center_y = y;
-		calculateHoldingOriginPoint(center_x, center_y);
+		if (isInsideDragingArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
+		{
+			isInside_areaA_ = true;
+			isInside_areaP_ = false;
+			isInside_areaN_ = false;
+		}
+		else if (isInsideDragingArea(overview_margin_, overviewP_posy_, overview_width_, overview_height_))
+		{
+			isInside_areaA_ = false;
+			isInside_areaP_ = true;
+			isInside_areaN_ = false;
+		}
+		else if (isInsideDragingArea(overview_margin_, overviewN_posy_, overview_width_, overview_height_))
+		{
+			isInside_areaA_ = false;
+			isInside_areaP_ = false;
+			isInside_areaN_ = true;
+		}
+		else
+		{
+			isInside_areaA_ = false;
+			isInside_areaP_ = false;
+			isInside_areaN_ = false;
+		}
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button)
 {
-	if (x < leftsize_)
-		leftsideclick_ = true;
-	else
-		leftsideclick_ = false;
-
 	clickx_ = x;
 	clicky_ = y;
 	click_ = true;
 	isHoldAndDrag_ = false;
 
-	if (vscroll_areaA_.mousePressed(x, y))
+	if (clickx_ < leftsize_)
+		leftsideclick_ = true;
+	else
+		leftsideclick_ = false;
+
+	if (vscroll_areaA_.mousePressed(clickx_, clicky_))
 		return;
 
 	if (isremove_ && isClickedArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
 		isHolding_areaA_ = true;
+	else if (isremove_ && isClickedArea(overview_margin_, overviewP_posy_, overview_width_, overview_height_))
+		isHolding_areaP_ = true;
+	else if (isremove_ && isClickedArea(overview_margin_, overviewN_posy_, overview_width_, overview_height_))
+		isHolding_areaN_ = true;
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button)
 {
+//	clickx_ = -1;
+//	clicky_ = -1;
+	dragx_ = -1;
+	dragy_ = -1;
+	holding_x_ = -1;
+	holding_y_ = -1;
 	isHoldAndDrag_ = false;
 	isHolding_areaA_ = false;
+	isHolding_areaP_ = false;
+	isHolding_areaN_ = false;
+	isInside_areaA_ = false;
+	isInside_areaP_ = false;
+	isInside_areaN_ = false;
 	holdImgNum_ = -1;
 
 	if (x < leftsize_ || (leftsize_ + width_areaA_) < x || y < uppersize_)
@@ -679,6 +768,17 @@ bool ofApp::isClickedArea(float x, float y, float w, float h)
 	if (clickx_ >= x && clicky_ >= y)
 	{
 		if (clickx_ <= x + w && clicky_ <= y + h)
+			return true;
+	}
+	return false;
+}
+
+//--------------------------------------------------------------
+bool ofApp::isInsideDragingArea(float x, float y, float w, float h)
+{
+	if (dragx_ >= x && dragy_ >= y)
+	{
+		if (dragx_ <= x + w && dragy_ <= y + h)
 			return true;
 	}
 	return false;
@@ -892,11 +992,11 @@ void ofApp::initializeBars()
 }
 
 //--------------------------------------------------------------
-void ofApp::calculateHoldingOriginPoint(const int center_x, const int center_y)
+void ofApp::calculateHoldingOriginPoint()
 {
 	int x, y;
-	x = center_x - d_size_ / 2;
-	y = center_y - d_size_ / 2;
+	x = dragx_ - d_size_ / 2;
+	y = dragy_ - d_size_ / 2;
 
 	holding_x_ = x;
 	holding_y_ = y;
