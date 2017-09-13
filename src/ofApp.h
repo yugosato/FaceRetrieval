@@ -82,7 +82,9 @@ public:
 	int clicky_;						// The Y-coordinate of mouse click.
 	int dragx_;							// The X-coordinate of mouse draging.
 	int dragy_;							// The Y-coordinate of mouse draging.
-	int mouseover_;						// Current mouseovered image ids.
+	int mouseoverx_;					// The X-coordinate of mouse click.
+	int mouseovery_;					// The Y-coordinate of mouse click.
+	int mouseover_;						// Current mouseovered image positions.
 	bool click_;						// Flag: Clicked.
 	bool leftsideclick_;				// Flag: Left side clicked.
 
@@ -143,16 +145,22 @@ public:
 	bool isInside_areaA_;				// Flag: Holding inside area A.
 	bool isInside_areaP_;				// Flag: Holding inside area P.
 	bool isInside_areaN_;				// Flag: Holding inside area N.
+	int overview_d_size_;				// Size of each displayed image (overview).
+	int overview_colShow_;				// The number of cols.
 	int holdImgNum_;					// Holding image number;
 	int holding_x_;						// The X-coordinate of held image.
 	int holding_y_;						// The Y-coordinate of held image.
 	int width_areaA_;					// Area A width.
-	int overview_margin_;				// Margin of Overview area.
+	const int overview_margin_ = 30;	// Margin of Overview area.
 	int overviewP_posy_;				// The Y-coordinate of positive overview.
 	int overviewN_posy_;				// The Y-coordinate of negative overview.
 	int overviewR_posy_;				// The Y-coordinate of reliability overview.
 	int overview_width_;				// Every overview width.
 	int overview_height_;				// Every overview height.
+	std::vector<ofImage> positive_images_;	// Positive sample images.
+	std::vector<ofImage> negative_images_;	// Negative sample images.
+	std::vector<int> positives_;		// Positive Samples (image id).
+	std::vector<int> negatives_;		// Negative Samples (image id).
 
 	//-----------------------------------------
 	// Others.
@@ -217,14 +225,19 @@ public:
 	inline void forwardhistory();
 	inline void back();
 	inline void forward();
-	inline bool isClickedArea(float x, float y, float w, float h);
+	inline bool isReleasedArea(float x, float y, float w, float h);
 	inline bool isInsideDragingArea(float x, float y, float w, float h);
+	inline bool isInsideMouseoverArea(float x, float y, float w, float h);
 	inline bool isFileexists(const std::string& filepath);
 	inline void writelog();
 	inline void loadImageandFont();
 	inline void updateScrollBars();
 	inline void initializeBars();
 	inline void calculateHoldingOriginPoint();
+
+
+public:
+	int vector_finder(std::vector<int>& vec, int number);
 
 
 public:

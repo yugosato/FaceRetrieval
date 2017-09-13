@@ -16,7 +16,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	//  The number of displayed images.
 	picA_ = 1;
-	picB_ = 200;
+	picB_ = 597;
 	picnum_ = picB_ - picA_ + 1;
 
 	//-----------------------------------------
@@ -37,7 +37,6 @@ void ofApp::initparam()
 	// Display Settings.
 	colShow_ = 8;
 	d_size_ = (initWidth_ - leftsize_ - ScrollBarWidth_) / colShow_;
-	overview_margin_ = 15;
 	width_areaA_ = 0;
 	rowshort_ = false;
 
@@ -113,6 +112,7 @@ void ofApp::initparam()
 	isInside_areaA_ = false;
 	isInside_areaP_ = false;
 	isInside_areaN_ = false;
+	overview_colShow_ = 15;
 	holdImgNum_ = -1;
 	holding_x_ = -1;
 	holding_y_ = -1;
@@ -369,7 +369,7 @@ void ofApp::draw()
 		}
 		else if (isremove_)
 		{
-			if (i == mouseover_ || selectList_[i])
+			if ((!isHoldAndDrag_ && i == mouseover_) || selectList_[i])
 			{
 				ofSetColor(255);
 				img.draw(drawx, drawy, d_size_, d_size_);
@@ -391,6 +391,7 @@ void ofApp::draw()
     ofDrawRectangle(1000, 0, 600, 40);
 
 	ofSetColor(255);
+
 //	// Forward button.
 //	if (!canBack_)
 //		backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
@@ -436,14 +437,18 @@ void ofApp::draw()
 	vscroll_areaA_.draw();
 
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
-	if (isInside_areaP_)
+	if (isInsideWindow_ && isremove_)
 	{
-		ofDrawRectangle(overview_margin_, overviewP_posy_, overview_width_, overview_height_);
+		if (isInside_areaP_)
+		{
+			ofDrawRectangle(overview_margin_, overviewP_posy_, overview_width_, overview_height_);
+		}
+		else if (isInside_areaN_)
+		{
+			ofDrawRectangle(overview_margin_, overviewN_posy_, overview_width_, overview_height_);
+		}
 	}
-	else if (isInside_areaN_)
-	{
-		ofDrawRectangle(overview_margin_, overviewN_posy_, overview_width_, overview_height_);
-	}
+
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	ofDrawRectangle(overview_margin_, overviewR_posy_, overview_width_, overview_height_);
 
@@ -462,20 +467,84 @@ void ofApp::draw()
 		overviewP_posy_ = posy_positive_txt + 10;
 		overviewN_posy_ = posy_negative_txt + 10;
 		overviewR_posy_ = posy_reliability_txt + 10;
-		overview_width_ = leftsize_ - 2 * overview_margin_;
-		overview_height_ = d_size_ * 4;
+		overview_width_ = overview_d_size_ * overview_colShow_;
+		overview_height_ = overview_d_size_ * 4;
 
 		font_.drawString(positive, overview_margin_, posy_positive_txt);
 		font_.drawString(negative, overview_margin_, posy_negative_txt);
 		font_.drawString(reliability, overview_margin_, posy_reliability_txt);
 	}
 
-	if (isHolding_areaA_ && isHoldAndDrag_)
+	const int len_positive_images = positive_images_.size();
+	const int len_negative_images = negative_images_.size();
+
+	if (len_positive_images > 0)
+	{
+		for (int i = 0; i < len_positive_images; ++i)
+		{
+			const int j = i % overview_colShow_;
+			const int k = i / overview_colShow_;
+
+			int drawx = overview_margin_ + overview_d_size_ * j;
+			int drawy = overviewP_posy_ + overview_d_size_ * k;
+
+			ofImage img_positive = positive_images_[i];
+
+			if (!img_positive.isAllocated())
+			{
+				break;
+			}
+			else
+			{
+				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+				img_positive.draw(drawx, drawy, overview_d_size_, overview_d_size_);
+			}
+		}
+	}
+
+	if (len_negative_images > 0)
+	{
+		for (int i = 0; i < len_negative_images; ++i)
+		{
+			const int j = i % overview_colShow_;
+			const int k = i / overview_colShow_;
+
+			int drawx = overview_margin_ + overview_d_size_ * j;
+			int drawy = overviewN_posy_ + overview_d_size_ * k;
+
+			ofImage img_negative = negative_images_[i];
+
+			if (!img_negative.isAllocated())
+			{
+				break;
+			}
+			else
+			{
+				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+				img_negative.draw(drawx, drawy, overview_d_size_, overview_d_size_);
+			}
+		}
+	}
+
+	if (isHoldAndDrag_)
 	{
 		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 		ofImage holdImg;
-		holdImg = loader_->picture_[holdImgNum_];
-	    holdImg.draw(holding_x_, holding_y_, d_size_, d_size_);
+		if (isHolding_areaA_)
+		{
+			holdImg = loader_->picture_[holdImgNum_];
+		}
+		else if (isHolding_areaP_)
+		{
+			holdImg = positive_images_[holdImgNum_];
+		}
+		else if (isHolding_areaN_)
+		{
+			holdImg = negative_images_[holdImgNum_];
+		}
+
+		if (holdImg.isAllocated())
+			holdImg.draw(holding_x_, holding_y_, d_size_, d_size_);
 	}
 }
 
@@ -546,16 +615,68 @@ void ofApp::keyReleased(int key)
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y)
 {
-	const int x_dash = x - leftsize_;
-	const int y_dash = y - scroll_areaA_ - uppersize_;
+	mouseoverx_ = x;
+	mouseovery_ = y;
 
-	if (x_dash >= 0 && y_dash >= 0 && uppersize_ < y)
-		mouseover_ = x_dash / d_size_ + y_dash / d_size_ * colShow_;
+	int x_dash, y_dash;
+	if (isInsideWindow_)
+	{
+		if (isremove_)
+		{
+			// Area A.
+			if (isInsideMouseoverArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
+			{
+				isInside_areaA_ = true;
+				isInside_areaP_ = false;
+				isInside_areaN_ = false;
+
+				x_dash = x - leftsize_;
+				y_dash = y - scroll_areaA_ - uppersize_;
+				mouseover_ = x_dash / d_size_ + y_dash / d_size_ * colShow_;
+			}	// Area P.
+			else if (isInsideMouseoverArea(overview_margin_, overviewP_posy_, overview_width_, overview_height_))
+			{
+				isInside_areaA_ = false;
+				isInside_areaP_ = true;
+				isInside_areaN_ = false;
+
+				x_dash = x - overview_margin_;
+				y_dash = y - overviewP_posy_;
+				mouseover_ = x_dash / overview_d_size_ + y_dash / overview_d_size_ * overview_colShow_;
+			}	// Area N.
+			else if (isInsideMouseoverArea(overview_margin_, overviewN_posy_, overview_width_, overview_height_))
+			{
+				isInside_areaA_ = false;
+				isInside_areaP_ = false;
+				isInside_areaN_ = true;
+
+				x_dash = x - overview_margin_;
+				y_dash = y - overviewN_posy_;
+				mouseover_ = x_dash / overview_d_size_ + y_dash / overview_d_size_ * overview_colShow_;
+			}
+			else
+			{
+				isInside_areaA_ = false;
+				isInside_areaP_ = false;
+				isInside_areaN_ = false;
+				mouseover_ = -1;
+			}
+		}
+		else
+		{
+			isInside_areaA_ = false;
+			isInside_areaP_ = false;
+			isInside_areaN_ = false;
+			mouseover_ = -1;
+		}
+	}
 	else
+	{
+		isInside_areaA_ = false;
+		isInside_areaP_ = false;
+		isInside_areaN_ = false;
 		mouseover_ = -1;
-
-	if ((windowWidth_ - ScrollBarWidth_ - 2) <= x)
-		mouseover_ = -1;
+	}
 }
 
 //--------------------------------------------------------------
@@ -568,29 +689,43 @@ void ofApp::mouseDragged(int x, int y, int button)
 	if (vscroll_areaA_.mouseDragged(x, y))
 		return;
 
-	if (isremove_ && isHolding_areaA_)
-	{
-		isHoldAndDrag_ = true;
-		holdImgNum_ = mouseover_;
-		calculateHoldingOriginPoint();
+	isInside_areaA_ = false;
+	isInside_areaP_ = false;
+	isInside_areaN_ = false;
 
-		if (isInsideDragingArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
+	if (isInsideWindow_)
+	{
+		if (isremove_)
 		{
-			isInside_areaA_ = true;
-			isInside_areaP_ = false;
-			isInside_areaN_ = false;
-		}
-		else if (isInsideDragingArea(overview_margin_, overviewP_posy_, overview_width_, overview_height_))
-		{
-			isInside_areaA_ = false;
-			isInside_areaP_ = true;
-			isInside_areaN_ = false;
-		}
-		else if (isInsideDragingArea(overview_margin_, overviewN_posy_, overview_width_, overview_height_))
-		{
-			isInside_areaA_ = false;
-			isInside_areaP_ = false;
-			isInside_areaN_ = true;
+			isHoldAndDrag_ = true;
+			holdImgNum_ = mouseover_;
+			calculateHoldingOriginPoint();
+
+			// Area A.
+			if (isInsideDragingArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
+			{
+				isInside_areaA_ = true;
+				isInside_areaP_ = false;
+				isInside_areaN_ = false;
+			}	// Area P.
+			else if (isInsideDragingArea(overview_margin_, overviewP_posy_, overview_width_, overview_height_))
+			{
+				isInside_areaA_ = false;
+				isInside_areaP_ = true;
+				isInside_areaN_ = false;
+			}	// Area N.
+			else if (isInsideDragingArea(overview_margin_, overviewN_posy_, overview_width_, overview_height_))
+			{
+				isInside_areaA_ = false;
+				isInside_areaP_ = false;
+				isInside_areaN_ = true;
+			}
+			else
+			{
+				isInside_areaA_ = false;
+				isInside_areaP_ = false;
+				isInside_areaN_ = false;
+			}
 		}
 		else
 		{
@@ -598,6 +733,12 @@ void ofApp::mouseDragged(int x, int y, int button)
 			isInside_areaP_ = false;
 			isInside_areaN_ = false;
 		}
+	}
+	else
+	{
+		isInside_areaA_ = false;
+		isInside_areaP_ = false;
+		isInside_areaN_ = false;
 	}
 }
 
@@ -607,7 +748,6 @@ void ofApp::mousePressed(int x, int y, int button)
 	clickx_ = x;
 	clicky_ = y;
 	click_ = true;
-	isHoldAndDrag_ = false;
 
 	if (clickx_ < leftsize_)
 		leftsideclick_ = true;
@@ -617,35 +757,133 @@ void ofApp::mousePressed(int x, int y, int button)
 	if (vscroll_areaA_.mousePressed(clickx_, clicky_))
 		return;
 
-	if (isremove_ && isClickedArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
-		isHolding_areaA_ = true;
-	else if (isremove_ && isClickedArea(overview_margin_, overviewP_posy_, overview_width_, overview_height_))
-		isHolding_areaP_ = true;
-	else if (isremove_ && isClickedArea(overview_margin_, overviewN_posy_, overview_width_, overview_height_))
-		isHolding_areaN_ = true;
+	if (isInsideWindow_)
+	{
+		if (isremove_)
+		{
+			// Area A.
+			if (mouseover_ < picnum_ && isInside_areaA_)
+			{
+				isHolding_areaA_ = true;
+				isHolding_areaP_ = false;
+				isHolding_areaN_ = false;
+			}	// Area P.
+			else if (mouseover_ < (int) positives_.size() && (int) positives_.size() > 0 && isInside_areaP_)
+			{
+				isHolding_areaA_ = false;
+				isHolding_areaP_ = true;
+				isHolding_areaN_ = false;
+			}	// Area N.
+			else if (mouseover_ < (int) negatives_.size() && (int) negatives_.size() > 0 && isInside_areaN_)
+			{
+				isHolding_areaA_ = false;
+				isHolding_areaP_ = false;
+				isHolding_areaN_ = true;
+			}
+			else
+			{
+				isHolding_areaA_ = false;
+				isHolding_areaP_ = false;
+				isHolding_areaN_ = false;
+			}
+		}
+		else
+		{
+			isHolding_areaA_ = false;
+			isHolding_areaP_ = false;
+			isHolding_areaN_ = false;
+		}
+	}
+	else
+	{
+		isHolding_areaA_ = false;
+		isHolding_areaP_ = false;
+		isHolding_areaN_ = false;
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button)
 {
-//	clickx_ = -1;
-//	clicky_ = -1;
-	dragx_ = -1;
-	dragy_ = -1;
-	holding_x_ = -1;
-	holding_y_ = -1;
-	isHoldAndDrag_ = false;
-	isHolding_areaA_ = false;
-	isHolding_areaP_ = false;
-	isHolding_areaN_ = false;
-	isInside_areaA_ = false;
-	isInside_areaP_ = false;
-	isInside_areaN_ = false;
-	holdImgNum_ = -1;
+	if (isInsideWindow_)
+	{
+		if (isremove_)
+		{
+			if (isHolding_areaA_)
+			{
+				std::vector<int> *list = &showList_removed_;
+				const int dragImgId = (*list)[holdImgNum_];
+				ofImage dragImg = loader_->picture_[holdImgNum_];
+				int check_duplication_P = vector_finder(positives_, dragImgId);
+				int check_duplication_N = vector_finder(negatives_, dragImgId);
 
-	if (x < leftsize_ || (leftsize_ + width_areaA_) < x || y < uppersize_)
-		mouseover_ = -1;
+				if (check_duplication_P < 0 && check_duplication_N < 0)
+				{
+					// A -> P.
+					if (isInside_areaP_)
+					{
+						positives_.push_back(dragImgId);
+						positive_images_.push_back(dragImg);
+					}	// A -> N.
+					else if (isInside_areaN_)
+					{
+						negatives_.push_back(dragImgId);
+						negative_images_.push_back(dragImg);
+					}
+				}
+			}
+			else if (isHolding_areaP_)
+			{
+				std::vector<int> *list = &positives_;
+				const int dragImgId = (*list)[holdImgNum_];
+				ofImage dragImg = positive_images_[holdImgNum_];
 
+				// P -> A.
+				if (isInside_areaA_)
+				{
+					positives_.erase(positives_.begin() + holdImgNum_);
+					positive_images_.erase(positive_images_.begin() + holdImgNum_);
+				}	// P -> N.
+				else if (isInside_areaN_)
+				{
+					int check_duplication = vector_finder(negatives_, dragImgId);
+					if (check_duplication < 0)
+					{
+						negatives_.push_back(dragImgId);
+						negative_images_.push_back(dragImg);
+						positives_.erase(positives_.begin() + holdImgNum_);
+						positive_images_.erase(positive_images_.begin() + holdImgNum_);
+					}
+				}
+			}
+			else if (isHolding_areaN_)
+			{
+				std::vector<int> *list = &negatives_;
+				const int dragImgId = (*list)[holdImgNum_];
+				ofImage dragImg = negative_images_[holdImgNum_];
+
+				// N -> A.
+				if (isInside_areaA_)
+				{
+					negatives_.erase(negatives_.begin() + holdImgNum_);
+					negative_images_.erase(negative_images_.begin() + holdImgNum_);
+				}	// N -> P.
+				else if (isInside_areaP_)
+				{
+					int check_duplication = vector_finder(positives_, dragImgId);
+					if (check_duplication < 0)
+					{
+						positives_.push_back(dragImgId);
+						positive_images_.push_back(dragImg);
+						negatives_.erase(negatives_.begin() + holdImgNum_);
+						negative_images_.erase(negative_images_.begin() + holdImgNum_);
+					}
+				}
+			}
+		}
+	}
+
+	std::vector<int> *sList = &showList_removed_;
 	if (click_ == true)
 	{
 		const int x_dash = x - leftsize_;
@@ -653,22 +891,20 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 		if (canSearch_)
 		{
-			std::vector<int> *sList = &showList_removed_;
-
-			if (isClickedArea(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
+			if (isReleasedArea(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = true;
 				iseval_ = false;
 				onPaint(showList_removed_);
 			}
-			else if (isClickedArea(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
+			else if (isReleasedArea(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = false;
 				iseval_ = false;
 				onPaint(showList_);
 			}
 #ifndef EXPERIMENT
-			else if (isClickedArea(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
+			else if (isReleasedArea(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
 			{
 				isremove_ = false;
 				iseval_ = true;
@@ -703,13 +939,13 @@ void ofApp::mouseReleased(int x, int y, int button)
 					}
 				}
 
-//				if (canBack_ && isClickedArea(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
+//				if (canBack_ && isReleasedArea(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
 //					back();
 //
-//				if (canForward_ && isClickedArea(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
+//				if (canForward_ && isReleasedArea(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
 //					forward();
 
-				if (isClickedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
+				if (isReleasedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 				{
 					if (selected_num_ != 0)
 					{
@@ -742,7 +978,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			}
 			else
 			{
-				if (isClickedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
+				if (isReleasedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 				{
 					std::cerr << "[Warning] Cannot search. Please search on state \"A\"" << std::endl;
 				}
@@ -754,16 +990,28 @@ void ofApp::mouseReleased(int x, int y, int button)
 		}
 	}
 
-	clickx_ = 0;
-	clicky_ = 0;
+	clickx_ = -1;
+	clicky_ = -1;
 	click_ = false;
 
 	if (vscroll_areaA_.mouseReleased(x, y))
 		return;
+
+	dragx_ = -1;
+	dragy_ = -1;
+	holding_x_ = -1;
+	holding_y_ = -1;
+	holdImgNum_ = -1;
+	mouseover_ = -1;
+
+	isHoldAndDrag_ = false;
+	isHolding_areaA_ = false;
+	isHolding_areaP_ = false;
+	isHolding_areaN_ = false;
 }
 
 //--------------------------------------------------------------
-bool ofApp::isClickedArea(float x, float y, float w, float h)
+bool ofApp::isReleasedArea(float x, float y, float w, float h)
 {
 	if (clickx_ >= x && clicky_ >= y)
 	{
@@ -785,6 +1033,17 @@ bool ofApp::isInsideDragingArea(float x, float y, float w, float h)
 }
 
 //--------------------------------------------------------------
+bool ofApp::isInsideMouseoverArea(float x, float y, float w, float h)
+{
+	if (mouseoverx_ >= x && mouseovery_ >= y)
+	{
+		if (mouseoverx_ <= x + w && mouseovery_ <= y + h)
+			return true;
+	}
+	return false;
+}
+
+//--------------------------------------------------------------
 void ofApp::mouseEntered(int x, int y)
 {
 	isInsideWindow_ = true;
@@ -795,8 +1054,13 @@ void ofApp::mouseExited(int x, int y)
 {
 	mouseover_ = -1;
 	isInsideWindow_ = false;
+	isInside_areaA_ = false;
+	isInside_areaP_ = false;
+	isInside_areaN_ = false;
 	isHoldAndDrag_ = false;
 	isHolding_areaA_ = false;
+	isHolding_areaP_ = false;
+	isHolding_areaN_ = false;
 }
 
 //--------------------------------------------------------------
@@ -839,6 +1103,7 @@ void ofApp::onPaint(const std::vector<int>& list)
 	loader_->setShowList(list);
 	loader_->load();
 	ishistory_ = false;
+	overview_d_size_ = d_size_ * 0.9;
 
 	int len = loader_->row_;
 	int draw_rows;
@@ -977,7 +1242,7 @@ void ofApp::updateScrollBars()
 {
 	vscroll_areaA_.bar_length(windowHeight_ - uppersize_);
 	vscroll_areaA_.max(std::max<float>(drawHeight_areaA_ - vscroll_areaA_.bar_length(), 0));
-	vscroll_areaA_.change_by_bar(vscroll_areaA_.max() / 10);
+	vscroll_areaA_.change_by_bar(vscroll_areaA_.max() * (vscroll_areaA_.max() / windowWidth_));
 }
 
 //--------------------------------------------------------------
@@ -1001,3 +1266,26 @@ void ofApp::calculateHoldingOriginPoint()
 	holding_x_ = x;
 	holding_y_ = y;
 }
+
+//--------------------------------------------------------------
+int ofApp::vector_finder(std::vector<int>& vec, int number)
+{
+	if (vec.size() > 0)
+	{
+		auto itr = std::find(vec.begin(), vec.end(), number);
+		size_t index = std::distance(vec.begin(), itr);
+		if (index != vec.size())
+		{
+			return index;	// If the number exists in the vector.
+		}
+		else
+		{
+			return -1;		// If the number does not exist in the vector.
+		}
+	}
+	else
+	{
+		return -1;
+	}
+}
+
