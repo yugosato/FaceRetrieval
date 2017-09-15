@@ -35,7 +35,7 @@ public:
 		// Allocate memory & initialize.
 		number_.resize(row_);
 		init();
-//		random();
+		random();
 		//init_clustering();
 		number_eval_ = number_;
 	}

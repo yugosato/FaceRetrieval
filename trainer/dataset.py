@@ -29,6 +29,7 @@ class ImportDataset(chainer.dataset.DatasetMixin):
         pos_num = len(positives)
         neg_num = len(negatives)
 
+
         pairs = []
         if pos_num > 0:
             for pos in positives:
@@ -41,14 +42,9 @@ class ImportDataset(chainer.dataset.DatasetMixin):
 
     def setsamples(self):
         self.base_ = []
-        pos_N = 0
-        neg_N = 0
-        for i in xrange(self.iter_num_):
-            pairs, pos_n, neg_n = self.get_split_sample(i)
-            self.base_.extend(pairs)
-            pos_N += pos_n
-            neg_N += neg_n
-        print "[Trainer] total sample size: {} (positive: {}, negative: {})".format(len(self.base_), pos_N, neg_N)
+        pairs, pos_n, neg_n = self.get_split_sample(self.iter_num_ - 1)
+        self.base_ = pairs
+        print "[Trainer] Total sample size: {} (Positive: {}, Negative: {})".format(len(self.base_), pos_n, neg_n)
 
 
     def get_example(self, i):

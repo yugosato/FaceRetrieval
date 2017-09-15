@@ -99,10 +99,6 @@ public:
 	//-----------------------------------------
 	// Input Query.
 	bool clickflag_;					// Flag: Query clicked.
-	std::vector<bool> selectList_;		// Selected (true) or Non-selected (false).
-	std::vector<int> selectedquery_;	// Position number of current selected images.
-	std::vector<int> nonselectedquery_;	// Position number of current non-celected images.
-	int selected_num_;					// The number of selected image.
 
 	//-----------------------------------------
 	// Window Information.
@@ -170,7 +166,6 @@ public:
 	bool isLoaded_;			// Flag: Finished loading image features file.
 	bool isSearchedAll_;	// Flag: Finished searching.
 	bool canSearch_;		// Flag: Ready to search.
-	bool draw_epoch_;		// Flag: draw current search epoch.
 
 	//-----------------------------------------
 	// Retrieval results.

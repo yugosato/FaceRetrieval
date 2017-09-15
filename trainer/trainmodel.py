@@ -71,13 +71,13 @@ def train_model():
     trainer.extend(extensions.PlotReport(["main/accuracy"], "epoch", file_name="accuracy.png"))
 
     # Run trainer
-    print "[Trainer] Train Model"
+    print "[Trainer] Start training."
     trainer.run()
 
     global weight, bias
     weight = model.fc2.W.data
     bias = model.fc2.b.data
-    print "[Trainer] Finished"
+    print "[Trainer] Finished training."
 
 
 def feature_extract(x):

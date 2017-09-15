@@ -16,7 +16,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	//  The number of displayed images.
 	picA_ = 1;
-	picB_ = 597;
+	picB_ = 128;
 	picnum_ = picB_ - picA_ + 1;
 
 	//-----------------------------------------
@@ -43,10 +43,6 @@ void ofApp::initparam()
 	//-----------------------------------------
 	// Input Query.
 	clickflag_ = false;
-	selectList_.resize(picnum_);
-	for (int i = 0; i < picnum_; ++i)
-		selectList_[i] = false;
-	selected_num_ = 0;
 
 	//-----------------------------------------
 	// Window Information.
@@ -125,7 +121,6 @@ void ofApp::initparam()
 	isLoaded_ = false;
 	isSearchedAll_ = false;
 	canSearch_ = false;
-	draw_epoch_ = false;
 }
 
 //--------------------------------------------------------------
@@ -274,7 +269,7 @@ void ofApp::update()
 		trainer_->stopThread();
 		trainer_->isTrained_ = false;
 		ngt_->setExtracter(trainer_->extracter_);
-		ngt_->setInput_multi(selectedquery_, nonselectedquery_);
+		ngt_->setInput_multi(positives_, negatives_);
 		ngt_->train_ = true;
 		ngt_->startThread();
 		starttime_ngt_ = clock();
@@ -307,26 +302,16 @@ void ofApp::update()
 		onPaint(showList_removed_);
 		inputHistory();
 
-		draw_epoch_ = true;
-		selectedquery_.clear();
-		nonselectedquery_.clear();
-		std::vector<int>().swap(selectedquery_);
-		std::vector<int>().swap(nonselectedquery_);
-		selected_num_ = 0;
-
-		for (int i = 0; i < (int) selectList_.size(); ++i)
-			selectList_[i] = false;
-
 		canSearch_ = true;
 		isSearchedAll_ = false;
 		endtime_ = clock();
+
 		std::cout << "[ofApp] Total processing time: " << (double)(endtime_ - starttime_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		std::cout << "================================" << std::endl;
 
 		vscroll_areaA_.current(0);
 	}
 
-	scroll_areaA_ = - vscroll_areaA_.current();
 	vscroll_areaA_.update();
 }
 
@@ -340,15 +325,9 @@ void ofApp::draw()
 		font_.drawString(nowload + process, 15, 36);
 	}
 
-	if (draw_epoch_ && epoch_ > 0)
-	{
-		std::string search = "Search: ";
-		std::string epoch = ofToString(epoch_);
-		font_.drawString(search + epoch, 10, 150);
-	}
-
 	ofImage img;
 	const int len = loader_->row_;
+	scroll_areaA_ = - vscroll_areaA_.current();
 
 	for (int i = 0; i < len; ++i)
 	{
@@ -371,14 +350,18 @@ void ofApp::draw()
 		}
 		else if (isremove_)
 		{
-			if ((isInside_areaA_ && i == mouseover_) || selectList_[i])
+			int imgId = loader_->showList_[i];
+			int exist_positive = vector_finder(positives_, imgId);
+			int exist_negative = vector_finder(negatives_, imgId);
+
+			if ((isHolding_areaA_ && i == holdImgNum_) || exist_positive >= 0 || exist_negative >= 0)
 			{
-				ofSetColor(255);
+				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
 				img.draw(drawx, drawy, d_size_, d_size_);
 			}
 			else
 			{
-				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
+				ofSetColor(255);
 				img.draw(drawx, drawy, d_size_, d_size_);
 			}
 		}
@@ -392,7 +375,10 @@ void ofApp::draw()
     ofSetColor(0);
     ofDrawRectangle(1000, 0, 600, 40);
 
-	ofSetColor(255);
+   	ofSetColor(255);
+	std::string search = "Search: ";
+	std::string epoch = ofToString(epoch_);
+	font_.drawString(search + epoch, evalbuttonposx_ + removebuttonwidth_ + 50, 25);
 
 //	// Forward button.
 //	if (!canBack_)
@@ -428,12 +414,6 @@ void ofApp::draw()
 		non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
 		removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
 		evalbutton2_.draw(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-	}
-
-	if (!canSearch_)
-	{
-		std::string nowsearch = "Now Searching...";
-		font_.drawString(nowsearch, 15, 36);
 	}
 
 	vscroll_areaA_.draw();
@@ -574,18 +554,8 @@ void ofApp::back()
 	ishistory_ = true;
 	backhistory();
 	database_->setNumber(numberhistory_[nowhistory_]);
-
 	calculate();
 	onPaint(showList_);
-
-	selectedquery_.clear();
-	nonselectedquery_.clear();
-	std::vector<int>().swap(selectedquery_);
-	std::vector<int>().swap(nonselectedquery_);
-	selected_num_ = 0;
-
-	for (int i = 0; i < (int) selectList_.size(); ++i)
-		selectList_[i] = false;
 }
 
 //--------------------------------------------------------------
@@ -594,18 +564,8 @@ void ofApp::forward()
 	ishistory_ = true;
 	forwardhistory();
 	database_->setNumber(numberhistory_[nowhistory_]);
-
 	calculate();
 	onPaint(showList_);
-
-	selectedquery_.clear();
-	nonselectedquery_.clear();
-	std::vector<int>().swap(selectedquery_);
-	std::vector<int>().swap(nonselectedquery_);
-	selected_num_ = 0;
-
-	for (int i = 0; i < (int) selectList_.size(); ++i)
-		selectList_[i] = false;
 }
 
 //--------------------------------------------------------------
@@ -692,7 +652,11 @@ void ofApp::mouseDragged(int x, int y, int button)
 	{
 		if (isremove_)
 		{
-			if (mouseover_ >= 0)
+			int imgId = loader_->showList_[mouseover_];
+			int exist_positive = vector_finder(positives_, imgId);
+			int exist_negative = vector_finder(negatives_, imgId);
+
+			if (canSearch_ && mouseover_ >= 0 && exist_positive < 0 && exist_negative < 0)
 			{
 				holdImgNum_ = mouseover_;
 				isHoldAndDrag_ = true;
@@ -757,7 +721,7 @@ void ofApp::mousePressed(int x, int y, int button)
 
 	if (isInsideWindow_)
 	{
-		if (isremove_)
+		if (isremove_ && mouseover_ >= 0)
 		{
 			// Area A.
 			if (mouseover_ < picnum_ && isInside_areaA_)
@@ -895,7 +859,6 @@ void ofApp::mouseReleased(int x, int y, int button)
 		}
 	}
 
-	std::vector<int> *sList = &showList_removed_;
 	if (click_ == true)
 	{
 		const int x_dash = x - leftsize_;
@@ -926,31 +889,6 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 			if (isremove_)
 			{
-				if (x_dash >= 0 && y_dash >= 0 && y > uppersize_ && x < (windowWidth_ - ScrollBarWidth_))
-				{
-					if (x < (windowWidth_ - ScrollBarWidth_ - 2))
-					{
-						const int clickpos = mouseover_;
-
-						if (clickpos < (int) sList->size())
-						{
-							if (button == 0 && isLoaded_)
-							{
-								if (!selectList_[clickpos])
-								{
-									selected_num_++;
-									selectList_[clickpos] = true;
-								}
-								else
-								{
-									selected_num_--;
-									selectList_[clickpos] = false;
-								}
-							}
-						}
-					}
-				}
-
 //				if (canBack_ && isReleasedArea(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
 //					back();
 //
@@ -959,32 +897,23 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 				if (isReleasedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 				{
-					if (selected_num_ != 0)
+					if (len_positives_ == 0)
+						std::cerr << "[Warning] Please select positive sample." << std::endl;
+
+					if (len_negatives_ == 0)
+						std::cerr << "[Warning] Please select negative sample." << std::endl;
+
+					if (len_positives_ > 0 && len_negatives_ > 0)
 					{
 						epoch_++;
-						draw_epoch_ = false;
 						std::cout << "[ofApp] " << epoch_ << " feedbacks." << std::endl;
 
 						starttime_ = clock();
-						for (int i = 0; i < (int) selectList_.size(); ++i)
-						{
-							const int No = (*sList)[i];
-
-							if (selectList_[i])
-								selectedquery_.push_back(No);
-							else
-								nonselectedquery_.push_back(No);
-						}
-
 						clickflag_ = true;
-						samplewriter_->write(selectedquery_, nonselectedquery_);
+						samplewriter_->write(positives_, negatives_);
 						trainer_->startThread();
 						starttime_trainer_ = clock();
 						canSearch_ = false;
-					}
-					else
-					{
-						std::cerr << "[Warning] Please select queries." << std::endl;
 					}
 				}
 			}
@@ -1014,6 +943,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 	holding_x_ = -1;
 	holding_y_ = -1;
 	holdImgNum_ = -1;
+	mouseover_ = -1;
 
 	isHoldAndDrag_ = false;
 	isHolding_areaA_ = false;
@@ -1064,6 +994,7 @@ void ofApp::mouseEntered(int x, int y)
 void ofApp::mouseExited(int x, int y)
 {
 	mouseover_ = -1;
+	holdImgNum_ = -1;
 	isInsideWindow_ = false;
 	isInside_areaA_ = false;
 	isInside_areaP_ = false;
@@ -1251,9 +1182,18 @@ void ofApp::sizeChanged()
 // (Called when the window size or the image size is changed)
 void ofApp::updateScrollBars()
 {
-	vscroll_areaA_.bar_length(windowHeight_ - uppersize_);
-	vscroll_areaA_.max(std::max<float>(drawHeight_areaA_ - vscroll_areaA_.bar_length(), 0));
-	vscroll_areaA_.change_by_bar(vscroll_areaA_.max() * (vscroll_areaA_.max() / windowWidth_));
+	if (drawHeight_areaA_ < vscroll_areaA_.bar_length())
+	{
+		vscroll_areaA_.max(0);
+		vscroll_areaA_.change_by_bar(0);
+		vscroll_areaA_.current(0);
+	}
+	else
+	{
+		vscroll_areaA_.max(drawHeight_areaA_ - vscroll_areaA_.bar_length());
+		vscroll_areaA_.change_by_bar(vscroll_areaA_.max() / 4);
+		vscroll_areaA_.current(0);
+	}
 }
 
 //--------------------------------------------------------------
@@ -1262,9 +1202,11 @@ void ofApp::initializeBars()
 	scroll_areaA_ = 0;
 	vscroll_areaA_.min(0);
 	vscroll_areaA_.bar_width(ScrollBarWidth_);
+	vscroll_areaA_.bar_length(windowHeight_ - uppersize_);
 	vscroll_areaA_.bar_pos_widthdir(windowWidth_ - ScrollBarWidth_);
 	vscroll_areaA_.bar_pos_lengthdir(uppersize_);
 	vscroll_areaA_.change_by_button(30);
+	vscroll_areaA_.current(0);
 }
 
 //--------------------------------------------------------------
@@ -1299,4 +1241,3 @@ int ofApp::vector_finder(std::vector<int>& vec, int number)
 		return -1;
 	}
 }
-
