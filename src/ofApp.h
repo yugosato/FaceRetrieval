@@ -157,6 +157,8 @@ public:
 	int overviewR_posy_;				// The Y-coordinate of reliability overview.
 	int overview_width_;				// Every overview width.
 	int overview_height_;				// Every overview height.
+	int len_positives_;					// The number of positive samples.
+	int len_negatives_;					// The number of negative samples.
 	std::vector<ofImage> positive_images_;	// Positive sample images.
 	std::vector<ofImage> negative_images_;	// Negative sample images.
 	std::vector<int> positives_;		// Positive Samples (image id).

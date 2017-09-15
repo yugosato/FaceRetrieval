@@ -116,6 +116,8 @@ void ofApp::initparam()
 	holdImgNum_ = -1;
 	holding_x_ = -1;
 	holding_y_ = -1;
+	len_positives_ = 0;
+	len_negatives_ = 0;
 
 	//-----------------------------------------
 	// Others.
@@ -369,7 +371,7 @@ void ofApp::draw()
 		}
 		else if (isremove_)
 		{
-			if ((!isHoldAndDrag_ && i == mouseover_) || selectList_[i])
+			if ((isInside_areaA_ && i == mouseover_) || selectList_[i])
 			{
 				ofSetColor(255);
 				img.draw(drawx, drawy, d_size_, d_size_);
@@ -455,8 +457,8 @@ void ofApp::draw()
 	if (isLoaded_)
 	{
 		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-		std::string positive = "Positive Sample";
-		std::string negative = "Negative Sample";
+		std::string positive = "Positive Sample: ";
+		std::string negative = "Negative Sample: ";
 		std::string reliability = "Reliability Graph";
 
 		int perHeight = windowHeight_ / 3;
@@ -470,8 +472,8 @@ void ofApp::draw()
 		overview_width_ = overview_d_size_ * overview_colShow_;
 		overview_height_ = overview_d_size_ * 4;
 
-		font_.drawString(positive, overview_margin_, posy_positive_txt);
-		font_.drawString(negative, overview_margin_, posy_negative_txt);
+		font_.drawString(positive + ofToString(len_positives_), overview_margin_, posy_positive_txt);
+		font_.drawString(negative + ofToString(len_negatives_), overview_margin_, posy_negative_txt);
 		font_.drawString(reliability, overview_margin_, posy_reliability_txt);
 	}
 
@@ -629,7 +631,6 @@ void ofApp::mouseMoved(int x, int y)
 				isInside_areaA_ = true;
 				isInside_areaP_ = false;
 				isInside_areaN_ = false;
-
 				x_dash = x - leftsize_;
 				y_dash = y - scroll_areaA_ - uppersize_;
 				mouseover_ = x_dash / d_size_ + y_dash / d_size_ * colShow_;
@@ -639,7 +640,6 @@ void ofApp::mouseMoved(int x, int y)
 				isInside_areaA_ = false;
 				isInside_areaP_ = true;
 				isInside_areaN_ = false;
-
 				x_dash = x - overview_margin_;
 				y_dash = y - overviewP_posy_;
 				mouseover_ = x_dash / overview_d_size_ + y_dash / overview_d_size_ * overview_colShow_;
@@ -649,7 +649,6 @@ void ofApp::mouseMoved(int x, int y)
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
 				isInside_areaN_ = true;
-
 				x_dash = x - overview_margin_;
 				y_dash = y - overviewN_posy_;
 				mouseover_ = x_dash / overview_d_size_ + y_dash / overview_d_size_ * overview_colShow_;
@@ -689,17 +688,16 @@ void ofApp::mouseDragged(int x, int y, int button)
 	if (vscroll_areaA_.mouseDragged(x, y))
 		return;
 
-	isInside_areaA_ = false;
-	isInside_areaP_ = false;
-	isInside_areaN_ = false;
-
 	if (isInsideWindow_)
 	{
 		if (isremove_)
 		{
-			isHoldAndDrag_ = true;
-			holdImgNum_ = mouseover_;
-			calculateHoldingOriginPoint();
+			if (mouseover_ >= 0)
+			{
+				holdImgNum_ = mouseover_;
+				isHoldAndDrag_ = true;
+				calculateHoldingOriginPoint();
+			}
 
 			// Area A.
 			if (isInsideDragingArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
@@ -768,13 +766,13 @@ void ofApp::mousePressed(int x, int y, int button)
 				isHolding_areaP_ = false;
 				isHolding_areaN_ = false;
 			}	// Area P.
-			else if (mouseover_ < (int) positives_.size() && (int) positives_.size() > 0 && isInside_areaP_)
+			else if (mouseover_ < len_positives_ && len_positives_ > 0 && isInside_areaP_)
 			{
 				isHolding_areaA_ = false;
 				isHolding_areaP_ = true;
 				isHolding_areaN_ = false;
 			}	// Area N.
-			else if (mouseover_ < (int) negatives_.size() && (int) negatives_.size() > 0 && isInside_areaN_)
+			else if (mouseover_ < len_negatives_ && len_negatives_ > 0 && isInside_areaN_)
 			{
 				isHolding_areaA_ = false;
 				isHolding_areaP_ = false;
@@ -807,7 +805,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 {
 	if (isInsideWindow_)
 	{
-		if (isremove_)
+		if (isremove_ && holdImgNum_ >= 0)
 		{
 			if (isHolding_areaA_)
 			{
@@ -822,13 +820,17 @@ void ofApp::mouseReleased(int x, int y, int button)
 					// A -> P.
 					if (isInside_areaP_)
 					{
+						std::cout << "[ofApp] Result No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Positive." << std::endl;
 						positives_.push_back(dragImgId);
 						positive_images_.push_back(dragImg);
+						len_positives_ = positives_.size();
 					}	// A -> N.
 					else if (isInside_areaN_)
 					{
+						std::cout << "[ofApp] Result No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Negative." << std::endl;
 						negatives_.push_back(dragImgId);
 						negative_images_.push_back(dragImg);
+						len_negatives_ = negatives_.size();
 					}
 				}
 			}
@@ -841,18 +843,23 @@ void ofApp::mouseReleased(int x, int y, int button)
 				// P -> A.
 				if (isInside_areaA_)
 				{
+					std::cout << "[ofApp] Positive No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Removed." << std::endl;
 					positives_.erase(positives_.begin() + holdImgNum_);
 					positive_images_.erase(positive_images_.begin() + holdImgNum_);
+					len_positives_ = positives_.size();
 				}	// P -> N.
 				else if (isInside_areaN_)
 				{
 					int check_duplication = vector_finder(negatives_, dragImgId);
 					if (check_duplication < 0)
 					{
+						std::cout << "[ofApp] Positive No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Negative." << std::endl;
 						negatives_.push_back(dragImgId);
 						negative_images_.push_back(dragImg);
 						positives_.erase(positives_.begin() + holdImgNum_);
 						positive_images_.erase(positive_images_.begin() + holdImgNum_);
+						len_positives_ = positives_.size();
+						len_negatives_ = negatives_.size();
 					}
 				}
 			}
@@ -865,18 +872,23 @@ void ofApp::mouseReleased(int x, int y, int button)
 				// N -> A.
 				if (isInside_areaA_)
 				{
+					std::cout << "[ofApp] Negative No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Removed." << std::endl;
 					negatives_.erase(negatives_.begin() + holdImgNum_);
 					negative_images_.erase(negative_images_.begin() + holdImgNum_);
+					len_negatives_ = negatives_.size();
 				}	// N -> P.
 				else if (isInside_areaP_)
 				{
 					int check_duplication = vector_finder(positives_, dragImgId);
 					if (check_duplication < 0)
 					{
+						std::cout << "[ofApp] Negative No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Positive." << std::endl;
 						positives_.push_back(dragImgId);
 						positive_images_.push_back(dragImg);
 						negatives_.erase(negatives_.begin() + holdImgNum_);
 						negative_images_.erase(negative_images_.begin() + holdImgNum_);
+						len_positives_ = positives_.size();
+						len_negatives_ = negatives_.size();
 					}
 				}
 			}
@@ -990,19 +1002,18 @@ void ofApp::mouseReleased(int x, int y, int button)
 		}
 	}
 
+	if (vscroll_areaA_.mouseReleased(x, y))
+		return;
+
 	clickx_ = -1;
 	clicky_ = -1;
 	click_ = false;
-
-	if (vscroll_areaA_.mouseReleased(x, y))
-		return;
 
 	dragx_ = -1;
 	dragy_ = -1;
 	holding_x_ = -1;
 	holding_y_ = -1;
 	holdImgNum_ = -1;
-	mouseover_ = -1;
 
 	isHoldAndDrag_ = false;
 	isHolding_areaA_ = false;
