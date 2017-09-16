@@ -710,6 +710,7 @@ void ofApp::mousePressed(int x, int y, int button)
 	clickx_ = x;
 	clicky_ = y;
 	click_ = true;
+	holdImgNum_ = -1;
 
 	if (clickx_ < leftsize_)
 		leftsideclick_ = true;
@@ -942,8 +943,6 @@ void ofApp::mouseReleased(int x, int y, int button)
 	dragy_ = -1;
 	holding_x_ = -1;
 	holding_y_ = -1;
-	holdImgNum_ = -1;
-	mouseover_ = -1;
 
 	isHoldAndDrag_ = false;
 	isHolding_areaA_ = false;
