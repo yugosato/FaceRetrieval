@@ -356,6 +356,24 @@ void ofApp::draw()
 
 			if ((isHolding_areaA_ && i == holdImgNum_) || exist_positive >= 0 || exist_negative >= 0)
 			{
+				if (exist_positive >= 0)
+				{
+					int margin = 5;
+					ofNoFill();
+					ofSetLineWidth(5);
+					ofSetColor(ofColor(255.0f, 0.0f, 0.0f, 255.0f));
+					ofDrawRectangle(drawx + margin, drawy + margin, d_size_ - 2*margin, d_size_ - 2*margin);
+
+				}
+				else if (exist_negative >=0)
+				{
+					int margin = 5;
+					ofNoFill();
+					ofSetLineWidth(5);
+					ofSetColor(ofColor(0.0f, 0.0f, 255.0f, 255.0f));
+					ofDrawRectangle(drawx + margin, drawy + margin, d_size_ - 2 * margin, d_size_ - 2 * margin);
+				}
+
 				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
 				img.draw(drawx, drawy, d_size_, d_size_);
 			}
