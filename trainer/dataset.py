@@ -6,9 +6,9 @@ import chainer
 
 
 class ImportDataset(chainer.dataset.DatasetMixin):
-    def __init__(self, listfile, inputfilefile):
+    def __init__(self, listfile, inputfile):
         self.listfile_ = listfile
-        self.inputfile_ = inputfilefile
+        self.inputfile_ = inputfile
         self.load()
         self.setsamples()
 
