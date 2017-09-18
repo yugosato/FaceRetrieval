@@ -4,6 +4,7 @@ home_dir = "/home/yugo/workspace/Interface/trainer"
 import chainer
 from chainer import training
 from chainer.training import extensions
+from chainer import serializers
 from chainer import cuda
 import json
 import sys
@@ -77,6 +78,10 @@ def train_model():
     global weight, bias
     weight = model.fc2.W.data
     bias = model.fc2.b.data
+
+    model_name = home_dir + "/result/iter-" + str(train.iter_num_ - 1) + "_model.npz"
+    serializers.save_npz(model_name, model)
+    print "[Trainer] Saved model."
     print "[Trainer] Finished training."
 
 
