@@ -24,18 +24,17 @@ class ImportDataset(chainer.dataset.DatasetMixin):
 
 
     def get_split_sample(self, i):
-        positives = self.samplelists_["iter" + str(i)]["positive"]
-        negatives = self.samplelists_["iter" + str(i)]["negative"]
-        pos_num = len(positives)
-        neg_num = len(negatives)
-
+        self.positives_ = self.samplelists_["iter" + str(i)]["positive"]
+        self.negatives_ = self.samplelists_["iter" + str(i)]["negative"]
+        pos_num = len(self.positives_)
+        neg_num = len(self.negatives_)
 
         pairs = []
         if pos_num > 0:
-            for pos in positives:
+            for pos in self.positives_:
                 pairs.append((self.features_[pos], 1))
         if neg_num > 0:
-            for neg in negatives:
+            for neg in self.negatives_:
                 pairs.append((self.features_[neg], 0))
         return  pairs, pos_num, neg_num
 
@@ -44,7 +43,7 @@ class ImportDataset(chainer.dataset.DatasetMixin):
         self.base_ = []
         pairs, pos_n, neg_n = self.get_split_sample(self.iter_num_ - 1)
         self.base_ = pairs
-        print "[Trainer] Total sample size: {} (Positive: {}, Negative: {})".format(len(self.base_), pos_n, neg_n)
+        print "[Dataset] Total sample size: {} (Positive: {}, Negative: {})".format(len(self.base_), pos_n, neg_n)
 
 
     def get_example(self, i):

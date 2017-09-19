@@ -28,3 +28,10 @@ class MyModel(Chain):
     def extract(self, x):
         h = F.dropout(F.relu(self.fc1(x)), train=False, ratio=0.5)
         return self.fc2(h)
+
+
+    def forward(self, x):
+        h = F.dropout(F.relu(self.fc1(x)), train=False, ratio=0.5)
+        h = F.dropout(F.relu(self.fc2(h)), train=False, ratio=0.5)
+        h = self.fc3(h)
+        return F.softmax(h)
