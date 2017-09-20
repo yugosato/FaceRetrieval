@@ -106,12 +106,34 @@ class ActiveSelection():
         self.write(os.path.join(home_dir, "result/random_index.txt"), random_index)
 
 
+    def estimate_class(self):
+        # result = self.clf_.predict(self.features_)
+        proba = self.clf_.predict_proba(self.features_)
+        positive_index = self.sort_positive(proba)
+        negative_index = self.sort_negative(proba)
+        self.write(os.path.join(home_dir, "result/positive_index.txt"), positive_index)
+        self.write(os.path.join(home_dir, "result/negative_index.txt"), negative_index)
+
+
+    def sort_positive(self, proba):
+        positive_proba = []
+        for prob in proba:
+            positive_proba.append(prob[1])
+        return np.argsort(positive_proba)[::-1]
+
+
+    def sort_negative(self, proba):
+        negative_proba = []
+        for prob in proba:
+            negative_proba.append(prob[0])
+        return np.argsort(negative_proba)[::-1]
+
+
     def write(self, filename, index):
         if not os.path.exists(os.path.join(home_dir, "result")):
             os.makedirs(os.path.join(home_dir, "result"))
         np.savetxt(filename, np.array(index), fmt="%.0f")
         print "[ActiveSelection] Saved result. --> {}".format(filename)
-
 
 
 class Chainer2LibAct(ProbabilisticModel):
@@ -123,7 +145,7 @@ class Chainer2LibAct(ProbabilisticModel):
         return self.model_
 
     def predict(self, x_data):
-        return
+        return self.predict_proba(x_data).argmax(1)
 
     def score(self, x_data):
         return
@@ -143,6 +165,7 @@ def main():
     # Active Selection.
     ActSel = ActiveSelection(samplelist, py_setting)
     ActSel.run()
+    ActSel.estimate_class()
 
 
 if __name__ == '__main__':
