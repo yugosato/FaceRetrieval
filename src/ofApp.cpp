@@ -88,10 +88,15 @@ void ofApp::initparam()
 	candidatefile_eval_ = logdir_ + "candidate_nontrain.txt";
 	init_candidatefile_ = binData_ + "cfd/initialize.txt";
 
-	// Online Training Settings.
+	// Python Settings.
 	pysettingfile_ = binData_ + "cfd/py_setting.txt";
 	samplefile_ = logdir_ + "feedback.txt";
-	pythonfile_ = "/home/yugo/workspace/Interface/trainer/trainmodel.py";
+	trainerfile_ = "/home/yugo/workspace/Interface/trainer/trainmodel.py";
+	activeSelectionfile_ = "/home/yugo/workspace/Interface/trainer/active_selection.py";
+	positiveIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/positive_index.txt";
+	negativeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/negative_index.txt";
+	uncertainIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/uncertain_index.txt";
+	randomIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/random_index.txt";
 
 	//-----------------------------------------
 	// Retrieval results.
@@ -120,6 +125,8 @@ void ofApp::initparam()
 	epoch_ = 0;
 	isLoaded_ = false;
 	isSearchedAll_ = false;
+	isReady_ = false;
+	isActiveSelected_ = false;
 	canSearch_ = false;
 }
 
@@ -197,7 +204,11 @@ void ofApp::setup()
 
 	// Setup online trainer.
 	trainer_ = new Trainer;
-	trainer_->setup(pythonfile_);
+	trainer_->setup(trainerfile_);
+
+	// Setup active selection.
+	selection_ = new Selection;
+	selection_->setup(activeSelectionfile_, positiveIndexfile_, negativeIndexfile_, uncertainIndexfile_, randomIndexfile_);
 
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Matrix file: \"" << matrixFile_ << "\"" << std::endl;
@@ -235,6 +246,7 @@ void ofApp::exit()
 	delete logger_removed_;
 	delete logger_eval_;
 	delete trainer_;
+	delete selection_;
 }
 
 //--------------------------------------------------------------
@@ -275,7 +287,7 @@ void ofApp::update()
 		starttime_ngt_ = clock();
 	}
 
-	if (!isSearchedAll_ && ngt_->isSearched_)
+	if (ngt_->isSearched_)
 	{
 		ngt_->stopThread();
 		ngt_->isSearched_ = false;
@@ -292,18 +304,35 @@ void ofApp::update()
 			isSearchedAll_ = true;
 		}
 	}
-	else if (isSearchedAll_)
+
+	if (isSearchedAll_)
 	{
 		endtime_ngt_ = clock();
 		std::cout << "[ofApp] Searching time: " << (double)(endtime_ngt_ - starttime_ngt_) / CLOCKS_PER_SEC << "sec." << std::endl;
+		isSearchedAll_ = false;
+		selection_->startThread();
+	}
+
+	if (selection_->isSelected_)
+	{
+		selection_->stopThread();
+		selection_->isSelected_ = false;
+		selection_->getNumber_Uncertain(&number_Uncertain_);
+		isReady_ = true;
+	}
+
+	if (isReady_)
+	{
+		isReady_ = false;
 		database_->setNumber(number_main_);
 		database_->setNumber_eval(number_eval_);
+		database_->setNumber_Uncertain(number_Uncertain_);
+
 		calculate();
 		onPaint(showList_removed_);
 		inputHistory();
 
 		canSearch_ = true;
-		isSearchedAll_ = false;
 		endtime_ = clock();
 
 		std::cout << "[ofApp] Total processing time: " << (double)(endtime_ - starttime_) / CLOCKS_PER_SEC << "sec." << std::endl;
@@ -390,8 +419,8 @@ void ofApp::draw()
 		}
 	}
 
-    ofSetColor(0);
-    ofDrawRectangle(1000, 0, 600, 40);
+    ofSetColor(ofColor(0.0f, 0.0f, 0.0f, 255.0f));
+    ofDrawRectangle(leftsize_, 0, windowWidth_ - leftsize_, uppersize_);
 
    	ofSetColor(255);
 	std::string search = "Search: ";

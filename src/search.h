@@ -84,6 +84,7 @@ public:
 	{
 		try
 		{
+			std::cout << "[Search] Start NGT searching." << std::endl;
 			isSearched_ = false;
 			lock();
 			NGT::Object* query = 0;
@@ -109,6 +110,7 @@ public:
 			objects_ = objects;
 			unlock();
 			isSearched_ = true;
+			std::cout << "[Search] Finished NGT searching." << std::endl;
 		}
 		catch (NGT::Exception &err)
 		{

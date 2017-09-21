@@ -8,6 +8,7 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
+#include "ofMain.h"
 #include "boost/python.hpp"
 #include "boost/python/numpy.hpp"
 
@@ -31,10 +32,8 @@ public:
 		std::ifstream ifs(pythonfile_);
 		if (!ifs)
 			std::cerr << "[Warning] Cannot open the specified file. " << pythonfile_ << std::endl;
-
 		std::string script((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 		script_ = script;
-
 
 		isTrained_ = false;
 	}
@@ -45,7 +44,6 @@ public:
 		{
 			isTrained_ = false;
 			lock();
-
 			char python_home[] = "/home/yugo/anaconda2";
 			Py_SetPythonHome(python_home);
 			Py_Initialize();
@@ -54,7 +52,6 @@ public:
 			boost::python::exec(script_.c_str(), main_namespace_, main_namespace_);
 			trainer_ = main_namespace_["train_model"];
 			extracter_ = main_namespace_["feature_extract"];
-
 			trainer_();
 			unlock();
 			isTrained_ = true;

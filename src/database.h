@@ -20,6 +20,7 @@ public:
 	std::vector<int> number_;
 	std::vector<int> number_removed_;
 	std::vector<int> number_eval_;
+	std::vector<int> number_Uncertain_;
 	std::vector<int> showList_;
 	std::vector<int> history_;
 	std::vector<int> ids_;
@@ -191,6 +192,18 @@ public:
 
 		for (int i = 0; i < size; ++i)
 			number_eval_[i] = number[i];
+	}
+
+	void setNumber_Uncertain(const std::vector<int>& number)
+	{
+		const int size = number.size();
+
+		number_Uncertain_.clear();
+		std::vector<int>().swap(number_Uncertain_);
+		number_Uncertain_.resize(size);
+
+		for (int i = 0; i < size; ++i)
+			number_Uncertain_[i] = number[i];
 	}
 
 	void getName(std::vector<std::string>* nameList) const

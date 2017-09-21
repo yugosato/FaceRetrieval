@@ -19,6 +19,7 @@
 #include "search.h"
 #include "writer.h"
 #include "trainer.h"
+#include "selection.h"
 #include "time.h"
 #include "ScrollBar4OF.hpp"
 
@@ -126,10 +127,15 @@ public:
 	std::string candidatefile_eval_;	// Candidate list (comparison).
 	std::string init_candidatefile_;	// Initial candidates list.
 
-	// Online Training Settings.
+	// Python Settings.
 	std::string pysettingfile_;			// Python settings.
 	std::string samplefile_;			// Training sample list.
-	std::string pythonfile_;			// Script file.
+	std::string trainerfile_;			// Script file (Trainer).
+	std::string activeSelectionfile_;	// Script file (Active Selection).
+	std::string positiveIndexfile_;		// Estimated positive index file.
+	std::string negativeIndexfile_;		// Estimated negative index file.
+	std::string uncertainIndexfile_;	// Active Selection index file.
+	std::string randomIndexfile_;		// Random Selection index file.
 
 	//-----------------------------------------
 	// Overview Settings.
@@ -165,6 +171,8 @@ public:
 	int epoch_;				// The number of current search iteration.
 	bool isLoaded_;			// Flag: Finished loading image features file.
 	bool isSearchedAll_;	// Flag: Finished searching.
+	bool isReady_;			// Flag: Finished all background processes.
+	bool isActiveSelected_;	// Flag: Finished active selection.
 	bool canSearch_;		// Flag: Ready to search.
 
 	//-----------------------------------------
@@ -176,6 +184,10 @@ public:
 	std::vector<int> showList_nonTrain_; 	// Retrieval results (comparison: full-paths).
 	bool isremove_;							// Switch: Display results removeed duplication.
 	bool iseval_;							// Switch: Display comparison results.
+
+	//-----------------------------------------
+	// Retrieval results.
+	std::vector<int> number_Uncertain_;		// Uncertain image selected using active selection.
 
 	//-----------------------------------------
 	// Time Record.
@@ -269,6 +281,7 @@ public:
 	Logger* logger_main_;			// Logger (main).
 	Logger* logger_removed_;		// Logger (removed).
 	Logger* logger_eval_;			// Logger (comparison method).
-	Trainer* trainer_;				// Run Python script.
+	Trainer* trainer_;				// Online Trainer.
+	Selection* selection_;			// Active Selection.
 };
 

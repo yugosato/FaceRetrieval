@@ -106,7 +106,7 @@ class ActiveSelection():
         self.write(os.path.join(home_dir, "result/random_index.txt"), random_index)
 
 
-    def estimate_class(self):
+    def run_estimate_class(self):
         # result = self.clf_.predict(self.features_)
         proba = self.clf_.predict_proba(self.features_)
         positive_index = self.sort_positive(proba)
@@ -156,7 +156,7 @@ class Chainer2LibAct(ProbabilisticModel):
         return y.data
 
 
-def main():
+def active_selection():
 
     # File paths.
     samplelist = "/home/yugo/workspace/Interface/bin/log/feedback.txt"
@@ -165,8 +165,4 @@ def main():
     # Active Selection.
     ActSel = ActiveSelection(samplelist, py_setting)
     ActSel.run()
-    ActSel.estimate_class()
-
-
-if __name__ == '__main__':
-    main()
+    ActSel.run_estimate_class()

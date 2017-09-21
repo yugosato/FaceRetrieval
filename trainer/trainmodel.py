@@ -21,7 +21,16 @@ weight = None
 bias = None
 model = None
 
+def remove(dirpath):
+    if os.path.exists(dirpath):
+        files = os.listdir(dirpath)
+        for file in files:
+            os.remove(os.path.join(dirpath, file))
+
 def train_model():
+
+    # Remove old files
+    remove(os.path.join(home_dir, "result"))
 
     # File paths
     listfile = "/home/yugo/workspace/Interface/bin/log/feedback.txt"
