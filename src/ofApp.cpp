@@ -273,9 +273,9 @@ void ofApp::update()
 		logger_main_ = new Logger;
 		logger_eval_ = new Logger;
 
-		logger_active_->setup(candidatefile_active_, pysettingfile_, npyFile_, loading_->col_);
-		logger_main_->setup(candidatefile_main_, pysettingfile_, npyFile_, loading_->col_);
-		logger_eval_->setup(candidatefile_eval_, pysettingfile_, npyFile_, loading_->col_);
+		logger_active_->setup(samplefile_, candidatefile_active_, pysettingfile_, npyFile_, loading_->col_);
+		logger_main_->setup(samplefile_, candidatefile_main_, pysettingfile_, npyFile_, loading_->col_);
+		logger_eval_->setup(samplefile_, candidatefile_eval_, pysettingfile_, npyFile_, loading_->col_);
 
 		logger_main_->writePySetting();
 

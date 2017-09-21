@@ -33,10 +33,9 @@ def train_model():
     remove(os.path.join(home_dir, "result"))
 
     # File paths
-    listfile = "/home/yugo/workspace/Interface/bin/log/feedback.txt"
     py_settingfile = "/home/yugo/workspace/Interface/bin/data/cfd/py_setting.txt"
-
     settings = json.load(open(py_settingfile, "r"))
+    listfile = settings["feedback_file"]
     inputfile = settings["input_file"]
     unit = settings["unit"]
 

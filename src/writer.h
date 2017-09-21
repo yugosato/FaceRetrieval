@@ -82,6 +82,7 @@ public:
 class Logger
 {
 public:
+	std::string feedbackfile_;
 	std::string candidatefile_;
 	std::string pysettingfile_;
 	std::string npyfile_;
@@ -91,8 +92,9 @@ public:
 
 
 public:
-	void setup(const std::string& candidatefile, const std::string& pysettingfile, const std::string& npyfile, const int dim)
+	void setup(const std::string& feedbackfile, const std::string& candidatefile, const std::string& pysettingfile, const std::string& npyfile, const int dim)
 	{
+		feedbackfile_ = feedbackfile;
 		candidatefile_ = candidatefile;
 		pysettingfile_ = pysettingfile;
 		npyfile_ = npyfile;
@@ -136,6 +138,7 @@ public:
 			std::cerr << "[Warning] Cannot open the specified file. " << candidatefile_ << std::endl;
 
 		writer << "{" << std::endl;
+		writer << "  \"feedback_file\":\"" << feedbackfile_ << "\"," << std::endl;
 		writer << "  \"input_file\":\"" << npyfile_ << "\"," << std::endl;
 		writer << "  \"unit\":" << dim_ << std::endl;
 		writer << "}" << std::endl;

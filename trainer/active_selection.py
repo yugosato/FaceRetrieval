@@ -18,13 +18,13 @@ os.environ["PATH"] += ":/usr/local/cuda-8.0/bin:/usr/local/cuda-8.0/bin"
 
 class ActiveSelection():
 
-    def __init__(self, listfile, py_settingfile):
-        self.listfile_ = listfile
+    def __init__(self, py_settingfile):
         self.py_settingfile_ = py_settingfile
 
 
     def load_dataset(self):
         settings = json.load(open(self.py_settingfile_, "r"))
+        self.listfile_ = settings["feedback_file"]
         self.inputfile_ = settings["input_file"]
         self.unit_ = settings["unit"]
         self.ImpData_ = ImportDataset(self.listfile_, self.inputfile_)
@@ -159,10 +159,9 @@ class Chainer2LibAct(ProbabilisticModel):
 def active_selection():
 
     # File paths.
-    samplelist = "/home/yugo/workspace/Interface/bin/log/feedback.txt"
     py_setting = "/home/yugo/workspace/Interface/bin/data/cfd/py_setting.txt"
 
     # Active Selection.
-    ActSel = ActiveSelection(samplelist, py_setting)
+    ActSel = ActiveSelection(py_setting)
     ActSel.run()
     ActSel.run_estimate_class()
