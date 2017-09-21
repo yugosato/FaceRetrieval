@@ -184,6 +184,7 @@ public:
 	std::vector<int> showList_main_;	 	// Retrieval results (main: show list).
 	std::vector<int> showList_eval_;	 	// Retrieval results (compatison: show list).
 	bool isactive_;							// Switch: Display active selection results.
+	bool ismain_;							// Switch: Display main results.
 	bool iseval_;							// Switch: Display comparison results.
 
 	//-----------------------------------------

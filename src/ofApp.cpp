@@ -101,6 +101,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	// Retrieval results.
 	isactive_ = true;
+	ismain_ = false;
 	iseval_ = false;
 
 	//-----------------------------------------
@@ -352,6 +353,9 @@ void ofApp::update()
 //--------------------------------------------------------------
 void ofApp::draw()
 {
+	ofFill();
+	ofSetLineWidth(1);
+
 	if (!isLoaded_)
 	{
 		std::string nowload = "Now Loading...\n";
@@ -408,18 +412,22 @@ void ofApp::draw()
 					ofDrawRectangle(drawx + margin, drawy + margin, d_size_ - 2 * margin, d_size_ - 2 * margin);
 				}
 
+				ofFill();
+				ofSetLineWidth(1);
 				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
 				img.draw(drawx, drawy, d_size_, d_size_);
 			}
 			else
 			{
-				ofSetColor(255);
+				ofFill();
+				ofSetLineWidth(1);
+				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 				img.draw(drawx, drawy, d_size_, d_size_);
 			}
 		}
 		else if (!isactive_)
 		{
-			ofSetColor(255);
+			ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 			img.draw(drawx, drawy, d_size_, d_size_);
 		}
 	}
@@ -427,7 +435,7 @@ void ofApp::draw()
     ofSetColor(ofColor(0.0f, 0.0f, 0.0f, 255.0f));
     ofDrawRectangle(leftsize_, 0, windowWidth_ - leftsize_, uppersize_);
 
-   	ofSetColor(255);
+   	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	std::string search = "Search: ";
 	std::string epoch = ofToString(epoch_);
 	font_.drawString(search + epoch, buttonposx_eval_ + buttonwidth_active_ + 50, 25);
@@ -449,26 +457,24 @@ void ofApp::draw()
 	forwardbutton0_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
 	searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
 
-	if (!isactive_ && !iseval_)
-	{
-		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button2_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button1_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-	}
-	else if (isactive_ && !iseval_)
+	if (isactive_)
 	{
 		button2_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 	}
-	else if (!isactive_ && iseval_)
+	else if (ismain_)
+	{
+		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button2_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button1_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+	}
+	else if (iseval_)
 	{
 		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button2_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 	}
-
-	vscroll_areaA_.draw();
 
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
 	if (isInsideWindow_ && isactive_)
@@ -559,6 +565,8 @@ void ofApp::draw()
 			}
 		}
 	}
+
+	vscroll_areaA_.draw();
 
 	if (isHoldAndDrag_)
 	{
@@ -922,12 +930,14 @@ void ofApp::mouseReleased(int x, int y, int button)
 			if (isReleasedArea(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
 			{
 				isactive_ = true;
+				ismain_ = false;
 				iseval_ = false;
 				onPaint(showList_active_);
 			}
 			else if (isReleasedArea(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
 			{
 				isactive_ = false;
+				ismain_ = true;
 				iseval_ = false;
 				onPaint(showList_main_);
 			}
@@ -935,6 +945,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			else if (isReleasedArea(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
 			{
 				isactive_ = false;
+				ismain_ = false;
 				iseval_ = true;
 				onPaint(showList_eval_);
 			}
@@ -1212,11 +1223,11 @@ void ofApp::sizeChanged()
 	}
 
 	std::vector<int>* sList;
-	if (isactive_ && !iseval_)
+	if (isactive_)
 		sList = &showList_active_;
-	else if (!isactive_ && !iseval_)
+	else if (ismain_)
 		sList = &showList_main_;
-	else if (!isactive_ && iseval_)
+	else if (iseval_)
 		sList = &showList_eval_;
 
 	rowShow_ = (sList->size() + colShow_ - 1) / colShow_;
