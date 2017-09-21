@@ -1,6 +1,9 @@
 #include "ofApp.h"
 
 
+inline int toInt(std::string s) {int v; std::istringstream sin(s);sin>>v;return v;}
+template<class T> inline std::string toString(T x) {std::ostringstream sout;sout<<x;return sout.str();}
+
 void ofApp::initparam()
 {
 	//-----------------------------------------
@@ -82,7 +85,9 @@ void ofApp::initparam()
 #endif
 
 	// Log Settings.
-	logdir_ = "/home/yugo/workspace/Interface/bin/log/";
+	std::string time;
+	put_time(time);
+	logdir_ = "/home/yugo/workspace/Interface/bin/log/" + time + "/";
 	candidatefile_active_ = logdir_ + "candidate_active.txt";
 	candidatefile_main_ = logdir_ + "candidate_main.txt";
 	candidatefile_eval_ = logdir_ + "candidate_eval.txt";
@@ -599,7 +604,9 @@ void ofApp::keyPressed(int key)
 		{
 			ofImage img;
 			img.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
-			std::string savepath = "/home/yugo/workspace/Interface/bin/snapshot/" + ofGetTimestampString() + ".jpeg";
+			std::string time;
+			put_time(time);
+			std::string savepath = logdir_ + time + ".jpeg";
 			img.save(savepath);
 			std::cout << "[ofApp] Saved snapshot image." << std::endl;
 			std::cout << "[ofApp] --> \"" << savepath << "\"" << std::endl;
@@ -1304,4 +1311,22 @@ int ofApp::vector_finder(std::vector<int>& vec, int number)
 	{
 		return -1;
 	}
+}
+
+//--------------------------------------------------------------
+void ofApp::put_time(std::string& time_str)
+{
+    time_t     current;
+    struct tm  *local;
+
+    time(&current);
+    local = localtime(&current);
+
+    std::string year = toString<int>(local->tm_year + 1900);
+    std::string hour = toString<int>(local->tm_hour);
+    std::string min = toString<int>(local->tm_min);
+    std::string sec = toString<int>(local->tm_sec);
+    std::string delim = "-";
+
+    time_str = year + delim + hour + delim + min + delim + sec;
 }

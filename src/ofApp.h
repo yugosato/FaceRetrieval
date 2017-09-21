@@ -9,6 +9,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <time.h>
+#include <stdio.h>
 #include <fstream>
 #include <sys/stat.h>
 #include "NGT/Index.h"
@@ -20,7 +22,6 @@
 #include "writer.h"
 #include "trainer.h"
 #include "selection.h"
-#include "time.h"
 #include "ScrollBar4OF.hpp"
 
 
@@ -245,7 +246,7 @@ public:
 
 public:
 	int vector_finder(std::vector<int>& vec, int number);
-
+	void put_time(std::string& time_str);
 
 public:
 	ofxUIScrollableCanvas* gui_;
