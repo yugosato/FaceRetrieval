@@ -102,7 +102,7 @@ class ActiveSelection():
         self.score_sorted_ = sorted(score, key=lambda x:x[1], reverse=True)
         uncertain_index = self.getIndexfromScore()
         random_index = self.getRandomIndex()
-        self.write(os.path.join(home_dir, "result/uncertain_index.txt"), uncertain_index)
+        self.write(os.path.join(home_dir, "result/active_index.txt"), uncertain_index)
         self.write(os.path.join(home_dir, "result/random_index.txt"), random_index)
 
 

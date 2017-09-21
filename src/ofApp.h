@@ -58,16 +58,16 @@ public:
 	const int fontsize_ = 16;			// Font size.
 	const int buttonheight_ = 30;		// Button height.
 	const int historybuttonwidth_ = buttonheight_;	// History button width.
-	const int removebuttonwidth_ = buttonheight_;	// Remove button width.
+	const int buttonwidth_active_ = buttonheight_;	// Show active selection results button width.
 	const int buttonposy_line1_ = 5;	// The Y-coordinate of buttons on the 1st line.
 	const int backbuttonposx_ = 1505;	// The X-coordinate of step back button.
 	const int forwardbuttonposx_ = 1540;// The X-coordinate of step forward button.
 	const int searchbuttonposx_ = 1000;	// The X-coordinate of search button.
 	const int searchbuttonwidth_ = 90;	// Search button width.
 	const int buttonposy_line2_ = buttonposy_line1_ + buttonheight_ + 5;	// The Y-coordinate of buttons on the 1st line.
-	const int removebuttonposx_ = 1095;		// The X-coordinate of button displays the results removed duplication.
-	const int non_removebuttonposx_ = 1130;	// The X-coordinate of button displays the results remain duplication.
-	const int evalbuttonposx_ = 1165;		// The X-coordinate of button displays the camparison results.
+	const int buttonposx_active_ = 1095;	// The X-coordinate of button displays the active selection results.
+	const int buttonposx_main_ = 1130;		// The X-coordinate of button displays the main results.
+	const int buttonposx_eval_ = 1165;		// The X-coordinate of button displays the camparison results.
 	const int guiScrollarea_height_ = 280;	// ScrollableCanvas's height (ofxUI).
 
 	//-----------------------------------------
@@ -122,8 +122,8 @@ public:
 
 	// Log Settings.
 	std::string logdir_;				// Log output directory.
+	std::string candidatefile_active_;	// Candidate list (active selection).
 	std::string candidatefile_main_;	// Candidate list (main).
-	std::string candidatefile_removed_;	// Candidate list (removed duplication).
 	std::string candidatefile_eval_;	// Candidate list (comparison).
 	std::string init_candidatefile_;	// Initial candidates list.
 
@@ -134,7 +134,7 @@ public:
 	std::string activeSelectionfile_;	// Script file (Active Selection).
 	std::string positiveIndexfile_;		// Estimated positive index file.
 	std::string negativeIndexfile_;		// Estimated negative index file.
-	std::string uncertainIndexfile_;	// Active Selection index file.
+	std::string activeIndexfile_;	// Active Selection index file.
 	std::string randomIndexfile_;		// Random Selection index file.
 
 	//-----------------------------------------
@@ -177,17 +177,14 @@ public:
 
 	//-----------------------------------------
 	// Retrieval results.
+	std::vector<int> number_active_;		// Active selection results.
 	std::vector<int> number_main_;			// Retrieval results (main: images' ids).
 	std::vector<int> number_eval_;			// Retrieval results (comparison: images' ids).
-	std::vector<int> showList_;			 	// Retrieval results (main: full-paths).
-	std::vector<int> showList_removed_;		// Retrieval results (removeed duplication: full-paths).
-	std::vector<int> showList_nonTrain_; 	// Retrieval results (comparison: full-paths).
-	bool isremove_;							// Switch: Display results removeed duplication.
+	std::vector<int> showList_active_;		// Selection image (active selection: show list).
+	std::vector<int> showList_main_;	 	// Retrieval results (main: show list).
+	std::vector<int> showList_eval_;	 	// Retrieval results (compatison: show list).
+	bool isactive_;							// Switch: Display active selection results.
 	bool iseval_;							// Switch: Display comparison results.
-
-	//-----------------------------------------
-	// Retrieval results.
-	std::vector<int> number_Uncertain_;		// Uncertain image selected using active selection.
 
 	//-----------------------------------------
 	// Time Record.
@@ -232,8 +229,8 @@ public:
 	inline void sizeChanged();
 	inline void backhistory();
 	inline void forwardhistory();
-	inline void back();
-	inline void forward();
+//	inline void back();
+//	inline void forward();
 	inline bool isReleasedArea(float x, float y, float w, float h);
 	inline bool isInsideDragingArea(float x, float y, float w, float h);
 	inline bool isInsideMouseoverArea(float x, float y, float w, float h);
@@ -266,20 +263,22 @@ public:
 	ofImage forwardbutton2_;
 	ofImage searchbutton1_;
 	ofImage searchbutton2_;
-	ofImage non_removebutton1_;
-	ofImage non_removebutton2_;
-	ofImage removebutton1_;
-	ofImage removebutton2_;
-	ofImage evalbutton1_;
-	ofImage evalbutton2_;
+	ofImage button1_active_;
+	ofImage button2_active_;
+	ofImage button1_main_;
+	ofImage button2_main_;
+	ofImage button1_eval_;
+	ofImage button2_eval_;
 
+
+public:
 	DataBase* database_;			// Database information.
 	NowLoading* loading_;			// Load Image features.
 	ImageLoader* loader_; 			// Load Images
 	Search* ngt_;					// NGT
 	SampleWriter* samplewriter_;	// Training sample writer
+	Logger* logger_active_;			// Logger (active selection).
 	Logger* logger_main_;			// Logger (main).
-	Logger* logger_removed_;		// Logger (removed).
 	Logger* logger_eval_;			// Logger (comparison method).
 	Trainer* trainer_;				// Online Trainer.
 	Selection* selection_;			// Active Selection.

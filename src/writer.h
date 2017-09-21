@@ -141,6 +141,7 @@ public:
 		writer << "}" << std::endl;
 		writer.close();
 	}
+
 };
 
 #endif /* SRC_WRITER_H_ */

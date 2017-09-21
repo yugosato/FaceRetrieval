@@ -83,9 +83,9 @@ void ofApp::initparam()
 
 	// Log Settings.
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/";
-	candidatefile_main_ = logdir_ + "candidate_train.txt";
-	candidatefile_removed_ = logdir_ + "candidate_train-removed.txt";
-	candidatefile_eval_ = logdir_ + "candidate_nontrain.txt";
+	candidatefile_active_ = logdir_ + "candidate_active.txt";
+	candidatefile_main_ = logdir_ + "candidate_main.txt";
+	candidatefile_eval_ = logdir_ + "candidate_eval.txt";
 	init_candidatefile_ = binData_ + "cfd/initialize.txt";
 
 	// Python Settings.
@@ -95,12 +95,12 @@ void ofApp::initparam()
 	activeSelectionfile_ = "/home/yugo/workspace/Interface/trainer/active_selection.py";
 	positiveIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/positive_index.txt";
 	negativeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/negative_index.txt";
-	uncertainIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/uncertain_index.txt";
+	activeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/active_index.txt";
 	randomIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/random_index.txt";
 
 	//-----------------------------------------
 	// Retrieval results.
-	isremove_ = true;
+	isactive_ = true;
 	iseval_ = false;
 
 	//-----------------------------------------
@@ -140,12 +140,12 @@ void ofApp::loadImageandFont()
 	forwardbutton1_.load(binData_ + "items/canForward1.png");
 	searchbutton1_.load(binData_ + "items/search1.png");
 	searchbutton2_.load(binData_ + "items/search2.png");
-	non_removebutton1_.load(binData_ + "items/non-remove1.png");
-	non_removebutton2_.load(binData_ + "items/non-remove2.png");
-	removebutton1_.load(binData_ + "items/remove1.png");
-	removebutton2_.load(binData_ + "items/remove2.png");
-	evalbutton1_.load(binData_ + "items/eval1.png");
-	evalbutton2_.load(binData_ + "items/eval2.png");
+	button1_active_.load(binData_ + "items/active1.png");
+	button2_active_.load(binData_ + "items/active2.png");
+	button1_main_.load(binData_ + "items/main1.png");
+	button2_main_.load(binData_ + "items/main2.png");
+	button1_eval_.load(binData_ + "items/eval1.png");
+	button2_eval_.load(binData_ + "items/eval2.png");
 }
 
 //--------------------------------------------------------------
@@ -183,8 +183,8 @@ void ofApp::setup()
 	loader_->setRow(row_);
 	loader_->setName(name_);
 	calculate();
-	onPaint(showList_removed_);
-	firstshowlist_ = showList_;
+	onPaint(showList_active_);
+	firstshowlist_ = showList_active_;
 
 	// Setup NGT.
 	ngt_ = new Search();
@@ -208,7 +208,7 @@ void ofApp::setup()
 
 	// Setup active selection.
 	selection_ = new Selection;
-	selection_->setup(activeSelectionfile_, positiveIndexfile_, negativeIndexfile_, uncertainIndexfile_, randomIndexfile_);
+	selection_->setup(activeSelectionfile_, positiveIndexfile_, negativeIndexfile_, activeIndexfile_, randomIndexfile_);
 
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Matrix file: \"" << matrixFile_ << "\"" << std::endl;
@@ -242,14 +242,15 @@ void ofApp::exit()
 	delete loader_;
 	delete ngt_;
 	delete samplewriter_;
+	delete logger_active_;
 	delete logger_main_;
-	delete logger_removed_;
 	delete logger_eval_;
 	delete trainer_;
 	delete selection_;
 }
 
 //--------------------------------------------------------------
+
 void ofApp::update()
 {
 	ofBackground(ofColor(0x000000));
@@ -262,14 +263,18 @@ void ofApp::update()
 		ngt_->setMatrix(loading_->mat_);
 		canSearch_ = true;
 
+		logger_active_ = new Logger;
 		logger_main_ = new Logger;
-		logger_removed_ = new Logger;
 		logger_eval_ = new Logger;
+
+		logger_active_->setup(candidatefile_active_, pysettingfile_, npyFile_, loading_->col_);
 		logger_main_->setup(candidatefile_main_, pysettingfile_, npyFile_, loading_->col_);
-		logger_removed_->setup(candidatefile_removed_, pysettingfile_, npyFile_, loading_->col_);
 		logger_eval_->setup(candidatefile_eval_, pysettingfile_, npyFile_, loading_->col_);
+
 		logger_main_->writePySetting();
-		number_main_ = database_->number_;
+
+		number_active_ = database_->number_main_;
+		number_main_ = database_->number_main_;
 		number_eval_ = number_main_;
 		writelog();
 	}
@@ -317,19 +322,19 @@ void ofApp::update()
 	{
 		selection_->stopThread();
 		selection_->isSelected_ = false;
-		selection_->getNumber_Uncertain(&number_Uncertain_);
+		selection_->getNumber(&number_active_);
 		isReady_ = true;
 	}
 
 	if (isReady_)
 	{
 		isReady_ = false;
-		database_->setNumber(number_main_);
+		database_->setNumber_active(number_active_);
+		database_->setNumber_main(number_main_);
 		database_->setNumber_eval(number_eval_);
-		database_->setNumber_Uncertain(number_Uncertain_);
 
 		calculate();
-		onPaint(showList_removed_);
+		onPaint(showList_active_);
 		inputHistory();
 
 		canSearch_ = true;
@@ -377,7 +382,7 @@ void ofApp::draw()
 		{
 			break;
 		}
-		else if (isremove_)
+		else if (isactive_)
 		{
 			int imgId = loader_->showList_[i];
 			int exist_positive = vector_finder(positives_, imgId);
@@ -412,7 +417,7 @@ void ofApp::draw()
 				img.draw(drawx, drawy, d_size_, d_size_);
 			}
 		}
-		else if (!isremove_)
+		else if (!isactive_)
 		{
 			ofSetColor(255);
 			img.draw(drawx, drawy, d_size_, d_size_);
@@ -425,7 +430,7 @@ void ofApp::draw()
    	ofSetColor(255);
 	std::string search = "Search: ";
 	std::string epoch = ofToString(epoch_);
-	font_.drawString(search + epoch, evalbuttonposx_ + removebuttonwidth_ + 50, 25);
+	font_.drawString(search + epoch, buttonposx_eval_ + buttonwidth_active_ + 50, 25);
 
 //	// Forward button.
 //	if (!canBack_)
@@ -444,29 +449,29 @@ void ofApp::draw()
 	forwardbutton0_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
 	searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
 
-	if (!isremove_ && !iseval_)
+	if (!isactive_ && !iseval_)
 	{
-		non_removebutton2_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-		removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-		evalbutton1_.draw(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button2_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button1_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 	}
-	else if (isremove_ && !iseval_)
+	else if (isactive_ && !iseval_)
 	{
-		non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-		removebutton2_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-		evalbutton1_.draw(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+		button2_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button1_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 	}
-	else if (!isremove_ && iseval_)
+	else if (!isactive_ && iseval_)
 	{
-		non_removebutton1_.draw(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-		removebutton1_.draw(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
-		evalbutton2_.draw(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_);
+		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button2_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 	}
 
 	vscroll_areaA_.draw();
 
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
-	if (isInsideWindow_ && isremove_)
+	if (isInsideWindow_ && isactive_)
 	{
 		if (isInside_areaP_)
 		{
@@ -596,24 +601,24 @@ void ofApp::keyPressed(int key)
 }
 
 //--------------------------------------------------------------
-void ofApp::back()
-{
-	ishistory_ = true;
-	backhistory();
-	database_->setNumber(numberhistory_[nowhistory_]);
-	calculate();
-	onPaint(showList_);
-}
+//void ofApp::back()
+//{
+//	ishistory_ = true;
+//	backhistory();
+//	database_->setNumber_main(numberhistory_[nowhistory_]);
+//	calculate();
+//	onPaint(showList_main_);
+//}
 
 //--------------------------------------------------------------
-void ofApp::forward()
-{
-	ishistory_ = true;
-	forwardhistory();
-	database_->setNumber(numberhistory_[nowhistory_]);
-	calculate();
-	onPaint(showList_);
-}
+//void ofApp::forward()
+//{
+//	ishistory_ = true;
+//	forwardhistory();
+//	database_->setNumber_main(numberhistory_[nowhistory_]);
+//	calculate();
+//	onPaint(showList_main_);
+//}
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key)
@@ -630,7 +635,7 @@ void ofApp::mouseMoved(int x, int y)
 	int x_dash, y_dash;
 	if (isInsideWindow_)
 	{
-		if (isremove_)
+		if (isactive_)
 		{
 			// Area A.
 			if (isInsideMouseoverArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
@@ -697,7 +702,7 @@ void ofApp::mouseDragged(int x, int y, int button)
 
 	if (isInsideWindow_)
 	{
-		if (isremove_)
+		if (isactive_)
 		{
 			int imgId = loader_->showList_[mouseover_];
 			int exist_positive = vector_finder(positives_, imgId);
@@ -769,7 +774,7 @@ void ofApp::mousePressed(int x, int y, int button)
 
 	if (isInsideWindow_)
 	{
-		if (isremove_ && mouseover_ >= 0)
+		if (isactive_ && mouseover_ >= 0)
 		{
 			// Area A.
 			if (mouseover_ < picnum_ && isInside_areaA_)
@@ -817,11 +822,11 @@ void ofApp::mouseReleased(int x, int y, int button)
 {
 	if (isInsideWindow_)
 	{
-		if (isremove_ && holdImgNum_ >= 0)
+		if (isactive_ && holdImgNum_ >= 0)
 		{
 			if (isHolding_areaA_)
 			{
-				std::vector<int> *list = &showList_removed_;
+				std::vector<int> *list = &showList_active_;
 				const int dragImgId = (*list)[holdImgNum_];
 				ofImage dragImg = loader_->picture_[holdImgNum_];
 				int check_duplication_P = vector_finder(positives_, dragImgId);
@@ -914,28 +919,28 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 		if (canSearch_)
 		{
-			if (isReleasedArea(removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
+			if (isReleasedArea(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
 			{
-				isremove_ = true;
+				isactive_ = true;
 				iseval_ = false;
-				onPaint(showList_removed_);
+				onPaint(showList_active_);
 			}
-			else if (isReleasedArea(non_removebuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
+			else if (isReleasedArea(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
 			{
-				isremove_ = false;
+				isactive_ = false;
 				iseval_ = false;
-				onPaint(showList_);
+				onPaint(showList_main_);
 			}
 #ifndef EXPERIMENT
-			else if (isReleasedArea(evalbuttonposx_, buttonposy_line1_, removebuttonwidth_, buttonheight_))
+			else if (isReleasedArea(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
 			{
-				isremove_ = false;
+				isactive_ = false;
 				iseval_ = true;
-				onPaint(showList_nonTrain_);
+				onPaint(showList_eval_);
 			}
 #endif
 
-			if (isremove_)
+			if (isactive_)
 			{
 //				if (canBack_ && isReleasedArea(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
 //					back();
@@ -1074,14 +1079,14 @@ void ofApp::dragEvent(ofDragInfo dragInfo)
 //--------------------------------------------------------------
 void ofApp::calculate()
 {
-	database_->makeShowList(picA_, picB_);
-	showList_ = database_->getShowList();
+	database_->makeShowList_active(picA_, picB_);
+	showList_active_ = database_->getShowList();
 
-	database_->makeShowList_removed(picA_, picB_);
-	showList_removed_ = database_->getShowList();
+	database_->makeShowList_main(picA_, picB_);
+	showList_main_ = database_->getShowList();
 
 	database_->makeShowList_eval(picA_, picB_);
-	showList_nonTrain_ = database_->getShowList();
+	showList_eval_ = database_->getShowList();
 }
 
 //--------------------------------------------------------------
@@ -1133,22 +1138,24 @@ void ofApp::inputHistory()
 //--------------------------------------------------------------
 void ofApp::writelog()
 {
-	std::vector<int> candidate_train, candidate_ntrain;;
-	candidate_train.resize(picnum_);
-	candidate_ntrain.resize(picnum_);
+	std::vector<int> candidate_active, candidate_main, candidate_eval;
+	candidate_active.resize(picnum_);
+	candidate_main.resize(picnum_);
+	candidate_eval.resize(picnum_);
 	for (int i = 0; i < picnum_; ++i)
 	{
-		int num_train = number_main_[i];
-		int num_rm = database_->number_removed_[i];
-		int num_ntrain = number_eval_[i];
-		candidate_train[i] = num_train;
-		candidate_ntrain[i] = num_ntrain;
-		candidatehistory_.push_back(num_rm);
+		int num_active = number_active_[i];
+		int num_main = number_main_[i];
+		int num_eval = number_eval_[i];
+		candidate_active[i] = num_active;
+		candidate_main[i] = num_main;
+		candidate_eval[i] = num_eval;
+		candidatehistory_.push_back(num_active);
 	}
 	database_->setHistory(candidatehistory_);
-	logger_main_->writeCandidate(candidate_train);
-	logger_removed_->writeCandidate(database_->number_removed_);
-	logger_eval_->writeCandidate(candidate_ntrain);
+	logger_active_->writeCandidate(candidate_active);
+	logger_main_->writeCandidate(candidate_main);
+	logger_eval_->writeCandidate(candidate_eval);
 }
 
 //--------------------------------------------------------------
@@ -1205,12 +1212,12 @@ void ofApp::sizeChanged()
 	}
 
 	std::vector<int>* sList;
-	if (isremove_ && !iseval_)
-		sList = &showList_removed_;
-	else if (!isremove_ && !iseval_)
-		sList = &showList_;
-	else if (!isremove_ && iseval_)
-		sList = &showList_nonTrain_;
+	if (isactive_ && !iseval_)
+		sList = &showList_active_;
+	else if (!isactive_ && !iseval_)
+		sList = &showList_main_;
+	else if (!isactive_ && iseval_)
+		sList = &showList_eval_;
 
 	rowShow_ = (sList->size() + colShow_ - 1) / colShow_;
 	if (rowShow_ < 1)

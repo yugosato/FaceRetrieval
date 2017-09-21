@@ -24,8 +24,8 @@ public:
 	std::string uncertain_indexfile_;
 	std::vector<int> number_estPositive_;
 	std::vector<int> number_estNegative_;
-	std::vector<int> number_Uncertain_;
-	std::vector<int> number_Random_;
+	std::vector<int> number_uncertain_;
+	std::vector<int> number_random_;
 	boost::python::object main_module_;
 	boost::python::object main_namespace_;
 	boost::python::object selection_;
@@ -67,8 +67,8 @@ public:
 			selection_();
 			read_index(positive_indexfile_, number_estPositive_);
 			read_index(negative_indexfile_, number_estNegative_);
-			read_index(uncertain_indexfile_, number_Uncertain_);
-			read_index(random_indexfile_, number_Random_);
+			read_index(uncertain_indexfile_, number_uncertain_);
+			read_index(random_indexfile_, number_random_);
 			unlock();
 			isSelected_ = true;
 		}
@@ -95,12 +95,12 @@ public:
 		}
 	}
 
-	void getNumber_Uncertain(std::vector<int>* number) const
+	void getNumber(std::vector<int>* number) const
 	{
-		int size = number_Uncertain_.size();
+		int size = number_uncertain_.size();
 		number->resize(size);
 		for (int i = 0; i < size; ++i)
-			(*number)[i] = number_Uncertain_[i];
+			(*number)[i] = number_uncertain_[i];
 	}
 
 };

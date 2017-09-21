@@ -17,10 +17,9 @@ public:
 	std::string initFile_;
 	int row_;
 	std::vector<std::string> name_;
-	std::vector<int> number_;
-	std::vector<int> number_removed_;
+	std::vector<int> number_active_;
+	std::vector<int> number_main_;
 	std::vector<int> number_eval_;
-	std::vector<int> number_Uncertain_;
 	std::vector<int> showList_;
 	std::vector<int> history_;
 	std::vector<int> ids_;
@@ -34,11 +33,12 @@ public:
 		loadFileName();
 
 		// Allocate memory & initialize.
-		number_.resize(row_);
+		number_main_.resize(row_);
 		init();
 		random();
 		//init_clustering();
-		number_eval_ = number_;
+		number_active_ = number_main_;
+		number_eval_ = number_main_;
 	}
 
 	// Load image list.
@@ -66,7 +66,7 @@ public:
 	void init()
 	{
 		for (int i = 0; i < row_; ++i)
-			number_[i] = i;
+			number_main_[i] = i;
 	}
 
 	void random()
@@ -75,9 +75,9 @@ public:
 		for (int i = 0; i < row_; ++i)
 		{
 			const int j = rand() % row_;
-			const int tempNo = number_[i];
-			number_[i] = number_[j];
-			number_[j] = tempNo;
+			const int tempNo = number_main_[i];
+			number_main_[i] = number_main_[j];
+			number_main_[j] = tempNo;
 		}
 	}
 
@@ -104,12 +104,12 @@ public:
 
 			for (int i = 0; i < (int) num.size(); ++i)
 			{
-				number_[i] = num[i];
+				number_main_[i] = num[i];
 			}
 		}
 	}
 
-	void makeShowList(const int begin, const int end)
+	void makeShowList_active(const int begin, const int end)
 	{
 		const int size = end - begin + 1;
 
@@ -118,10 +118,10 @@ public:
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
-			showList_[i] = number_[begin + i - 1];
+			showList_[i] = number_active_[begin + i - 1];
 	}
 
-	void makeShowList_removed(const int begin, const int end)
+	void makeShowList_main(const int begin, const int end)
 	{
 		const int size = end - begin + 1;
 
@@ -129,28 +129,8 @@ public:
 		std::vector<int>().swap(showList_);
 		showList_.resize(size);
 
-		number_removed_.clear();
-		std::vector<int>().swap(number_removed_);
-		number_removed_.resize(size);
-
-		int count = 0;
-		int iter = 0;
-		while (count < size)
-		{
-			auto pos = std::find(history_.begin(), history_.end(), number_[iter]);
-			if (pos != history_.end())
-			{
-				iter++;
-				continue;
-			}
-			else
-			{
-				showList_[count] = number_[iter];
-				number_removed_[count] = number_[iter];
-				iter++;
-				count++;
-			}
-		}
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_main_[begin + i - 1];
 	}
 
 	void makeShowList_eval(const int begin, const int end)
@@ -170,16 +150,28 @@ public:
 		history_ = history;
 	}
 
-	void setNumber(const std::vector<int>& number)
+	void setNumber_active(const std::vector<int>& number)
 	{
 		const int size = number.size();
 
-		number_.clear();
-		std::vector<int>().swap(number_);
-		number_.resize(size);
+		number_active_.clear();
+		std::vector<int>().swap(number_active_);
+		number_active_.resize(size);
 
 		for (int i = 0; i < size; ++i)
-			number_[i] = number[i];
+			number_active_[i] = number[i];
+	}
+
+	void setNumber_main(const std::vector<int>& number)
+	{
+		const int size = number.size();
+
+		number_main_.clear();
+		std::vector<int>().swap(number_main_);
+		number_main_.resize(size);
+
+		for (int i = 0; i < size; ++i)
+			number_main_[i] = number[i];
 	}
 
 	void setNumber_eval(const std::vector<int>& number)
@@ -192,18 +184,6 @@ public:
 
 		for (int i = 0; i < size; ++i)
 			number_eval_[i] = number[i];
-	}
-
-	void setNumber_Uncertain(const std::vector<int>& number)
-	{
-		const int size = number.size();
-
-		number_Uncertain_.clear();
-		std::vector<int>().swap(number_Uncertain_);
-		number_Uncertain_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			number_Uncertain_[i] = number[i];
 	}
 
 	void getName(std::vector<std::string>* nameList) const
