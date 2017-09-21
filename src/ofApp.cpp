@@ -719,15 +719,45 @@ void ofApp::mouseDragged(int x, int y, int button)
 	{
 		if (isactive_)
 		{
-			int imgId = loader_->showList_[mouseover_];
-			int exist_positive = vector_finder(positives_, imgId);
-			int exist_negative = vector_finder(negatives_, imgId);
-
-			if (canSearch_ && mouseover_ >= 0 && exist_positive < 0 && exist_negative < 0)
+			if (canSearch_ && mouseover_ >= 0)
 			{
-				holdImgNum_ = mouseover_;
-				isHoldAndDrag_ = true;
-				calculateHoldingOriginPoint();
+				if (isHolding_areaA_)
+				{
+					int imgId = showList_active_[mouseover_];
+					int exist_positive = vector_finder(positives_, imgId);
+					int exist_negative = vector_finder(negatives_, imgId);
+
+					if (exist_positive < 0 && exist_negative < 0)
+					{
+						holdImgNum_ = mouseover_;
+						isHoldAndDrag_ = true;
+						calculateHoldingOriginPoint();
+					}
+				}
+				else if (isHolding_areaP_)
+				{
+					int imgId = positives_[mouseover_];
+					int exist_negative = vector_finder(negatives_, imgId);
+
+					if (exist_negative < 0)
+					{
+						holdImgNum_ = mouseover_;
+						isHoldAndDrag_ = true;
+						calculateHoldingOriginPoint();
+					}
+				}
+				else if (isHolding_areaN_)
+				{
+					int imgId = negatives_[mouseover_];
+					int exist_positive = vector_finder(positives_, imgId);
+
+					if (exist_positive < 0)
+					{
+						holdImgNum_ = mouseover_;
+						isHoldAndDrag_ = true;
+						calculateHoldingOriginPoint();
+					}
+				}
 			}
 
 			// Area A.
@@ -852,14 +882,14 @@ void ofApp::mouseReleased(int x, int y, int button)
 					// A -> P.
 					if (isInside_areaP_)
 					{
-						std::cout << "[ofApp] Result No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Positive." << std::endl;
+						std::cout << "[ofApp] ActiveSelection No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Positive." << std::endl;
 						positives_.push_back(dragImgId);
 						positive_images_.push_back(dragImg);
 						len_positives_ = positives_.size();
 					}	// A -> N.
 					else if (isInside_areaN_)
 					{
-						std::cout << "[ofApp] Result No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Negative." << std::endl;
+						std::cout << "[ofApp] ActiveSelection No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Negative." << std::endl;
 						negatives_.push_back(dragImgId);
 						negative_images_.push_back(dragImg);
 						len_negatives_ = negatives_.size();
