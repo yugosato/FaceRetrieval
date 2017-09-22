@@ -135,7 +135,8 @@ public:
 	std::string activeSelectionfile_;	// Script file (Active Selection).
 	std::string positiveIndexfile_;		// Estimated positive index file.
 	std::string negativeIndexfile_;		// Estimated negative index file.
-	std::string activeIndexfile_;	// Active Selection index file.
+	std::string activeIndexfile_;		// Active Selection index file.
+	std::string cueflikIndexfile_;		// Active Selection index file (CueFlik).
 	std::string randomIndexfile_;		// Random Selection index file.
 
 	//-----------------------------------------

@@ -101,6 +101,7 @@ void ofApp::initparam()
 	positiveIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/positive_index.txt";
 	negativeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/negative_index.txt";
 	activeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/active_index.txt";
+	cueflikIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/cueflik_index.txt";
 	randomIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/random_index.txt";
 
 	//-----------------------------------------
@@ -214,7 +215,8 @@ void ofApp::setup()
 
 	// Setup active selection.
 	selection_ = new Selection;
-	selection_->setup(activeSelectionfile_, positiveIndexfile_, negativeIndexfile_, activeIndexfile_, randomIndexfile_);
+	selection_->setup(activeSelectionfile_, positiveIndexfile_, negativeIndexfile_, activeIndexfile_,
+			cueflikIndexfile_, randomIndexfile_);
 
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Matrix file: \"" << matrixFile_ << "\"" << std::endl;
@@ -445,7 +447,7 @@ void ofApp::draw()
 	std::string epoch = ofToString(epoch_);
 	font_.drawString(search + epoch, buttonposx_eval_ + buttonwidth_active_ + 50, 25);
 
-//	// Forward button.
+	// Forward button.
 //	if (!canBack_)
 //		backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
 //	else
