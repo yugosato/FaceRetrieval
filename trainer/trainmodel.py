@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import cupy as xp
 import numpy as np
+import random
 import chainer
 from chainer import training
 from chainer import serializers
@@ -54,8 +55,21 @@ def remove(dirpath):
         for file in files:
             os.remove(os.path.join(dirpath, file))
 
+def set_random_seed(seed):
+    # set Python random seed
+    random.seed(seed)
+
+    # set NumPy random seed
+    np.random.seed(seed)
+
+    # set Chainer(CuPy) random seed
+    xp.random.seed(seed)
+
 
 def train_model():
+    # Set Random Seed
+    set_random_seed(1)
+
     # Remove old files
     remove(os.path.join(home_dir, "result"))
 

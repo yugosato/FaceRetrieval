@@ -2,6 +2,8 @@
 
 import json
 import numpy as np
+import cupy as xp
+import random
 from chainer import serializers
 from libact.query_strategies import UncertaintySampling
 from libact.base.dataset import Dataset
@@ -166,8 +168,20 @@ class ActiveSelection():
         np.savetxt(filename, np.array(index), fmt="%.0f")
         print "[ActiveSelection] Saved result. --> {}".format(filename)
 
+def set_random_seed(seed):
+    # set Python random seed
+    random.seed(seed)
+
+    # set NumPy random seed
+    np.random.seed(seed)
+
+    # set Chainer(CuPy) random seed
+    xp.random.seed(seed)
 
 def active_selection():
+    # Set Random Seed
+    set_random_seed(1)
+
     # File paths.
     py_setting = "/home/yugo/workspace/Interface/bin/data/cfd/py_setting.txt"
 
