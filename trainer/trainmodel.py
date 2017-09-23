@@ -36,7 +36,7 @@ def drawGraph(acc, val):
     plt.ylim([0.0, 1.0])
     plt.xlim([0, 10])
     plt.tight_layout(pad=2)
-    plt.legend()
+    plt.legend(loc="upper left")
     plt.xlabel("Iteration")
     plt.ylabel("Reliability")
     plt.yticks(np.arange(0.0, 1.1, 0.1))

@@ -103,6 +103,7 @@ void ofApp::initparam()
 	activeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/active_index.txt";
 	cueflikIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/cueflik_index.txt";
 	randomIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/random_index.txt";
+	resultGraphfile_ = "/home/yugo/workspace/Interface/trainer/result/acc_val.png";
 
 	//-----------------------------------------
 	// Retrieval results.
@@ -153,6 +154,7 @@ void ofApp::loadImageandFont()
 	button2_main_.load(binData_ + "items/main2.png");
 	button1_eval_.load(binData_ + "items/eval1.png");
 	button2_eval_.load(binData_ + "items/eval2.png");
+	graph_.load(binData_ + "items/init_graph.png");
 }
 
 //--------------------------------------------------------------
@@ -341,6 +343,9 @@ void ofApp::update()
 		database_->setNumber_main(number_main_);
 		database_->setNumber_eval(number_eval_);
 
+		graph_.load(resultGraphfile_);
+		graph_.update();
+
 		calculate();
 		onPaint(showList_active_);
 		inputHistory();
@@ -497,7 +502,7 @@ void ofApp::draw()
 	}
 
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-	ofDrawRectangle(overview_margin_, overviewR_posy_, overview_width_, overview_height_);
+	graph_.draw(overview_margin_, overviewR_posy_, overview_width_, overview_height_);
 
 	if (isLoaded_)
 	{

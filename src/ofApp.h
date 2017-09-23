@@ -138,6 +138,8 @@ public:
 	std::string activeIndexfile_;		// Active Selection index file.
 	std::string cueflikIndexfile_;		// Active Selection index file (CueFlik).
 	std::string randomIndexfile_;		// Random Selection index file.
+	std::string resultGraphfile_;		// For update graph.
+
 
 	//-----------------------------------------
 	// Overview Settings.
@@ -272,6 +274,10 @@ public:
 	ofImage button2_main_;
 	ofImage button1_eval_;
 	ofImage button2_eval_;
+
+
+public:
+	ofImage graph_;
 
 
 public:
