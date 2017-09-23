@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
 import chainer
 import chainer.functions as F
 import chainer.links as L
-import numpy as np
 from chainer import Chain
 from libact.base.interfaces import ProbabilisticModel
 
@@ -39,8 +39,7 @@ class MyModel(Chain):
         return F.softmax(h)
 
 
-class Chainer2LibAct(ProbabilisticModel):
-
+class Chainer2Sklearn(ProbabilisticModel):
     def __init__(self, model):
         self.model_ = model
 

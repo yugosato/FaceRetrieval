@@ -12,7 +12,6 @@ class ImportDataset(chainer.dataset.DatasetMixin):
         self.load()
         self.setsamples()
 
-
     def __len__(self):
         return len(self.base_)
 
@@ -45,6 +44,25 @@ class ImportDataset(chainer.dataset.DatasetMixin):
         self.base_ = pairs
         print "[Dataset] Total sample size: {} (Positive: {}, Negative: {})".format(len(self.base_), pos_n, neg_n)
 
+
+    def get_example(self, i):
+        vector, label = self.base_[i]
+        label = np.array(label, dtype=np.int32)
+        return vector, label
+
+
+class SplitImportDataset(chainer.dataset.DatasetMixin):
+    def __init__(self, base):
+        self.input_base_ = base
+
+    def split_LOOCV(self, train_index):
+        split_pairs = []
+        for trn_idx in train_index:
+            split_pairs.append(self.input_base_[trn_idx])
+        self.base_ = split_pairs
+
+    def __len__(self):
+        return len(self.base_)
 
     def get_example(self, i):
         vector, label = self.base_[i]

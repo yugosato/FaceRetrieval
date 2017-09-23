@@ -1,24 +1,21 @@
 # -*- coding: utf-8 -*-
 
 import json
-import mymodel
-import sys
-import os
 import numpy as np
 from chainer import serializers
-from dataset import ImportDataset
 from libact.query_strategies import UncertaintySampling
 from libact.base.dataset import Dataset
 from scipy.spatial.distance import  cosine
-from mymodel import Chainer2LibAct
-
-
+import os
+import sys
 home_dir = "/home/yugo/workspace/Interface/trainer"
 sys.path.append(home_dir)
-os.environ["PATH"] += ":/usr/local/cuda-8.0/bin:/usr/local/cuda-8.0/bin"
+import mymodel
+from mymodel import Chainer2Sklearn
+from dataset import ImportDataset
+
 
 class ActiveSelection():
-
     def __init__(self, py_settingfile):
         self.py_settingfile_ = py_settingfile
 
@@ -37,7 +34,7 @@ class ActiveSelection():
         model_name = home_dir + "/result/iter-" + str(self.ImpData_.iter_num_ - 1) + "_model.npz"
         print "[ActiveSelection] Load fine-tuned model: {}".format(model_name)
         serializers.load_npz(model_name, model)
-        self.clf_ = Chainer2LibAct(model)
+        self.clf_ = Chainer2Sklearn(model)
 
 
     def labeled_index(self):
@@ -142,7 +139,6 @@ class ActiveSelection():
 
 
     def run_estimate_class(self):
-        # result = self.clf_.predict(self.features_)
         proba = self.clf_.predict_proba(self.features_)
         positive_index = self.sort_positive(proba)
         negative_index = self.sort_negative(proba)
@@ -172,7 +168,6 @@ class ActiveSelection():
 
 
 def active_selection():
-
     # File paths.
     py_setting = "/home/yugo/workspace/Interface/bin/data/cfd/py_setting.txt"
 
