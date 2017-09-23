@@ -4,6 +4,7 @@ template.xml
 .cproject
 .project
 *.pyc
+trainer/acc_val.npy
 
 # directories
 bin/
