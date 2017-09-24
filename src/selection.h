@@ -8,17 +8,11 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
-#include "ofMain.h"
-#include "boost/python.hpp"
-#include "boost/python/numpy.hpp"
 
 
-class Selection: public ofThread
+class Selection
 {
 public:
-	std::string pythonfile_;
-	std::string script_;
-
 	std::string positive_indexfile_;
 	std::string negative_indexfile_;
 
@@ -33,64 +27,33 @@ public:
 	std::vector<int> number_cueflik_;
 	std::vector<int> number_random_;
 
-	boost::python::object main_module_;
-	boost::python::object main_namespace_;
-	boost::python::object selection_;
-
-	bool isSelected_;
+	bool isLoaded_;
 
 
 public:
-	void setup(const std::string& pythonfile, const std::string& positive_indexfile, const std::string& negative_indexfile,
+	void setup(const std::string& positive_indexfile, const std::string& negative_indexfile,
 			const std::string& uncertain_indexfile, const std::string& cueflik_indexfile, const std::string& random_indexfile)
 	{
-		pythonfile_ = pythonfile;
-		std::ifstream ifs(pythonfile_);
-		if (!ifs)
-			std::cerr << "[Warning] Cannot open the specified file. " << pythonfile_ << std::endl;
-		std::string script((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
-
-		script_ = script;
 		positive_indexfile_ = positive_indexfile;
 		negative_indexfile_ = negative_indexfile;
 		uncertain_indexfile_ = uncertain_indexfile;
 		cueflik_indexfile_ = cueflik_indexfile;
 		random_indexfile_ = random_indexfile;
-		isSelected_ = false;
+		isLoaded_ = false;
 	}
 
-	void threadedFunction()
+	void load()
 	{
-		try
-		{
-			isSelected_ = false;
-			lock();
-			char python_home[] = "/home/yugo/anaconda2";
-			Py_SetPythonHome(python_home);
-			Py_Initialize();
-			main_module_ = boost::python::import("__main__");
-			main_namespace_ = main_module_.attr("__dict__");
-			boost::python::exec(script_.c_str(), main_namespace_, main_namespace_);
-			selection_ = main_namespace_["active_selection"];
-
-			selection_();
-
-			read_index(positive_indexfile_, number_estPositive_);
-			read_index(negative_indexfile_, number_estNegative_);
-			read_index(uncertain_indexfile_, number_uncertain_);
-			read_index(cueflik_indexfile_, number_cueflik_);
-			read_index(random_indexfile_, number_random_);
-
-			unlock();
-			isSelected_ = true;
-		}
-		catch(boost::python::error_already_set const &)
-		{
-			PyErr_Print();
-		}
+		isLoaded_ = false;
+		read_index(positive_indexfile_, number_estPositive_);
+		read_index(negative_indexfile_, number_estNegative_);
+		read_index(uncertain_indexfile_, number_uncertain_);
+		read_index(cueflik_indexfile_, number_cueflik_);
+		read_index(random_indexfile_, number_random_);
+		isLoaded_ = true;
 	}
 
-	void read_index(const std::string fname, std::vector<int>& vec)
+	inline void read_index(const std::string fname, std::vector<int>& vec)
 	{
 		std::ifstream ifs(fname);
 		if (!ifs)
@@ -107,7 +70,7 @@ public:
 		}
 	}
 
-	void getNumber(std::vector<int>* number) const
+	inline void getNumber(std::vector<int>* number) const
 	{
 		int size = number_uncertain_.size();
 		number->resize(size);

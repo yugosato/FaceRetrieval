@@ -26,7 +26,7 @@ public:
 
 
 public:
-	void setup(const std::string nameFile, const std::string initFile)
+	inline void setup(const std::string nameFile, const std::string initFile)
 	{
 		nameFile_ = nameFile;
 		initFile_ = initFile;
@@ -42,7 +42,7 @@ public:
 	}
 
 	// Load image list.
-	void loadFileName()
+	inline void loadFileName()
 	{
 		std::ifstream ifs(nameFile_);
 		if (!ifs)
@@ -63,13 +63,13 @@ public:
 		}
 	}
 
-	void init()
+	inline void init()
 	{
 		for (int i = 0; i < row_; ++i)
 			number_main_[i] = i;
 	}
 
-	void random()
+	inline void random()
 	{
 		init();
 		for (int i = 0; i < row_; ++i)
@@ -82,7 +82,7 @@ public:
 	}
 
 	// k-means clustering initialization
-	void init_clustering()
+	inline void init_clustering()
 	{
 		std::ifstream ifs(initFile_, std::ios::in);
 		if(!ifs)
@@ -109,7 +109,7 @@ public:
 		}
 	}
 
-	void makeShowList_active(const int begin, const int end)
+	inline void makeShowList_active(const int begin, const int end)
 	{
 		const int size = end - begin + 1;
 
@@ -121,7 +121,7 @@ public:
 			showList_[i] = number_active_[begin + i - 1];
 	}
 
-	void makeShowList_main(const int begin, const int end)
+	inline void makeShowList_main(const int begin, const int end)
 	{
 		const int size = end - begin + 1;
 
@@ -133,7 +133,7 @@ public:
 			showList_[i] = number_main_[begin + i - 1];
 	}
 
-	void makeShowList_eval(const int begin, const int end)
+	inline void makeShowList_eval(const int begin, const int end)
 	{
 		const int size = end - begin + 1;
 
@@ -150,7 +150,7 @@ public:
 		history_ = history;
 	}
 
-	void setNumber_active(const std::vector<int>& number)
+	inline void setNumber_active(const std::vector<int>& number)
 	{
 		const int size = number.size();
 
@@ -162,7 +162,7 @@ public:
 			number_active_[i] = number[i];
 	}
 
-	void setNumber_main(const std::vector<int>& number)
+	inline void setNumber_main(const std::vector<int>& number)
 	{
 		const int size = number.size();
 
@@ -174,7 +174,7 @@ public:
 			number_main_[i] = number[i];
 	}
 
-	void setNumber_eval(const std::vector<int>& number)
+	inline void setNumber_eval(const std::vector<int>& number)
 	{
 		const int size = number.size();
 
@@ -186,14 +186,14 @@ public:
 			number_eval_[i] = number[i];
 	}
 
-	void getName(std::vector<std::string>* nameList) const
+	inline void getName(std::vector<std::string>* nameList) const
 	{
 		nameList->resize(row_);
 		for (int i = 0; i < row_; ++i)
 			(*nameList)[i] = name_[i];
 	}
 
-	void getPersonID(std::vector<int>* person_ids) const
+	inline void getPersonID(std::vector<int>* person_ids) const
 	{
 		person_ids->resize(row_);
 		for (int i = 0; i < row_; ++i)

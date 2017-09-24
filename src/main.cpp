@@ -5,9 +5,6 @@
 #include "boost/python/numpy.hpp"
 
 
-boost::python::object NGT::ObjectSpace::neuralExtracter;
-bool NGT::ObjectSpace::withTrain;
-
 //========================================================================
 int main()
 {

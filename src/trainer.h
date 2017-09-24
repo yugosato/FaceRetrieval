@@ -21,7 +21,6 @@ public:
 	boost::python::object main_module_;
 	boost::python::object main_namespace_;
 	boost::python::object trainer_;
-	boost::python::object extracter_;
 	bool isTrained_;
 
 
@@ -38,7 +37,7 @@ public:
 		isTrained_ = false;
 	}
 
-	void threadedFunction()
+	inline void threadedFunction()
 	{
 		try
 		{
@@ -47,12 +46,13 @@ public:
 			char python_home[] = "/home/yugo/anaconda2";
 			Py_SetPythonHome(python_home);
 			Py_Initialize();
+
 			main_module_ = boost::python::import("__main__");
 			main_namespace_ = main_module_.attr("__dict__");
 			boost::python::exec(script_.c_str(), main_namespace_, main_namespace_);
-			trainer_ = main_namespace_["train_model"];
-			extracter_ = main_namespace_["feature_extract"];
+			trainer_ = main_namespace_["processing"];
 			trainer_();
+
 			unlock();
 			isTrained_ = true;
 		}
@@ -60,6 +60,11 @@ public:
 		{
 			PyErr_Print();
 		}
+	}
+
+	~Trainer()
+	{
+		Py_Finalize();
 	}
 
 };

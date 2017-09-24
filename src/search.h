@@ -20,12 +20,10 @@ public:
 	std::vector<double> queryvector_;
 	int phase_;
 	bool isSearched_;
-	bool train_;
 	int clickNo_;
 	const int size_ = 500;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
-	boost::python::object extracter_;
 
 
 public:
@@ -38,7 +36,7 @@ public:
 		isSearched_ = false;
 	}
 
-	void setInput_multi(const std::vector<int>& rel, const std::vector<int>& inrel)
+	inline void setInput_multi(const std::vector<int>& rel, const std::vector<int>& inrel)
 	{
 		Rocchio* rocchio;
 		rocchio = new Rocchio;
@@ -75,12 +73,7 @@ public:
 		matrix_ = matrix;
 	}
 
-	void setExtracter(const boost::python::object &e)
-	{
-		extracter_ = e;
-	}
-
-	void threadedFunction()
+	inline void threadedFunction()
 	{
 		try
 		{
@@ -92,15 +85,12 @@ public:
 
 			NGT::SearchContainer sc(*query);
 			NGT::ObjectDistances objects;
-			NGT::ObjectSpace::withTrain = train_;
 
 			sc.setResults(&objects);
 			sc.setSize(size_);
 			sc.setRadius(radius_);
 			sc.setEpsilon(epsilon_);
-			sc.setExtracter(extracter_);
 
-			index_->setExtracter(extracter_);
 			index_->search(sc);
 			index_->deleteObject(query);
 
@@ -122,7 +112,7 @@ public:
 		}
 	}
 
-	void getNumber(std::vector<int>* number) const
+	inline void getNumber(std::vector<int>* number) const
 	{
 		number->resize(size_);
 		for (int i = 0; i < size_; ++i)

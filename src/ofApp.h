@@ -23,6 +23,7 @@
 #include "trainer.h"
 #include "selection.h"
 #include "ScrollBar4OF.hpp"
+#include "rerank.h"
 
 
 const int initWidth_ = 1600;			// Initial window size: Width.
@@ -132,13 +133,13 @@ public:
 	std::string pysettingfile_;			// Python settings.
 	std::string samplefile_;			// Training sample list.
 	std::string trainerfile_;			// Script file (Trainer).
-	std::string activeSelectionfile_;	// Script file (Active Selection).
 	std::string positiveIndexfile_;		// Estimated positive index file.
 	std::string negativeIndexfile_;		// Estimated negative index file.
 	std::string activeIndexfile_;		// Active Selection index file.
 	std::string cueflikIndexfile_;		// Active Selection index file (CueFlik).
 	std::string randomIndexfile_;		// Random Selection index file.
 	std::string resultGraphfile_;		// For update graph.
+	std::string newfeaturesfile_;		// For rerank method.
 
 
 	//-----------------------------------------
@@ -291,5 +292,6 @@ public:
 	Logger* logger_eval_;			// Logger (comparison method).
 	Trainer* trainer_;				// Online Trainer.
 	Selection* selection_;			// Active Selection.
+	ReRank* rerank_;				// Reranking method.
 };
 

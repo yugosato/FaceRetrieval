@@ -46,7 +46,7 @@ public:
 		inrelnum_ = inrelVec_.size();
 	}
 
-	void setInitquery(const std::vector<double> initquery, const int phase)
+	inline void setInitquery(const std::vector<double> initquery, const int phase)
 	{
 		initquery_ = Eigen::VectorXd::Zero(dim_);
 		if (phase > 0)
@@ -54,7 +54,7 @@ public:
 				initquery_[i] = initquery[i];
 	}
 
-	void calcAverage()
+	inline void calcAverage()
 	{
 		if (relnum_ > 0)
 			average(relVec_, relVec_ave_);
@@ -67,7 +67,7 @@ public:
 			inrelVec_ave_ = Eigen::VectorXd::Zero(dim_);
 	}
 
-	void average(const std::vector<std::vector<double>>& srcVec, Eigen::VectorXd& dstVec)
+	inline void average(const std::vector<std::vector<double>>& srcVec, Eigen::VectorXd& dstVec)
 	{
 		const int size = srcVec.size();
 		Eigen::VectorXd average = Eigen::VectorXd::Zero(dim_);
@@ -82,7 +82,7 @@ public:
 		dstVec = average;
 	}
 
-	void calculate(const float alpha, const float beta, const float gamma)
+	inline void calculate(const float alpha, const float beta, const float gamma)
 	{
 		std::cout << "[Rocchio] Alpha: " << alpha << ", Beta: " << beta << ", Gamma: " << gamma << std::endl;
 		calcAverage();
@@ -91,7 +91,7 @@ public:
 				- (gamma * inrelVec_ave_.array());
 	}
 
-	void getquery(std::vector<double>* query) const
+	inline void getquery(std::vector<double>* query) const
 	{
 		query->resize(dim_);
 		for (int i = 0; i < dim_; ++i)

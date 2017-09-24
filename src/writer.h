@@ -23,7 +23,7 @@ public:
 		iter_ = 0;
 	}
 
-	void write_init()
+	inline void write_init()
 	{
 		std::ofstream writer(samplefile_, std::ios::trunc);
 		if (!writer)
@@ -35,7 +35,7 @@ public:
 		writer << "}" << std::endl;
 	}
 
-	void write(const std::vector<int>& positive, const std::vector<int>& negative)
+	inline void write(const std::vector<int>& positive, const std::vector<int>& negative)
 	{
 		positives_.push_back(positive);
 		negatives_.push_back(negative);
@@ -102,7 +102,7 @@ public:
 		iter_ = 0;
 	}
 
-	void writeCandidate(const std::vector<int>& candidate)
+	inline void writeCandidate(const std::vector<int>& candidate)
 	{
 		candidates_.push_back(candidate);
 		iter_++;
@@ -131,7 +131,7 @@ public:
 		writer.close();
 	}
 
-	void writePySetting()
+	inline void writePySetting()
 	{
 		std::ofstream writer(pysettingfile_, std::ios::trunc);
 		if (!writer)

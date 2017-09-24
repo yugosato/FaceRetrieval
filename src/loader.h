@@ -27,7 +27,7 @@ public:
 		done_ = false;
 	}
 
-	void threadedFunction()
+	inline void threadedFunction()
 	{
 		if (!done_)
 		{
@@ -55,7 +55,7 @@ public:
 		return col_;
 	}
 
-	void loadMatrix()
+	inline void loadMatrix()
 	{
 		std::ifstream ifs(matFile_);
 		if (!ifs)
@@ -89,7 +89,7 @@ public:
 
 
 public:
-	void load()
+	inline void load()
 	{
 		for (int i = 0; i < row_; i++)
 			picture_[i].load(name_[showList_[i]]);
@@ -101,7 +101,7 @@ public:
 		name_ = name;
 	}
 
-	void setShowList(const std::vector<int>& showList)
+	inline void setShowList(const std::vector<int>& showList)
 	{
 		showList_.clear();
 		std::vector<int>().swap(showList_);

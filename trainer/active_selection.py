@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import json
 import numpy as np
 import cupy as xp
 import random
-from chainer import serializers
 from libact.query_strategies import UncertaintySampling
 from libact.base.dataset import Dataset
 from scipy.spatial.distance import  cosine
@@ -12,31 +10,21 @@ import os
 import sys
 home_dir = "/home/yugo/workspace/Interface/trainer"
 sys.path.append(home_dir)
-from mymodel import MyModel
 from mymodel import Chainer2Sklearn
-from dataset import ImportDataset
 
 
 class ActiveSelection():
-    def __init__(self, py_settingfile):
-        self.py_settingfile_ = py_settingfile
+    def __init__(self, trainer):
+        self.trainer_ = trainer
 
 
     def load_dataset(self):
-        settings = json.load(open(self.py_settingfile_, "r"))
-        self.listfile_ = settings["feedback_file"]
-        self.inputfile_ = settings["input_file"]
-        self.unit_ = settings["unit"]
-        self.ImpData_ = ImportDataset(self.listfile_, self.inputfile_)
+        self.ImpData_ = self.trainer_.train_
         self.features_ = self.ImpData_.features_
 
 
     def load_classifier(self):
-        model = MyModel(self.unit_)
-        model_name = home_dir + "/result/iter-" + str(self.ImpData_.iter_num_ - 1) + "_model.npz"
-        print "[ActiveSelection] Load fine-tuned model: {}".format(model_name)
-        serializers.load_npz(model_name, model)
-        self.clf_ = Chainer2Sklearn(model)
+        self.clf_ = Chainer2Sklearn(self.trainer_.model_.to_cpu())
 
 
     def labeled_index(self):
@@ -84,11 +72,13 @@ class ActiveSelection():
 
     "Random selection for compasion."
     def getRandomIndex(self):
+        print "[ActiveSelection] Get random sampling index."
         return np.random.choice(self.unlabeled_ids_, self.len_unlabeled_ids_, replace = False)
 
 
     "Traditional active learning method."
     def getUncertaintyIndex(self, trn_ds, method, clf):
+        print "[ActiveSelection] Get uncertainty sampling index."
         qs = UncertaintySampling(trn_ds, method=method, model=clf)
         _, score = qs.make_query(return_score=True)
         score_sorted = sorted(score, key=lambda x:x[1], reverse=True)
@@ -100,7 +90,7 @@ class ActiveSelection():
 
     "Active distance used in the CueFlik (Fogary+,2008)."
     def getCueFlikIndex(self):
-        # Feature extraction using fine-tuned model.
+        print "[ActiveSelection] Get CueFlik sampling index."
         features = self.clf_.extract(self.features_)
 
         result = []
@@ -141,6 +131,7 @@ class ActiveSelection():
 
 
     def run_estimate_class(self):
+        print "[ActiveSelection] Estimate Positive or Negative."
         proba = self.clf_.predict_proba(self.features_)
         positive_index = self.sort_positive(proba)
         negative_index = self.sort_negative(proba)

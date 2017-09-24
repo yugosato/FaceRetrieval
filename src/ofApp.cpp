@@ -97,13 +97,13 @@ void ofApp::initparam()
 	pysettingfile_ = binData_ + "cfd/py_setting.txt";
 	samplefile_ = logdir_ + "feedback.txt";
 	trainerfile_ = "/home/yugo/workspace/Interface/trainer/trainmodel.py";
-	activeSelectionfile_ = "/home/yugo/workspace/Interface/trainer/active_selection.py";
 	positiveIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/positive_index.txt";
 	negativeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/negative_index.txt";
 	activeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/active_index.txt";
 	cueflikIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/cueflik_index.txt";
 	randomIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/random_index.txt";
 	resultGraphfile_ = "/home/yugo/workspace/Interface/trainer/result/acc_val.png";
+	newfeaturesfile_ = "/home/yugo/workspace/Interface/trainer/result/features.tsv";
 
 	//-----------------------------------------
 	// Retrieval results.
@@ -217,8 +217,12 @@ void ofApp::setup()
 
 	// Setup active selection.
 	selection_ = new Selection;
-	selection_->setup(activeSelectionfile_, positiveIndexfile_, negativeIndexfile_, activeIndexfile_,
+	selection_->setup(positiveIndexfile_, negativeIndexfile_, activeIndexfile_,
 			cueflikIndexfile_, randomIndexfile_);
+
+	// Setup reranking method.
+	rerank_ = new ReRank;
+	rerank_->setup(newfeaturesfile_);
 
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Matrix file: \"" << matrixFile_ << "\"" << std::endl;
@@ -257,6 +261,7 @@ void ofApp::exit()
 	delete logger_eval_;
 	delete trainer_;
 	delete selection_;
+	delete rerank_;
 }
 
 //--------------------------------------------------------------
@@ -295,9 +300,7 @@ void ofApp::update()
 		std::cout << "[ofApp] Training time: " << (double)(endtime_trainer_ - starttime_trainer_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		trainer_->stopThread();
 		trainer_->isTrained_ = false;
-		ngt_->setExtracter(trainer_->extracter_);
 		ngt_->setInput_multi(positives_, negatives_);
-		ngt_->train_ = true;
 		ngt_->startThread();
 		starttime_ngt_ = clock();
 	}
@@ -307,17 +310,18 @@ void ofApp::update()
 		ngt_->stopThread();
 		ngt_->isSearched_ = false;
 
-		if (ngt_->train_)
-		{
-			ngt_->getNumber(&number_main_);
-			ngt_->train_ = false;
-			ngt_->startThread();
-		}
-		else
-		{
-			ngt_->getNumber(&number_eval_);
-			isSearchedAll_ = true;
-		}
+		ngt_->getNumber(&number_main_);
+		rerank_->load();
+		rerank_->set_queryvector(ngt_->queryvector_);
+		rerank_->set_result(number_main_);
+		rerank_->startThread();
+	}
+
+	if (rerank_->isReranked_)
+	{
+		rerank_->stopThread();
+		rerank_->isReranked_ = false;
+		isSearchedAll_ = true;
 	}
 
 	if (isSearchedAll_)
@@ -325,13 +329,12 @@ void ofApp::update()
 		endtime_ngt_ = clock();
 		std::cout << "[ofApp] Searching time: " << (double)(endtime_ngt_ - starttime_ngt_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		isSearchedAll_ = false;
-		selection_->startThread();
+		selection_->load();
 	}
 
-	if (selection_->isSelected_)
+	if (selection_->isLoaded_)
 	{
-		selection_->stopThread();
-		selection_->isSelected_ = false;
+		selection_->isLoaded_ = false;
 		selection_->getNumber(&number_active_);
 		isReady_ = true;
 	}
@@ -1014,7 +1017,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 					if (len_positives_ > 0 && len_negatives_ > 0)
 					{
 						epoch_++;
-						std::cout << "[ofApp] " << epoch_ << " feedbacks." << std::endl;
+						std::cout << "[ofApp] " << "Feedback: " << epoch_ << std::endl;
 
 						starttime_ = clock();
 						clickflag_ = true;
@@ -1360,10 +1363,13 @@ void ofApp::put_time(std::string& time_str)
     local = localtime(&current);
 
     std::string year = toString<int>(local->tm_year + 1900);
+    std::string month = toString<int>(local->tm_mon);
+    std::string day = toString<int>(local->tm_mday);
     std::string hour = toString<int>(local->tm_hour);
     std::string min = toString<int>(local->tm_min);
     std::string sec = toString<int>(local->tm_sec);
     std::string delim = "-";
 
-    time_str = year + delim + hour + delim + min + delim + sec;
+    time_str = year + delim + month + delim + day + delim + hour +
+    		delim + min + delim + sec;
 }
