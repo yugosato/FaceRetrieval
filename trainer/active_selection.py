@@ -12,7 +12,7 @@ import os
 import sys
 home_dir = "/home/yugo/workspace/Interface/trainer"
 sys.path.append(home_dir)
-import mymodel
+from mymodel import MyModel
 from mymodel import Chainer2Sklearn
 from dataset import ImportDataset
 
@@ -32,7 +32,7 @@ class ActiveSelection():
 
 
     def load_classifier(self):
-        model = mymodel.MyModel(self.unit_)
+        model = MyModel(self.unit_)
         model_name = home_dir + "/result/iter-" + str(self.ImpData_.iter_num_ - 1) + "_model.npz"
         print "[ActiveSelection] Load fine-tuned model: {}".format(model_name)
         serializers.load_npz(model_name, model)
@@ -123,7 +123,7 @@ class ActiveSelection():
         return np.argsort(result)
 
 
-    def run(self):
+    def run_selection(self):
         self.load_dataset()
         self.load_classifier()
         _, trn_ds = self.split_train_test()
@@ -168,24 +168,19 @@ class ActiveSelection():
         np.savetxt(filename, np.array(index), fmt="%.0f")
         print "[ActiveSelection] Saved result. --> {}".format(filename)
 
-def set_random_seed(seed):
-    # set Python random seed
-    random.seed(seed)
 
-    # set NumPy random seed
-    np.random.seed(seed)
+    def set_random_seed(self, seed):
+        random.seed(seed)
+        np.random.seed(seed)
+        xp.random.seed(seed)
 
-    # set Chainer(CuPy) random seed
-    xp.random.seed(seed)
 
 def active_selection():
-    # Set Random Seed
-    set_random_seed(1)
-
     # File paths.
     py_setting = "/home/yugo/workspace/Interface/bin/data/cfd/py_setting.txt"
 
     # Active Selection.
-    ActSel = ActiveSelection(py_setting)
-    ActSel.run()
-    ActSel.run_estimate_class()
+    actSel = ActiveSelection(py_setting)
+    actSel.set_random_seed(1)
+    actSel.run_selection()
+    actSel.run_estimate_class()

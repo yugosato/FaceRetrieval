@@ -18,7 +18,7 @@ sys.path.append(home_dir)
 os.environ['PATH'] += ':/usr/local/cuda-8.0/bin:/usr/local/cuda-8.0/bin'
 from dataset import ImportDataset
 from dataset import SplitImportDataset
-import mymodel
+from mymodel import MyModel
 from mymodel import Chainer2Sklearn
 
 
@@ -55,14 +55,10 @@ def remove(dirpath):
         for file in files:
             os.remove(os.path.join(dirpath, file))
 
+
 def set_random_seed(seed):
-    # set Python random seed
     random.seed(seed)
-
-    # set NumPy random seed
     np.random.seed(seed)
-
-    # set Chainer(CuPy) random seed
     xp.random.seed(seed)
 
 
@@ -94,7 +90,7 @@ def train_model():
 
     # Initialize model to train
     global model
-    model = mymodel.MyModel(unit)
+    model = MyModel(unit)
 
     if gpu_id >= 0:
         cuda.get_device_from_id(gpu_id).use()
@@ -143,7 +139,7 @@ def train_model():
         print "[LOOCV] Test: {}, Train: {}.".format(test_index, train_index)
 
         # Initialize model to train
-        model_val = mymodel.MyModel(unit)
+        model_val = MyModel(unit)
 
         if gpu_id >= 0:
             cuda.get_device_from_id(gpu_id).use()
