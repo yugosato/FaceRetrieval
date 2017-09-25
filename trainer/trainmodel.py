@@ -48,7 +48,7 @@ class TrainModel(object):
 
         plt.figure(figsize=(11,3))
         plt.fill_between(x[:len_acc], acc - val, acc + val, color="blue", alpha=0.1, label="variance")
-        plt.plot(x[:len_acc], acc, color="b", alpha=0.5, label="reliability")
+        plt.plot(x[:len_acc], acc, color="b", label="reliability")
         plt.ylim([0.0, 1.0])
         plt.xlim([0, 10])
         plt.tight_layout(pad=2)
@@ -75,7 +75,7 @@ class TrainModel(object):
         random.seed(seed)
         np.random.seed(seed)
         xp.random.seed(seed)
-        print "[Trainer] Fixed Random Seed: {}".format(seed)
+        print "[Trainer] Set Random Seed: {}".format(seed)
 
 
     def run_feature_extraction(self):
@@ -88,9 +88,6 @@ class TrainModel(object):
 
 
     def run_train(self):
-        # Remove old files
-        self.remove(os.path.join(home_dir, "result"))
-
         print "[Trainer] feedback file: \"{}\"".format(self.listfile_)
         print "[Trainer] input: \"{}\"".format(self.inputfile_)
         print "[Trainer] setting: \"{}\"".format(self.py_settingfile_)
@@ -98,6 +95,9 @@ class TrainModel(object):
         print "[Trainer] epoch: {}".format(self.epoch_)
         print "[Trainer] mini-batch size: {}".format(self.batch_size_)
         print "[Trainer] GPU id: {}".format(self.gpu_id_)
+
+        # Remove old files
+        self.remove(os.path.join(home_dir, "result"))
 
         # Initialize model to train
         model = MyModel(self.unit_)
@@ -169,7 +169,7 @@ class TrainModel(object):
         # Calculate accuracy and valiance
         acc = accuracy_score(true_labels, predicted_labels)
         val = self.variance_score(acc, len(split_samples.input_base_))
-        print "[LOOCV] Accuracy(average): {}, Variance: {}.".format(acc, val)
+        print "[LOOCV] Accuracy (average): {}, Variance: {}.".format(acc, val)
 
         # Save as figure.
         if (self.train_.iter_num_ - 1) == 1:
@@ -180,6 +180,6 @@ class TrainModel(object):
             acc_val = np.load(os.path.join(home_dir, "acc_val.npy"))
 
         self.acc_val_ = np.append(acc_val, [[acc], [val]], axis=1)
-        np.save(os.path.join(home_dir, "acc_val.npy"), acc_val)
+        np.save(os.path.join(home_dir, "acc_val.npy"), self.acc_val_)
 
         self.drawGraph()

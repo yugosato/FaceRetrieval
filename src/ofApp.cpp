@@ -296,10 +296,11 @@ void ofApp::update()
 
 	if (trainer_->isTrained_)
 	{
-		endtime_trainer_ = clock();
-		std::cout << "[ofApp] Training time: " << (double)(endtime_trainer_ - starttime_trainer_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		trainer_->stopThread();
 		trainer_->isTrained_ = false;
+		endtime_trainer_ = clock();
+		std::cout << "[ofApp] Training time: " << (double)(endtime_trainer_ - starttime_trainer_) / CLOCKS_PER_SEC << "sec." << std::endl;
+
 		ngt_->setInput_multi(positives_, negatives_);
 		ngt_->startThread();
 		starttime_ngt_ = clock();
@@ -309,8 +310,8 @@ void ofApp::update()
 	{
 		ngt_->stopThread();
 		ngt_->isSearched_ = false;
-
 		ngt_->getNumber(&number_main_);
+
 		rerank_->load();
 		rerank_->set_queryvector(ngt_->queryvector_);
 		rerank_->set_result(number_main_);
@@ -1022,6 +1023,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 						starttime_ = clock();
 						clickflag_ = true;
 						samplewriter_->write(positives_, negatives_);
+
 						trainer_->startThread();
 						starttime_trainer_ = clock();
 						canSearch_ = false;

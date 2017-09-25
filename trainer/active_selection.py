@@ -123,7 +123,7 @@ class ActiveSelection(object):
 
 
     def run_estimate_class(self):
-        print "[ActiveSelection] Estimate Positive or Negative."
+        print "[ActiveSelection] Estimate positive/negative."
         proba = self.clf_.predict_proba(self.train_.features_)
         positive_index = self.sort_positive(proba)
         negative_index = self.sort_negative(proba)

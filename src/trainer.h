@@ -28,9 +28,11 @@ public:
 	void setup(const std::string& pythonfile)
 	{
 		pythonfile_ = pythonfile;
+
 		std::ifstream ifs(pythonfile_);
 		if (!ifs)
 			std::cerr << "[Warning] Cannot open the specified file. " << pythonfile_ << std::endl;
+
 		std::string script((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 		script_ = script;
 
@@ -43,20 +45,21 @@ public:
 		{
 			isTrained_ = false;
 			lock();
+
 			char python_home[] = "/home/yugo/anaconda2";
 			Py_SetPythonHome(python_home);
 			Py_Initialize();
 
-			main_module_ = boost::python::import("__main__");
-			main_namespace_ = main_module_.attr("__dict__");
-			boost::python::exec(script_.c_str(), main_namespace_, main_namespace_);
-			trainer_ = main_namespace_["main_process"];
-			trainer_();
+		    auto main_mod = boost::python::import("__main__");
+		    auto main_ns  = main_mod.attr("__dict__");
 
-			unlock();
+		    boost::python::exec(script_.c_str(), main_ns);
+		    main_mod.attr("main_process")();
+
+		    unlock();
 			isTrained_ = true;
 		}
-		catch(boost::python::error_already_set const &)
+		catch (boost::python::error_already_set const &)
 		{
 			PyErr_Print();
 		}
