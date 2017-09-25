@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-import cupy as xp
-import random
 from libact.query_strategies import UncertaintySampling
 from libact.base.dataset import Dataset
 from scipy.spatial.distance import  cosine
@@ -13,37 +11,32 @@ sys.path.append(home_dir)
 from mymodel import Chainer2Sklearn
 
 
-class ActiveSelection():
-    def __init__(self, trainer):
-        self.trainer_ = trainer
-
-
-    def load_dataset(self):
-        self.ImpData_ = self.trainer_.train_
-        self.features_ = self.ImpData_.features_
+class ActiveSelection(object):
+    def __init__(self):
+        pass
 
 
     def load_classifier(self):
-        self.clf_ = Chainer2Sklearn(self.trainer_.model_.to_cpu())
+        self.clf_ = Chainer2Sklearn(self.model_.to_cpu())
 
 
     def labeled_index(self):
-        positives = self.ImpData_.positives_
-        negatives = self.ImpData_.negatives_
+        positives = self.train_.positives_
+        negatives = self.train_.negatives_
         self.labeled_ids_ = np.hstack((positives, negatives))
         self.len_labeled_ids_ = len(self.labeled_ids_)
 
 
     def unlabeled_index(self):
         self.unlabeled_ids_ = []
-        for i in xrange(len(self.features_)):
+        for i in xrange(len(self.train_.features_)):
             if not i in self.labeled_ids_:
                 self.unlabeled_ids_.append(i)
         self.len_unlabeled_ids_ = len(self.unlabeled_ids_)
 
 
     def labeled_sample(self):
-        Pairs = self.ImpData_.base_
+        Pairs = self.train_.base_
         X = []
         y = []
         for Pair in Pairs:
@@ -56,7 +49,7 @@ class ActiveSelection():
         X = []
         y = [None] * len(self.unlabeled_ids_)
         for unlabeled_id in self.unlabeled_ids_:
-            X.append(self.features_[unlabeled_id])
+            X.append(self.train_.features_[unlabeled_id])
         return X, y
 
 
@@ -91,18 +84,18 @@ class ActiveSelection():
     "Active distance used in the CueFlik (Fogary+,2008)."
     def getCueFlikIndex(self):
         print "[ActiveSelection] Get CueFlik sampling index."
-        features = self.clf_.extract(self.features_)
+        features = self.clf_.extract(self.train_.features_)
 
         result = []
         for uid in self.unlabeled_ids_:
             mindist_p = 1.0
-            for pos in self.ImpData_.positives_:
+            for pos in self.train_.positives_:
                 distance = cosine(features[uid], features[pos])
                 if distance < mindist_p:
                     mindist_p = distance
 
             mindist_n = 1.0
-            for pos in self.ImpData_.negatives_:
+            for pos in self.train_.negatives_:
                 distance = cosine(features[uid], features[pos])
                 if distance < mindist_p:
                     mindist_n = distance
@@ -114,7 +107,6 @@ class ActiveSelection():
 
 
     def run_selection(self):
-        self.load_dataset()
         self.load_classifier()
         _, trn_ds = self.split_train_test()
 
@@ -132,7 +124,7 @@ class ActiveSelection():
 
     def run_estimate_class(self):
         print "[ActiveSelection] Estimate Positive or Negative."
-        proba = self.clf_.predict_proba(self.features_)
+        proba = self.clf_.predict_proba(self.train_.features_)
         positive_index = self.sort_positive(proba)
         negative_index = self.sort_negative(proba)
         self.write(os.path.join(home_dir, "result/positive_index.txt"), positive_index)
@@ -158,20 +150,3 @@ class ActiveSelection():
             os.makedirs(os.path.join(home_dir, "result"))
         np.savetxt(filename, np.array(index), fmt="%.0f")
         print "[ActiveSelection] Saved result. --> {}".format(filename)
-
-
-    def set_random_seed(self, seed):
-        random.seed(seed)
-        np.random.seed(seed)
-        xp.random.seed(seed)
-
-
-def active_selection():
-    # File paths.
-    py_setting = "/home/yugo/workspace/Interface/bin/data/cfd/py_setting.txt"
-
-    # Active Selection.
-    actSel = ActiveSelection(py_setting)
-    actSel.set_random_seed(1)
-    actSel.run_selection()
-    actSel.run_estimate_class()

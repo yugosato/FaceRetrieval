@@ -96,7 +96,7 @@ void ofApp::initparam()
 	// Python Settings.
 	pysettingfile_ = binData_ + "cfd/py_setting.txt";
 	samplefile_ = logdir_ + "feedback.txt";
-	trainerfile_ = "/home/yugo/workspace/Interface/trainer/trainmodel.py";
+	scriptfile_ = "/home/yugo/workspace/Interface/trainer/main_process.py";
 	positiveIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/positive_index.txt";
 	negativeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/negative_index.txt";
 	activeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/active_index.txt";
@@ -213,7 +213,7 @@ void ofApp::setup()
 
 	// Setup online trainer.
 	trainer_ = new Trainer;
-	trainer_->setup(trainerfile_);
+	trainer_->setup(scriptfile_);
 
 	// Setup active selection.
 	selection_ = new Selection;

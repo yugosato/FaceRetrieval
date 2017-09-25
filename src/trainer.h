@@ -50,7 +50,7 @@ public:
 			main_module_ = boost::python::import("__main__");
 			main_namespace_ = main_module_.attr("__dict__");
 			boost::python::exec(script_.c_str(), main_namespace_, main_namespace_);
-			trainer_ = main_namespace_["processing"];
+			trainer_ = main_namespace_["main_process"];
 			trainer_();
 
 			unlock();

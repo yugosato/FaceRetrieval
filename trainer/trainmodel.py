@@ -12,7 +12,6 @@ from sklearn.metrics import accuracy_score
 import json
 import os
 import sys
-import gc
 home_dir = "/home/yugo/workspace/Interface/trainer"
 sys.path.append(home_dir)
 os.environ['PATH'] += ':/usr/local/cuda-8.0/bin:/usr/local/cuda-8.0/bin'
@@ -20,10 +19,9 @@ from dataset import ImportDataset
 from dataset import SplitImportDataset
 from mymodel import MyModel
 from mymodel import Chainer2Sklearn
-from active_selection import ActiveSelection
 
 
-class TrainModel():
+class TrainModel(object):
     def __init__(self):
         # File paths
         self.py_settingfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/py_setting.txt"
@@ -44,7 +42,6 @@ class TrainModel():
     def drawGraph(self):
         acc = self.acc_val_[0]
         val = self.acc_val_[1]
-
         total_iter_num = 10
         len_acc = len(acc)
         x = [i for i in xrange(total_iter_num)]
@@ -78,6 +75,7 @@ class TrainModel():
         random.seed(seed)
         np.random.seed(seed)
         xp.random.seed(seed)
+        print "[Trainer] Fixed Random Seed: {}".format(seed)
 
 
     def run_feature_extraction(self):
@@ -102,10 +100,10 @@ class TrainModel():
         print "[Trainer] GPU id: {}".format(self.gpu_id_)
 
         # Initialize model to train
-        self.model_ = MyModel(self.unit_)
+        model = MyModel(self.unit_)
         if self.gpu_id_ >= 0:
             cuda.get_device_from_id(self.gpu_id_).use()
-            self.model_.to_gpu(self.gpu_id_)
+            model.to_gpu(self.gpu_id_)
 
         # Load datasets and set up iterator
         self.train_ = ImportDataset(self.listfile_, self.inputfile_)
@@ -113,7 +111,7 @@ class TrainModel():
 
         # Set optimizer
         optimizer = chainer.optimizers.AdaDelta()
-        optimizer.setup(self.model_)
+        optimizer.setup(model)
 
         # Set up updateer and trainer
         updater = training.StandardUpdater(train_iter, optimizer, device=self.gpu_id_)
@@ -122,6 +120,7 @@ class TrainModel():
         # Run trainer
         print "[Trainer] Start training --> ",
         trainer.run()
+        self.model_ = model
         print "Finished."
 
 
@@ -137,18 +136,18 @@ class TrainModel():
             print "[LOOCV] Test: [{}], Train: {}.".format(test_index, train_index)
 
             # Initialize model to train
-            model = MyModel(self.unit_)
+            model_loccv = MyModel(self.unit_)
 
             if self.gpu_id_ >= 0:
                 cuda.get_device_from_id(self.gpu_id_).use()
-                model.to_gpu(self.gpu_id_)
+                model_loccv.to_gpu(self.gpu_id_)
 
             split_samples.split_LOOCV(train_index)
             train_iter = chainer.iterators.SerialIterator(split_samples, batch_size=self.batch_size_)
 
             # Set optimizer
             optimizer = chainer.optimizers.AdaDelta()
-            optimizer.setup(model)
+            optimizer.setup(model_loccv)
 
             # Set up updateer and trainer
             updater = training.StandardUpdater(train_iter, optimizer, device=self.gpu_id_)
@@ -158,10 +157,9 @@ class TrainModel():
             trainer.run()
 
             # Testing
-            clf = Chainer2Sklearn(model)
+            clf = Chainer2Sklearn(model_loccv.to_cpu())
             X_test = [list(split_samples.input_base_[test_index][0])]
 
-            model.to_cpu()
             true_label = int(split_samples.input_base_[test_index][1])
             predicted_label = int(clf.predict(X_test))
 
@@ -185,22 +183,3 @@ class TrainModel():
         np.save(os.path.join(home_dir, "acc_val.npy"), acc_val)
 
         self.drawGraph()
-
-
-def processing():
-    # Train Neural Network
-    trainer = TrainModel()
-    trainer.set_random_seed(1)
-    trainer.run_train()
-    trainer.run_feature_extraction()
-    trainer.run_LOOCV()
-
-    # Active Selection using Trained Model
-    actsel = ActiveSelection(trainer)
-    actsel.run_selection()
-    actsel.run_estimate_class()
-
-    # Memory Release
-    del trainer, actsel
-    gc.collect()
-

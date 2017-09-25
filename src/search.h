@@ -4,8 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <stdio.h>
-#include "boost/python.hpp"
-#include "boost/python/numpy.hpp"
 #include "NGT/Index.h"
 #include "rocchio.h"
 

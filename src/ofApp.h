@@ -132,7 +132,7 @@ public:
 	// Python Settings.
 	std::string pysettingfile_;			// Python settings.
 	std::string samplefile_;			// Training sample list.
-	std::string trainerfile_;			// Script file (Trainer).
+	std::string scriptfile_;			// Script file (Trainer).
 	std::string positiveIndexfile_;		// Estimated positive index file.
 	std::string negativeIndexfile_;		// Estimated negative index file.
 	std::string activeIndexfile_;		// Active Selection index file.
