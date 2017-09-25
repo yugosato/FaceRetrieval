@@ -358,7 +358,7 @@ void ofApp::update()
 		endtime_ = clock();
 
 		std::cout << "[ofApp] Total processing time: " << (double)(endtime_ - starttime_) / CLOCKS_PER_SEC << "sec." << std::endl;
-		std::cout << "================================" << std::endl;
+		std::cout << "#####################################################################################################" << std::endl;
 
 		vscroll_areaA_.current(0);
 	}

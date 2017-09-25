@@ -74,17 +74,17 @@ class TrainModel(object):
     def set_random_seed(self, seed):
         random.seed(seed)
         np.random.seed(seed)
-        xp.random.seed(seed)
-        print "[Trainer] Set Random Seed: {}".format(seed)
+        # xp.random.seed(seed)
+        print "[Trainer] Set Random Seed: {}.".format(seed)
 
 
     def run_feature_extraction(self):
         # Extract features
-        print "[Trainer] Feature Extraction --> ",
+        print "[Trainer] Feature Extraction."
         features = self.model_.extract(xp.array(self.train_.features_))
         features_name = os.path.join(home_dir, "result", "features.tsv")
         np.savetxt(features_name, cuda.to_cpu(features.data), delimiter="\t", fmt="%.18f")
-        print features_name
+        print "[Trainer] --> {}".format(features_name)
 
 
     def run_train(self):
@@ -107,7 +107,7 @@ class TrainModel(object):
 
         # Load datasets and set up iterator
         self.train_ = ImportDataset(self.listfile_, self.inputfile_)
-        train_iter = chainer.iterators.SerialIterator(self.train_, batch_size=self.batch_size_)
+        train_iter = chainer.iterators.SerialIterator(self.train_, batch_size=self.batch_size_, shuffle=False)
 
         # Set optimizer
         optimizer = chainer.optimizers.AdaDelta()
@@ -118,10 +118,10 @@ class TrainModel(object):
         trainer = training.Trainer(updater, (self.epoch_, "epoch"), os.path.join(home_dir, "result"))
 
         # Run trainer
-        print "[Trainer] Start training --> ",
+        print "[Trainer] Start training."
         trainer.run()
         self.model_ = model
-        print "Finished."
+        print "[Trainer] Finished."
 
 
     def run_LOOCV(self):
@@ -143,7 +143,7 @@ class TrainModel(object):
                 model_loccv.to_gpu(self.gpu_id_)
 
             split_samples.split_LOOCV(train_index)
-            train_iter = chainer.iterators.SerialIterator(split_samples, batch_size=self.batch_size_)
+            train_iter = chainer.iterators.SerialIterator(split_samples, batch_size=self.batch_size_, shuffle=False)
 
             # Set optimizer
             optimizer = chainer.optimizers.AdaDelta()

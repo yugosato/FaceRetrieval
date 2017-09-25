@@ -29,9 +29,6 @@ class OnlineProcessing(TrainModel, ActiveSelection):
 
 def main_process():
     process = OnlineProcessing()
-
-    "cause bug"
-    # process.set_random_seed(0)
-
+    process.set_random_seed(0)
     process.run_trainmodel()
     process.run_activeSelection()
