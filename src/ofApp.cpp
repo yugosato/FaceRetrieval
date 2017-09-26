@@ -298,12 +298,10 @@ void ofApp::update()
 	{
 		trainer_->stopThread();
 		trainer_->isTrained_ = false;
-		endtime_trainer_ = clock();
-		std::cout << "[ofApp] Training time: " << (double)(endtime_trainer_ - starttime_trainer_) / CLOCKS_PER_SEC << "sec." << std::endl;
+		std::cout << "[ofApp] Training time: " << trainer_->process_time_ << "sec." << std::endl;
 
 		ngt_->setInput_multi(positives_, negatives_);
 		ngt_->startThread();
-		starttime_ngt_ = clock();
 	}
 
 	if (ngt_->isSearched_)
@@ -327,8 +325,6 @@ void ofApp::update()
 
 	if (isSearchedAll_)
 	{
-		endtime_ngt_ = clock();
-		std::cout << "[ofApp] Searching time: " << (double)(endtime_ngt_ - starttime_ngt_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		isSearchedAll_ = false;
 		selection_->load();
 	}
@@ -355,11 +351,8 @@ void ofApp::update()
 		inputHistory();
 
 		canSearch_ = true;
-		endtime_ = clock();
 
-		std::cout << "[ofApp] Total processing time: " << (double)(endtime_ - starttime_) / CLOCKS_PER_SEC << "sec." << std::endl;
 		std::cout << "#####################################################################################################" << std::endl;
-
 		vscroll_areaA_.current(0);
 	}
 
@@ -1020,12 +1013,11 @@ void ofApp::mouseReleased(int x, int y, int button)
 						epoch_++;
 						std::cout << "[ofApp] " << "Feedback: " << epoch_ << std::endl;
 
-						starttime_ = clock();
-						clickflag_ = true;
+
 						samplewriter_->write(positives_, negatives_);
 
 						trainer_->startThread();
-						starttime_trainer_ = clock();
+						clickflag_ = true;
 						canSearch_ = false;
 					}
 				}

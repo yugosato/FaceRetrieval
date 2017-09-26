@@ -193,15 +193,6 @@ public:
 	bool iseval_;							// Switch: Display comparison results.
 
 	//-----------------------------------------
-	// Time Record.
-	clock_t starttime_;			// Total processing time (start).
-	clock_t starttime_trainer_; // Online Training processing time (start).
-	clock_t starttime_ngt_;		// NGT searching time (start).
-	clock_t endtime_;			// Total processing time (end).
-	clock_t endtime_trainer_;	// Online Training processing time (end).
-	clock_t endtime_ngt_;		// NGT searching time (end).
-
-	//-----------------------------------------
 	// Scroll Bar..
 	VerticalScrollBar vscroll_areaA_;		// ScrollBar: All results viewer.
 	const int ScrollBarWidth_ = 30;			// ScrollBar width.

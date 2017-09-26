@@ -21,6 +21,7 @@ public:
 	boost::python::object main_module_;
 	boost::python::object main_namespace_;
 	boost::python::object trainer_;
+	double process_time_;
 	bool isTrained_;
 
 
