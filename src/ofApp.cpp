@@ -195,9 +195,9 @@ void ofApp::setup()
 	onPaint(showList_active_);
 	firstshowlist_ = showList_active_;
 
-	// Setup NGT.
-	ngt_ = new Search();
-	ngt_->setup(indexFile_);
+	// Setup search method.
+	search_ = new Search();
+	search_->setup(indexFile_);
 
 	// Load image features (multi thread).
 	loading_ = new NowLoading();
@@ -254,7 +254,7 @@ void ofApp::exit()
 	delete database_;
 	delete loading_;
 	delete loader_;
-	delete ngt_;
+	delete search_;
 	delete samplewriter_;
 	delete logger_active_;
 	delete logger_main_;
@@ -275,7 +275,7 @@ void ofApp::update()
 		loading_->stopThread();
 		loading_->unlock();
 		isLoaded_ = true;
-		ngt_->setMatrix(loading_->mat_);
+		search_->setMatrix(loading_->mat_);
 		canSearch_ = true;
 
 		logger_active_ = new Logger;
@@ -298,20 +298,17 @@ void ofApp::update()
 	{
 		trainer_->stopThread();
 		trainer_->isTrained_ = false;
-		std::cout << "[ofApp] Training time: " << trainer_->process_time_ << "sec." << std::endl;
-
-		ngt_->setInput_multi(positives_, negatives_);
-		ngt_->startThread();
+		search_->startThread();
 	}
 
-	if (ngt_->isSearched_)
+	if (search_->isSearched_)
 	{
-		ngt_->stopThread();
-		ngt_->isSearched_ = false;
-		ngt_->getNumber(&number_main_);
+		search_->stopThread();
+		search_->isSearched_ = false;
+		search_->getNumber(&number_main_);
 
 		rerank_->load();
-		rerank_->set_queryvector(ngt_->queryvector_);
+		rerank_->set_queryvector(search_->queryvector_);
 		rerank_->set_result(number_main_);
 		rerank_->startThread();
 	}
@@ -351,6 +348,9 @@ void ofApp::update()
 		inputHistory();
 
 		canSearch_ = true;
+		process_time_ = ofGetElapsedTimef() - timer_start_;
+
+		showProcessingTime();
 
 		std::cout << "#####################################################################################################" << std::endl;
 		vscroll_areaA_.current(0);
@@ -1013,12 +1013,13 @@ void ofApp::mouseReleased(int x, int y, int button)
 						epoch_++;
 						std::cout << "[ofApp] " << "Feedback: " << epoch_ << std::endl;
 
-
-						samplewriter_->write(positives_, negatives_);
-
-						trainer_->startThread();
 						clickflag_ = true;
 						canSearch_ = false;
+
+						samplewriter_->write(positives_, negatives_);
+						search_->setInput_multi(positives_, negatives_);
+						trainer_->startThread();
+						timer_start_ = ofGetElapsedTimef();
 					}
 				}
 			}
@@ -1366,4 +1367,17 @@ void ofApp::put_time(std::string& time_str)
 
     time_str = year + delim + month + delim + day + delim + hour +
     		delim + min + delim + sec;
+}
+
+//--------------------------------------------------------------
+void ofApp::showProcessingTime()
+{
+	float others = process_time_ - trainer_->process_time_ - search_->process_time_;
+
+	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
+	std::cout << "Total: " << process_time_ << " sec." << std::endl;
+	std::cout << "Online Training (Main + LOOCV + Selection): " << trainer_->process_time_ << " sec." << std::endl;
+	std::cout << "Searching: " << search_->process_time_ << " sec." << std::endl;
+	std::cout << "Others: " << others << " sec." << std::endl;
+	std::cout << "---------------------------------------------------------------------" << std::endl;
 }

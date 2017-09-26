@@ -80,21 +80,21 @@ class TrainModel(object):
 
     def run_feature_extraction(self):
         # Extract features
-        print "[Trainer] Feature Extraction."
+        print "[Trainer-Extraction] Start feature Extraction."
         features = self.model_.extract(xp.array(self.train_.features_))
         features_name = os.path.join(home_dir, "result", "features.tsv")
         np.savetxt(features_name, cuda.to_cpu(features.data), delimiter="\t", fmt="%.18f")
-        print "[Trainer] --> {}".format(features_name)
+        print "[Trainer-Extraction] --> {}".format(features_name)
 
 
     def run_train(self):
-        print "[Trainer] feedback file: \"{}\"".format(self.listfile_)
-        print "[Trainer] input: \"{}\"".format(self.inputfile_)
-        print "[Trainer] setting: \"{}\"".format(self.py_settingfile_)
-        print "[Trainer] dim: {}".format(self.unit_)
-        print "[Trainer] epoch: {}".format(self.epoch_)
-        print "[Trainer] mini-batch size: {}".format(self.batch_size_)
-        print "[Trainer] GPU id: {}".format(self.gpu_id_)
+        print "[Trainer-Main] feedback file: \"{}\"".format(self.listfile_)
+        print "[Trainer-Main] input: \"{}\"".format(self.inputfile_)
+        print "[Trainer-Main] setting: \"{}\"".format(self.py_settingfile_)
+        print "[Trainer-Main] dim: {}".format(self.unit_)
+        print "[Trainer-Main] epoch: {}".format(self.epoch_)
+        print "[Trainer-Main] mini-batch size: {}".format(self.batch_size_)
+        print "[Trainer-Main] GPU id: {}".format(self.gpu_id_)
 
         # Remove old files
         self.remove(os.path.join(home_dir, "result"))
@@ -118,22 +118,22 @@ class TrainModel(object):
         trainer = training.Trainer(updater, (self.epoch_, "epoch"), os.path.join(home_dir, "result"))
 
         # Run trainer
-        print "[Trainer] Start training."
+        print "[Trainer-Main] Start main training."
         trainer.run()
         self.model_ = model
-        print "[Trainer] Finished."
+        print "[Trainer-Main] --> Finished."
 
 
     def run_LOOCV(self):
         # Cross-validation testing.
-        print "[LOOCV] Start Leave-one-out testing."
+        print "[Trainer-LOOCV] Start leave-one-out testing."
         loo = LeaveOneOut()
         split_samples = SplitImportDataset(self.train_.base_)
         true_labels = []
         predicted_labels = []
 
         for train_index, [test_index] in loo.split(split_samples.input_base_):
-            print "[LOOCV] Test: [{}], Train: {}.".format(test_index, train_index)
+            print "[Trainer-LOOCV] Test: [{}], Train: {}.".format(test_index, train_index)
 
             # Initialize model to train
             model_loccv = MyModel(self.unit_)
@@ -169,7 +169,7 @@ class TrainModel(object):
         # Calculate accuracy and valiance
         acc = accuracy_score(true_labels, predicted_labels)
         val = self.variance_score(acc, len(split_samples.input_base_))
-        print "[LOOCV] Accuracy (average): {}, Variance: {}.".format(acc, val)
+        print "[Trainer-LOOCV] Accuracy (average): {}, Variance: {}.".format(acc, val)
 
         # Save as figure.
         if (self.train_.iter_num_ - 1) == 1:

@@ -21,7 +21,7 @@ public:
 	boost::python::object main_module_;
 	boost::python::object main_namespace_;
 	boost::python::object trainer_;
-	double process_time_;
+	float process_time_;
 	bool isTrained_;
 
 
@@ -44,8 +44,10 @@ public:
 	{
 		try
 		{
+			std::cout << "[Trainer] Start online training." << std::endl;
 			isTrained_ = false;
 			lock();
+			float start = ofGetElapsedTimef();
 
 			char python_home[] = "/home/yugo/anaconda2";
 			Py_SetPythonHome(python_home);
@@ -57,8 +59,10 @@ public:
 		    boost::python::exec(script_.c_str(), main_ns);
 		    main_mod.attr("main_process")();
 
+		    process_time_ = ofGetElapsedTimef() - start;
 		    unlock();
-			isTrained_ = true;
+		    isTrained_ = true;
+		    std::cout << "[Trainer] Finished online training." << std::endl;
 		}
 		catch (boost::python::error_already_set const &)
 		{

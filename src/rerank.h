@@ -56,6 +56,7 @@ public:
 	size_t size_;
 	size_t dim_;
 	bool isReranked_;
+	float process_time_;
 
 
 public:
@@ -101,6 +102,7 @@ public:
 		std::cout << "[ReRank] Start reranking results by trained model." << std::endl;
 		isReranked_ = false;
 		lock();
+		float start = ofGetElapsedTimef();
 
 		size_ = number_result_.size();
 		std::vector<double> distance;
@@ -118,6 +120,7 @@ public:
 		number_reranked_.clear();
 		number_reranked_ = ArgSort(distance, std::less<double>());
 
+		process_time_ = ofGetElapsedTimef() - start;
 		unlock();
 		isReranked_ = true;
 		std::cout << "[ReRank] Finished reranking results by trained model." << std::endl;

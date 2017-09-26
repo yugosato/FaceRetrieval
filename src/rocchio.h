@@ -21,50 +21,57 @@
 class Rocchio
 {
 public:
-	std::vector<std::vector<double>> relVec_;
-	std::vector<std::vector<double>> inrelVec_;
+	std::vector<std::vector<double>> relevance_;
+	std::vector<std::vector<double>> irrelevance_;
 	Eigen::VectorXd initquery_;
 	Eigen::VectorXd newquery_;
-	Eigen::VectorXd relVec_ave_;
-	Eigen::VectorXd inrelVec_ave_;
+	Eigen::VectorXd relevance_ave_;
+	Eigen::VectorXd irrelevance_ave_;
 	int dim_;
 	int relnum_;
-	int inrelnum_;
+	int irrelnum_;
+	int count_;
 
 
 public:
-	void setRelevance(const std::vector<std::vector<double>>& relVec)
+	Rocchio()
 	{
-		relVec_ = relVec;
-		relnum_ = relVec_.size();
-		dim_ = relVec_[0].size();
+		dim_ = 0;
+		relnum_ = 0;
+		irrelnum_ = 0;
+		count_ = 0;
 	}
 
-	void setInRelevance(const std::vector<std::vector<double>>& inrelVec)
+	void set_vector(const std::vector<std::vector<double>>& relevance,
+			const std::vector<std::vector<double>>& irrelevance)
 	{
-		inrelVec_ = inrelVec;
-		inrelnum_ = inrelVec_.size();
+		relevance_ = relevance;
+		irrelevance_ = irrelevance;
+		relnum_ = relevance_.size();
+		irrelnum_ = irrelevance_.size();
+		dim_ = relevance_[0].size();
 	}
 
-	inline void setInitquery(const std::vector<double> initquery, const int phase)
+	inline void setInitquery(const std::vector<double> initquery)
 	{
 		initquery_ = Eigen::VectorXd::Zero(dim_);
-		if (phase > 0)
+		if (count_ > 0)
 			for (int i = 0; i < dim_; ++i)
 				initquery_[i] = initquery[i];
+		++count_;
 	}
 
 	inline void calcAverage()
 	{
 		if (relnum_ > 0)
-			average(relVec_, relVec_ave_);
+			average(relevance_, relevance_ave_);
 		else
-			relVec_ave_ = Eigen::VectorXd::Zero(dim_);
+			relevance_ave_ = Eigen::VectorXd::Zero(dim_);
 
-		if (inrelnum_ > 0)
-			average(inrelVec_, inrelVec_ave_);
+		if (irrelnum_ > 0)
+			average(irrelevance_, irrelevance_ave_);
 		else
-			inrelVec_ave_ = Eigen::VectorXd::Zero(dim_);
+			irrelevance_ave_ = Eigen::VectorXd::Zero(dim_);
 	}
 
 	inline void average(const std::vector<std::vector<double>>& srcVec, Eigen::VectorXd& dstVec)
@@ -87,8 +94,8 @@ public:
 		std::cout << "[Rocchio] Alpha: " << alpha << ", Beta: " << beta << ", Gamma: " << gamma << std::endl;
 		calcAverage();
 		newquery_ = Eigen::VectorXd::Zero(dim_);
-		newquery_ = (alpha * initquery_.array()) + (beta * relVec_ave_.array())
-				- (gamma * inrelVec_ave_.array());
+		newquery_ = (alpha * initquery_.array()) + (beta * relevance_ave_.array())
+				- (gamma * irrelevance_ave_.array());
 	}
 
 	inline void getquery(std::vector<double>* query) const

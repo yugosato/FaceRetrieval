@@ -179,6 +179,8 @@ public:
 	bool isReady_;			// Flag: Finished all background processes.
 	bool isActiveSelected_;	// Flag: Finished active selection.
 	bool canSearch_;		// Flag: Ready to search.
+	float process_time_;	// Total processing time.
+	float timer_start_;		// Timer (start).
 
 	//-----------------------------------------
 	// Retrieval results.
@@ -237,6 +239,7 @@ public:
 	inline void updateScrollBars();
 	inline void initializeBars();
 	inline void calculateHoldingOriginPoint();
+	inline void showProcessingTime();
 
 
 public:
@@ -276,7 +279,7 @@ public:
 	DataBase* database_;			// Database information.
 	NowLoading* loading_;			// Load Image features.
 	ImageLoader* loader_; 			// Load Images
-	Search* ngt_;					// NGT
+	Search* search_;				// Search image from database.
 	SampleWriter* samplewriter_;	// Training sample writer
 	Logger* logger_active_;			// Logger (active selection).
 	Logger* logger_main_;			// Logger (main).

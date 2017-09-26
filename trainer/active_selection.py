@@ -65,13 +65,13 @@ class ActiveSelection(object):
 
     "Random selection for compasion."
     def getRandomIndex(self):
-        print "[ActiveSelection] Get random sampling index."
+        print "[Trainer-Selection] Get random sampling index."
         return np.random.choice(self.unlabeled_ids_, self.len_unlabeled_ids_, replace = False)
 
 
     "Traditional active learning method."
     def getUncertaintyIndex(self, trn_ds, method, clf):
-        print "[ActiveSelection] Get uncertainty sampling index."
+        print "[Trainer-Selection] Get uncertainty sampling index."
         qs = UncertaintySampling(trn_ds, method=method, model=clf)
         _, score = qs.make_query(return_score=True)
         score_sorted = sorted(score, key=lambda x:x[1], reverse=True)
@@ -83,7 +83,7 @@ class ActiveSelection(object):
 
     "Active distance used in the CueFlik (Fogary+,2008)."
     def getCueFlikIndex(self):
-        print "[ActiveSelection] Get CueFlik sampling index."
+        print "[Trainer-Selection] Get CueFlik sampling index."
         features = self.clf_.extract(self.train_.features_)
 
         result = []
@@ -123,7 +123,7 @@ class ActiveSelection(object):
 
 
     def run_estimate_class(self):
-        print "[ActiveSelection] Estimate positive/negative."
+        print "[Trainer-Selection] Start Estimating positive/negative."
         proba = self.clf_.predict_proba(self.train_.features_)
         positive_index = self.sort_positive(proba)
         negative_index = self.sort_negative(proba)
@@ -149,4 +149,4 @@ class ActiveSelection(object):
         if not os.path.exists(os.path.join(home_dir, "result")):
             os.makedirs(os.path.join(home_dir, "result"))
         np.savetxt(filename, np.array(index), fmt="%.0f")
-        print "[ActiveSelection] Saved result. --> {}".format(filename)
+        print "[Trainer-Selection] --> {}".format(filename)

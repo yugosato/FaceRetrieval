@@ -16,12 +16,15 @@ public:
 	std::string indexFile_;
 	std::vector<std::vector<double>> matrix_;
 	std::vector<double> queryvector_;
-	int phase_;
+	std::vector<std::vector<double>> relevance_;
+	std::vector<std::vector<double>> irrelevance_;
 	bool isSearched_;
 	int clickNo_;
 	const int size_ = 500;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
+	Rocchio* rocchio_;
+	float process_time_;
 
 
 public:
@@ -30,40 +33,23 @@ public:
 		clickNo_ = -1;
 		indexFile_ = indexFile;
 		index_ = new NGT::Index(indexFile_);
-		phase_ = 0;
 		isSearched_ = false;
+		rocchio_ = new Rocchio;
 	}
 
-	inline void setInput_multi(const std::vector<int>& rel, const std::vector<int>& inrel)
+	inline void setInput_multi(const std::vector<int>& positives, const std::vector<int>& negatives)
 	{
-		Rocchio* rocchio;
-		rocchio = new Rocchio;
+		relevance_.clear();
+		irrelevance_.clear();
 
-		std::vector<std::vector<double>> relVec;
-		std::vector<std::vector<double>> inrelVec;
-		relVec.reserve(rel.size());
-		inrelVec.reserve(inrel.size());
+		relevance_.resize(positives.size());
+		irrelevance_.resize(negatives.size());
 
-		for (int i = 0; i < (int) rel.size(); ++i)
-			relVec.push_back(matrix_[rel[i]]);
+		for (int i = 0; i < (int) positives.size(); ++i)
+			relevance_[i] = matrix_[positives[i]];
 
-		for (int i = 0; i < (int) inrel.size(); ++i)
-			inrelVec.push_back(matrix_[inrel[i]]);
-
-		rocchio->setRelevance(relVec);
-		rocchio->setInRelevance(inrelVec);
-		rocchio->setInitquery(queryvector_, phase_);
-		rocchio->calculate(1.0f, 0.8f, 0.3f);
-		rocchio->getquery(&queryvector_);
-
-		phase_++;
-
-		relVec.clear();
-		inrelVec.clear();
-		std::vector<std::vector<double>>().swap(relVec);
-		std::vector<std::vector<double>>().swap(inrelVec);
-
-		delete rocchio;
+		for (int i = 0; i < (int) negatives.size(); ++i)
+			irrelevance_[i] = matrix_[negatives[i]];
 	}
 
 	void setMatrix(const std::vector<std::vector<double>>& matrix)
@@ -75,9 +61,18 @@ public:
 	{
 		try
 		{
-			std::cout << "[Search] Start NGT searching." << std::endl;
+			std::cout << "[Search] Start searching." << std::endl;
 			isSearched_ = false;
 			lock();
+			float start = ofGetElapsedTimef();
+
+			// Rocchio Algorithm.
+			rocchio_->set_vector(relevance_, irrelevance_);
+			rocchio_->setInitquery(queryvector_);
+			rocchio_->calculate(1.0f, 0.8f, 0.3f);
+			rocchio_->getquery(&queryvector_);
+
+			// NGT Search.
 			NGT::Object* query = 0;
 			query = index_->allocateObject(queryvector_);
 
@@ -96,9 +91,11 @@ public:
 			NGT::ObjectDistances().swap(objects_);
 
 			objects_ = objects;
+
+			process_time_ = ofGetElapsedTimef() - start;
 			unlock();
 			isSearched_ = true;
-			std::cout << "[Search] Finished NGT searching." << std::endl;
+			std::cout << "[Search] Finished Searching." << std::endl;
 		}
 		catch (NGT::Exception &err)
 		{
@@ -120,6 +117,7 @@ public:
 	virtual ~Search()
 	{
 		delete index_;
+		delete rocchio_;
 	}
 
 };
