@@ -27,9 +27,8 @@ class OnlineProcessing(TrainModel, ActiveSelection):
         self.run_estimate_class()
 
 
-def main_process():
-    process = OnlineProcessing()
-    process.set_random_seed(0)
-    process.run_trainmodel()
-    process.run_activeSelection()
-
+# Main
+process = OnlineProcessing()
+# process.set_random_seed(0) # <--- bug
+process.run_trainmodel()
+process.run_activeSelection()

@@ -76,7 +76,7 @@ class TrainModel(object):
     def set_random_seed(seed):
         random.seed(seed)
         np.random.seed(seed)
-        # xp.random.seed(seed)
+        xp.random.seed(seed)
         print "[Trainer] Set Random Seed: {}.".format(seed)
 
 

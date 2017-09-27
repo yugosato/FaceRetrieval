@@ -9,8 +9,7 @@
 #include <fstream>
 #include <streambuf>
 #include "ofMain.h"
-#include "boost/python.hpp"
-#include "boost/python/numpy.hpp"
+#include "Python.h"
 
 
 class Trainer: public ofThread
@@ -18,9 +17,6 @@ class Trainer: public ofThread
 public:
 	std::string pythonfile_;
 	std::string script_;
-	boost::python::object main_module_;
-	boost::python::object main_namespace_;
-	boost::python::object trainer_;
 	float process_time_;
 	bool isTrained_;
 
@@ -51,19 +47,16 @@ public:
 
 			char python_home[] = "/home/yugo/anaconda2";
 			Py_SetPythonHome(python_home);
-			Py_Initialize();
+			Py_InitializeEx(0);
 
-			auto main_mod = boost::python::import("__main__");
-			auto main_ns  = main_mod.attr("__dict__");
-			boost::python::exec(script_.c_str(), main_ns);
-			main_mod.attr("main_process")();
+			PyRun_SimpleString(script_.c_str());
 
  		    process_time_ = ofGetElapsedTimef() - start;
 		    unlock();
 		    isTrained_ = true;
 		    std::cout << "[Trainer] Finished online training." << std::endl;
 		}
-		catch (boost::python::error_already_set const &)
+		catch (...)
 		{
 			PyErr_Print();
 		}
