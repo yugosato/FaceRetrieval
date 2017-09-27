@@ -17,7 +17,7 @@ class ActiveSelection(object):
 
 
     def load_classifier(self):
-        self.clf_ = Chainer2Sklearn(self.model_.to_cpu())
+        self.clf_ = Chainer2Sklearn(self.model_)
 
 
     def labeled_index(self):
@@ -84,7 +84,7 @@ class ActiveSelection(object):
     "Active distance used in the CueFlik (Fogary+,2008)."
     def getCueFlikIndex(self):
         print "[Trainer-Selection] Get CueFlik sampling index."
-        features = self.clf_.extract(self.train_.features_)
+        features = self.new_features_
 
         result = []
         for uid in self.unlabeled_ids_:
@@ -131,21 +131,24 @@ class ActiveSelection(object):
         self.write(os.path.join(home_dir, "result/negative_index.txt"), negative_index)
 
 
-    def sort_positive(self, proba):
+    @staticmethod
+    def sort_positive(proba):
         positive_proba = []
         for prob in proba:
             positive_proba.append(prob[1])
         return np.argsort(positive_proba)[::-1]
 
 
-    def sort_negative(self, proba):
+    @staticmethod
+    def sort_negative(proba):
         negative_proba = []
         for prob in proba:
             negative_proba.append(prob[0])
         return np.argsort(negative_proba)[::-1]
 
 
-    def write(self, filename, index):
+    @staticmethod
+    def write(filename, index):
         if not os.path.exists(os.path.join(home_dir, "result")):
             os.makedirs(os.path.join(home_dir, "result"))
         np.savetxt(filename, np.array(index), fmt="%.0f")

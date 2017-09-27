@@ -32,3 +32,4 @@ def main_process():
     process.set_random_seed(0)
     process.run_trainmodel()
     process.run_activeSelection()
+

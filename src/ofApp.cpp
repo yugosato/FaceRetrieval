@@ -354,6 +354,7 @@ void ofApp::update()
 
 		std::cout << "#####################################################################################################" << std::endl;
 		vscroll_areaA_.current(0);
+
 	}
 
 	vscroll_areaA_.update();
@@ -1375,9 +1376,9 @@ void ofApp::showProcessingTime()
 	float others = process_time_ - trainer_->process_time_ - search_->process_time_;
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
-	std::cout << "Total: " << process_time_ << " sec." << std::endl;
 	std::cout << "Online Training (Main + LOOCV + Selection): " << trainer_->process_time_ << " sec." << std::endl;
 	std::cout << "Searching: " << search_->process_time_ << " sec." << std::endl;
 	std::cout << "Others: " << others << " sec." << std::endl;
+	std::cout << "Total: " << process_time_ << " sec." << std::endl;
 	std::cout << "---------------------------------------------------------------------" << std::endl;
 }

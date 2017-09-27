@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import matplotlib.pyplot as plt
-import cupy as xp
-import numpy as np
 import random
+import numpy as np
+import cupy as xp
+import matplotlib.pyplot as plt
 import chainer
 from chainer import training
 from chainer import cuda
@@ -60,18 +60,20 @@ class TrainModel(object):
         plt.savefig(os.path.join(home_dir, "result", "acc_val.png"))
 
 
-    def variance_score(self, acc, size):
+    @staticmethod
+    def variance_score(acc, size):
         return acc * (1 - acc) / size
 
 
-    def remove(self, dirpath):
+    @staticmethod
+    def remove(dirpath):
         if os.path.exists(dirpath):
             files = os.listdir(dirpath)
             for file in files:
                 os.remove(os.path.join(dirpath, file))
 
-
-    def set_random_seed(self, seed):
+    @staticmethod
+    def set_random_seed(seed):
         random.seed(seed)
         np.random.seed(seed)
         # xp.random.seed(seed)
@@ -81,10 +83,16 @@ class TrainModel(object):
     def run_feature_extraction(self):
         # Extract features
         print "[Trainer-Extraction] Start feature Extraction."
-        features = self.model_.extract(xp.array(self.train_.features_))
+        if self.gpu_id_ >= 0:
+           new_features = self.model_.extract(xp.array(self.train_.features_))
+        else:
+           new_features = self.model_.extract(np.array(self.train_.features_))
+
+        self.new_features_ = cuda.to_cpu(new_features.data)
         features_name = os.path.join(home_dir, "result", "features.tsv")
-        np.savetxt(features_name, cuda.to_cpu(features.data), delimiter="\t", fmt="%.18f")
+        np.savetxt(features_name, self.new_features_, delimiter="\t", fmt="%.18f")
         print "[Trainer-Extraction] --> {}".format(features_name)
+        self.model_.to_cpu()
 
 
     def run_train(self):
@@ -120,7 +128,7 @@ class TrainModel(object):
         # Run trainer
         print "[Trainer-Main] Start main training."
         trainer.run()
-        self.model_ = model
+        self.model_ = model.copy()
         print "[Trainer-Main] --> Finished."
 
 
@@ -182,4 +190,6 @@ class TrainModel(object):
         self.acc_val_ = np.append(acc_val, [[acc], [val]], axis=1)
         np.save(os.path.join(home_dir, "acc_val.npy"), self.acc_val_)
 
+        # Draw reriability graph.
         self.drawGraph()
+

@@ -53,13 +53,12 @@ public:
 			Py_SetPythonHome(python_home);
 			Py_Initialize();
 
-		    auto main_mod = boost::python::import("__main__");
-		    auto main_ns  = main_mod.attr("__dict__");
+			auto main_mod = boost::python::import("__main__");
+			auto main_ns  = main_mod.attr("__dict__");
+			boost::python::exec(script_.c_str(), main_ns);
+			main_mod.attr("main_process")();
 
-		    boost::python::exec(script_.c_str(), main_ns);
-		    main_mod.attr("main_process")();
-
-		    process_time_ = ofGetElapsedTimef() - start;
+ 		    process_time_ = ofGetElapsedTimef() - start;
 		    unlock();
 		    isTrained_ = true;
 		    std::cout << "[Trainer] Finished online training." << std::endl;
