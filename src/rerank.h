@@ -48,48 +48,32 @@ std::vector<int> ArgSort(const Sequence& seq, BinaryPredicate func)
 class ReRank: public ofThread
 {
 public:
-	std::string featuresfile_;
 	std::vector<double> queryvector_;
-	std::vector<std::vector<double>> features_;
-	std::vector<int> number_result_;
-	std::vector<int> number_reranked_;
-	size_t size_;
-	size_t dim_;
+	std::vector<std::vector<double>> new_features_;
+	std::vector<int> init_result_;
+	std::vector<int> reranked_result_;
+	int size_;
 	bool isReranked_;
 	float process_time_;
 
 
 public:
-	void setup(const std::string& featuresfile)
+	ReRank()
 	{
-		featuresfile_ = featuresfile;
+		size_ = 0;
 		isReranked_ = false;
+		process_time_ = 0.0f;
 	}
 
-	inline void load()
+	void set_newfeatures(const std::vector<std::vector<double>>& new_features)
 	{
-		std::ifstream ifs(featuresfile_);
-		if (!ifs)
-			std::cerr << "[Warning] Cannot open the specified file. " << featuresfile_ << std::endl;
-		else
-		{
-			std::string line;
-			while (getline(ifs, line))
-			{
-				std::vector<std::string> tokens;
-				NGT::Common::tokenize(line, tokens, "\t");
-				std::vector<double> obj;
-				for (std::vector<std::string>::iterator ti = tokens.begin(); ti != tokens.end(); ++ti)
-					obj.push_back(NGT::Common::strtod(*ti));
-				features_.push_back(obj);
-			}
-			dim_ = features_[0].size();
-		}
+		new_features_ = new_features;
 	}
 
-	void set_result(const std::vector<int>& number_result)
+	void set_init_result(const std::vector<int>& result)
 	{
-		number_result_ = number_result;
+		init_result_ = result;
+		size_ = (int) init_result_.size();
 	}
 
 	void set_queryvector(const std::vector<double>& queryvector)
@@ -104,26 +88,38 @@ public:
 		lock();
 		float start = ofGetElapsedTimef();
 
-		size_ = number_result_.size();
 		std::vector<double> distance;
 		distance.resize(size_);
 
 		double cos_distance = 0;
-		size_t i = 0;
+		int i = 0;
 		while(i < size_)
 		{
-			cos_distance = cosine_distance(queryvector_, features_[i]);
+			cos_distance = cosine_distance(queryvector_, new_features_[i]);
 			distance[i] = cos_distance;
 			++i;
 		}
 
-		number_reranked_.clear();
-		number_reranked_ = ArgSort(distance, std::less<double>());
+		std::vector<int> reranked_idx = ArgSort(distance, std::less<double>());
+		sort_result_by_index(reranked_idx);
 
 		process_time_ = ofGetElapsedTimef() - start;
 		unlock();
 		isReranked_ = true;
 		std::cout << "[ReRank] Finished reranking results by trained model." << std::endl;
+	}
+
+	inline void sort_result_by_index(const std::vector<int>& index)
+	{
+		reranked_result_.clear();
+		reranked_result_.resize(size_);
+
+		int i = 0;
+		while (i < size_)
+		{
+			reranked_result_[i] = init_result_[index[i]];
+			++i;
+		}
 	}
 
 	inline double cosine_distance(const std::vector<double>& a, const std::vector<double>& b)
@@ -133,8 +129,9 @@ public:
 		double normB = 0.0F;
 		double sum = 0.0F;
 
-		size_t loc = 0;
-		while (loc < dim_)
+		int dim = a.size();
+		int loc = 0;
+		while (loc < dim)
 		{
 			normA += (double) a[loc] * (double) a[loc];
 			normB += (double) b[loc] * (double) b[loc];
@@ -153,11 +150,12 @@ public:
 
 	inline void getNumber(std::vector<int>* number) const
 	{
+		number->clear();
 		number->resize(size_);
-		size_t i = 0;
+		int i = 0;
 		while (i < size_)
 		{
-			(*number)[i] = number_reranked_[i];
+			(*number)[i] = reranked_result_[i];
 			++i;
 		}
 	}

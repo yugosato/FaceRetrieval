@@ -72,7 +72,8 @@ public:
 
 	inline void getNumber(std::vector<int>* number) const
 	{
-		int size = number_cueflik_.size();
+		number->clear();
+		int size = (int) number_cueflik_.size();
 		number->resize(size);
 		for (int i = 0; i < size; ++i)
 			(*number)[i] = number_cueflik_[i];

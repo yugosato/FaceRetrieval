@@ -14,7 +14,7 @@ public:
 	NGT::Index* index_;
 	NGT::ObjectDistances objects_;
 	std::string indexFile_;
-	std::vector<std::vector<double>> matrix_;
+	std::vector<std::vector<double>> features_;
 	std::vector<double> queryvector_;
 	std::vector<std::vector<double>> relevance_;
 	std::vector<std::vector<double>> irrelevance_;
@@ -37,6 +37,11 @@ public:
 		rocchio_ = new Rocchio;
 	}
 
+	void set_features(const std::vector<std::vector<double>>& features)
+	{
+		features_ = features;
+	}
+
 	inline void setInput_multi(const std::vector<int>& positives, const std::vector<int>& negatives)
 	{
 		relevance_.clear();
@@ -46,15 +51,10 @@ public:
 		irrelevance_.resize(negatives.size());
 
 		for (int i = 0; i < (int) positives.size(); ++i)
-			relevance_[i] = matrix_[positives[i]];
+			relevance_[i] = features_[positives[i]];
 
 		for (int i = 0; i < (int) negatives.size(); ++i)
-			irrelevance_[i] = matrix_[negatives[i]];
-	}
-
-	void setMatrix(const std::vector<std::vector<double>>& matrix)
-	{
-		matrix_ = matrix;
+			irrelevance_[i] = features_[negatives[i]];
 	}
 
 	inline void threadedFunction()
@@ -109,6 +109,7 @@ public:
 
 	inline void getNumber(std::vector<int>* number) const
 	{
+		number->clear();
 		number->resize(size_);
 		for (int i = 0; i < size_; ++i)
 			(*number)[i] = (int)objects_[i].id - 1;

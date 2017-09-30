@@ -64,7 +64,7 @@ void ofApp::initparam()
 	nameFile_ = datasetdir_ + dataset_ + "images_selected.txt";
 
 #ifdef VGG
-	matrixFile_ = binData_ + "cfd/cfd-vgg.tsv";
+	featuresfile_ = binData_ + "cfd/cfd-vgg.tsv";
 	npyFile_ = binData_ + "cfd/cfd-vgg.npy";
 	indexFile_ = binData_ + "cfd/cfd-vgg_index-angle";
 #endif
@@ -103,7 +103,7 @@ void ofApp::initparam()
 	cueflikIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/cueflik_index.txt";
 	randomIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/random_index.txt";
 	resultGraphfile_ = "/home/yugo/workspace/Interface/trainer/result/acc_val.png";
-	newfeaturesfile_ = "/home/yugo/workspace/Interface/trainer/result/features.tsv";
+	new_featuresfile_ = "/home/yugo/workspace/Interface/trainer/result/features.tsv";
 
 	//-----------------------------------------
 	// Retrieval results.
@@ -131,7 +131,6 @@ void ofApp::initparam()
 	//-----------------------------------------
 	// Others.
 	epoch_ = 0;
-	isLoaded_ = false;
 	isSearchedAll_ = false;
 	isReady_ = false;
 	isActiveSelected_ = false;
@@ -201,7 +200,7 @@ void ofApp::setup()
 
 	// Load image features (multi thread).
 	loading_ = new NowLoading();
-	loading_->setMatFile(matrixFile_);
+	loading_->set_featuresfile(featuresfile_, new_featuresfile_);
 	loading_->setRow(row_);
 	loading_->startThread();
 
@@ -209,7 +208,7 @@ void ofApp::setup()
 	if (!isFileexists(logdir_))
 		mkdir(logdir_.c_str(), 0777);
 	samplewriter_ = new SampleWriter(samplefile_);
-	samplewriter_->write_init();
+	samplewriter_->init_write();
 
 	// Setup online trainer.
 	trainer_ = new Trainer;
@@ -222,10 +221,9 @@ void ofApp::setup()
 
 	// Setup reranking method.
 	rerank_ = new ReRank;
-	rerank_->setup(newfeaturesfile_);
 
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
-	std::cout << "[Setting] Matrix file: \"" << matrixFile_ << "\"" << std::endl;
+	std::cout << "[Setting] Matrix file: \"" << featuresfile_ << "\"" << std::endl;
 	std::cout << "[Setting] Npy file: \"" << npyFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Feedback file: \"" << samplefile_ << "\"" << std::endl;
 	std::cout << "[Setting] Python settings: \"" << pysettingfile_ << "\"" << std::endl;
@@ -270,12 +268,11 @@ void ofApp::update()
 {
 	ofBackground(ofColor(0x000000));
 
-	if (loading_->done_ && !isLoaded_)
+	if (loading_->isLoaded_init_)
 	{
 		loading_->stopThread();
-		loading_->unlock();
-		isLoaded_ = true;
-		search_->setMatrix(loading_->mat_);
+		loading_->isLoaded_init_ = false;
+		search_->set_features(loading_->features_);
 		canSearch_ = true;
 
 		logger_active_ = new Logger;
@@ -285,12 +282,12 @@ void ofApp::update()
 		logger_active_->setup(samplefile_, candidatefile_active_, pysettingfile_, npyFile_, loading_->col_);
 		logger_main_->setup(samplefile_, candidatefile_main_, pysettingfile_, npyFile_, loading_->col_);
 		logger_eval_->setup(samplefile_, candidatefile_eval_, pysettingfile_, npyFile_, loading_->col_);
-
 		logger_main_->writePySetting();
 
 		number_active_ = database_->number_main_;
 		number_main_ = database_->number_main_;
-		number_eval_ = number_main_;
+		number_eval_ = database_->number_eval_;
+
 		writelog();
 	}
 
@@ -298,6 +295,17 @@ void ofApp::update()
 	{
 		trainer_->stopThread();
 		trainer_->isTrained_ = false;
+
+		loading_->isLoadNew_ = true;
+		loading_->startThread();
+	}
+
+	if (loading_->isLoaded_new_)
+	{
+		loading_->stopThread();
+		loading_->isLoaded_new_ = false;
+
+		search_->set_features(loading_->new_features_);
 		search_->startThread();
 	}
 
@@ -305,11 +313,12 @@ void ofApp::update()
 	{
 		search_->stopThread();
 		search_->isSearched_ = false;
-		search_->getNumber(&number_main_);
+		search_->getNumber(&number_eval_); // Not Rerank.
+		search_->getNumber(&number_main_); // Rerank.
 
-		rerank_->load();
+		rerank_->set_newfeatures(loading_->new_features_);
+		rerank_->set_init_result(number_main_);
 		rerank_->set_queryvector(search_->queryvector_);
-		rerank_->set_result(number_main_);
 		rerank_->startThread();
 	}
 
@@ -317,6 +326,8 @@ void ofApp::update()
 	{
 		rerank_->stopThread();
 		rerank_->isReranked_ = false;
+		rerank_->getNumber(&number_main_);
+
 		isSearchedAll_ = true;
 	}
 
@@ -354,7 +365,6 @@ void ofApp::update()
 
 		std::cout << "#####################################################################################################" << std::endl;
 		vscroll_areaA_.current(0);
-
 	}
 
 	vscroll_areaA_.update();
@@ -365,13 +375,6 @@ void ofApp::draw()
 {
 	ofFill();
 	ofSetLineWidth(1);
-
-	if (!isLoaded_)
-	{
-		std::string nowload = "Now Loading...\n";
-		std::string process = ofToString(loading_->count_ * 100 / loading_->row_) + "%";
-		font_.drawString(nowload + process, 15, 36);
-	}
 
 	ofImage img;
 	const int len = loader_->row_;
@@ -502,28 +505,25 @@ void ofApp::draw()
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	graph_.draw(overview_margin_, overviewR_posy_, overview_width_, overview_height_);
 
-	if (isLoaded_)
-	{
-		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-		std::string positive = "Positive Sample: ";
-		std::string negative = "Negative Sample: ";
-		std::string reliability = "Reliability Graph";
+	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+	std::string positive = "Positive Sample: ";
+	std::string negative = "Negative Sample: ";
+	std::string reliability = "Reliability Graph";
 
-		int perHeight = windowHeight_ / 3;
-		int posy_positive_txt = 25;
-		int posy_negative_txt = 25 + perHeight;
-		int posy_reliability_txt = 25 + 2 * perHeight;
+	int perHeight = windowHeight_ / 3;
+	int posy_positive_txt = 25;
+	int posy_negative_txt = 25 + perHeight;
+	int posy_reliability_txt = 25 + 2 * perHeight;
 
-		overviewP_posy_ = posy_positive_txt + 10;
-		overviewN_posy_ = posy_negative_txt + 10;
-		overviewR_posy_ = posy_reliability_txt + 10;
-		overview_width_ = overview_d_size_ * overview_colShow_;
-		overview_height_ = overview_d_size_ * 4;
+	overviewP_posy_ = posy_positive_txt + 10;
+	overviewN_posy_ = posy_negative_txt + 10;
+	overviewR_posy_ = posy_reliability_txt + 10;
+	overview_width_ = overview_d_size_ * overview_colShow_;
+	overview_height_ = overview_d_size_ * 4;
 
-		font_.drawString(positive + ofToString(len_positives_), overview_margin_, posy_positive_txt);
-		font_.drawString(negative + ofToString(len_negatives_), overview_margin_, posy_negative_txt);
-		font_.drawString(reliability, overview_margin_, posy_reliability_txt);
-	}
+	font_.drawString(positive + ofToString(len_positives_), overview_margin_, posy_positive_txt);
+	font_.drawString(negative + ofToString(len_negatives_), overview_margin_, posy_negative_txt);
+	font_.drawString(reliability, overview_margin_, posy_reliability_txt);
 
 	const int len_positive_images = positive_images_.size();
 	const int len_negative_images = negative_images_.size();
@@ -1019,6 +1019,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 						samplewriter_->write(positives_, negatives_);
 						search_->setInput_multi(positives_, negatives_);
+
 						trainer_->startThread();
 						timer_start_ = ofGetElapsedTimef();
 					}
@@ -1148,7 +1149,7 @@ void ofApp::onPaint(const std::vector<int>& list)
 {
 	sizeChanged();
 	loader_->setShowList(list);
-	loader_->load();
+	loader_->load_images();
 	ishistory_ = false;
 	overview_d_size_ = d_size_ * 0.9;
 

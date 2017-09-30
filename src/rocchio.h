@@ -1,10 +1,3 @@
-/*
- * rocchio.h
- *
- *  Created on: May 10, 2017
- *      Author: yugo
- */
-
 #ifndef SRC_ROCCHIO_H_
 #define SRC_ROCCHIO_H_
 

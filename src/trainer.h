@@ -71,4 +71,3 @@ public:
 
 
 #endif /* SRC_TRAINER_H_ */
-

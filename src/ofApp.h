@@ -118,7 +118,7 @@ public:
 	std::string datasetdir_;			// Dataset directory.
 	std::string dataset_;				// Dataset name.
 	std::string nameFile_;				// Image list file.
-	std::string matrixFile_;			// Image features file (tsv).
+	std::string featuresfile_;			// Image features file (tsv).
 	std::string npyFile_;				// Image features file (npy).
 	std::string indexFile_;				// Index directory (for NGT).
 
@@ -139,7 +139,7 @@ public:
 	std::string cueflikIndexfile_;		// Active Selection index file (CueFlik).
 	std::string randomIndexfile_;		// Random Selection index file.
 	std::string resultGraphfile_;		// For update graph.
-	std::string newfeaturesfile_;		// For rerank method.
+	std::string new_featuresfile_;		// For rerank method.
 
 
 	//-----------------------------------------
@@ -174,7 +174,6 @@ public:
 	//-----------------------------------------
 	// Others.
 	int epoch_;				// The number of current search iteration.
-	bool isLoaded_;			// Flag: Finished loading image features file.
 	bool isSearchedAll_;	// Flag: Finished searching.
 	bool isReady_;			// Flag: Finished all background processes.
 	bool isActiveSelected_;	// Flag: Finished active selection.
@@ -288,4 +287,3 @@ public:
 	Selection* selection_;			// Active Selection.
 	ReRank* rerank_;				// Reranking method.
 };
-

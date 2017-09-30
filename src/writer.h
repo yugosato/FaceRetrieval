@@ -23,7 +23,7 @@ public:
 		iter_ = 0;
 	}
 
-	inline void write_init()
+	inline void init_write()
 	{
 		std::ofstream writer(samplefile_, std::ios::trunc);
 		if (!writer)
@@ -148,4 +148,3 @@ public:
 };
 
 #endif /* SRC_WRITER_H_ */
-
