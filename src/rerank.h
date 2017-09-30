@@ -5,8 +5,10 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <algorithm>
 #include "ofMain.h"
 #include "NGT/Index.h"
+#include "rocchio.h"
 
 
 template<typename Sequence, typename BinaryPredicate>
@@ -49,12 +51,15 @@ class ReRank: public ofThread
 {
 public:
 	std::vector<double> queryvector_;
+	std::vector<std::vector<double>> relevance_;
+	std::vector<std::vector<double>> irrelevance_;
 	std::vector<std::vector<double>> new_features_;
 	std::vector<int> init_result_;
 	std::vector<int> reranked_result_;
 	int size_;
 	bool isReranked_;
 	float process_time_;
+	Rocchio* rocchio_;
 
 
 public:
@@ -63,6 +68,7 @@ public:
 		size_ = 0;
 		isReranked_ = false;
 		process_time_ = 0.0f;
+		rocchio_ = new Rocchio;
 	}
 
 	void set_newfeatures(const std::vector<std::vector<double>>& new_features)
@@ -76,9 +82,19 @@ public:
 		size_ = (int) init_result_.size();
 	}
 
-	void set_queryvector(const std::vector<double>& queryvector)
+	inline void setInput_multi(const std::vector<int>& positives, const std::vector<int>& negatives)
 	{
-		queryvector_ = queryvector;
+		relevance_.clear();
+		irrelevance_.clear();
+
+		relevance_.resize(positives.size());
+		irrelevance_.resize(negatives.size());
+
+		for (int i = 0; i < (int) positives.size(); ++i)
+			relevance_[i] = new_features_[positives[i]];
+
+		for (int i = 0; i < (int) negatives.size(); ++i)
+			irrelevance_[i] = new_features_[negatives[i]];
 	}
 
 	inline void threadedFunction()
@@ -87,6 +103,12 @@ public:
 		isReranked_ = false;
 		lock();
 		float start = ofGetElapsedTimef();
+
+		// Rocchio Algorithm.
+		rocchio_->set_vector(relevance_, irrelevance_);
+		rocchio_->setInitquery(queryvector_);
+		rocchio_->calculate(1.0f, 0.8f, 0.3f);
+		rocchio_->getquery(&queryvector_);
 
 		std::vector<double> distance;
 		distance.resize(size_);
@@ -158,6 +180,11 @@ public:
 			(*number)[i] = reranked_result_[i];
 			++i;
 		}
+	}
+
+	virtual ~ReRank()
+	{
+		delete rocchio_;
 	}
 
 };

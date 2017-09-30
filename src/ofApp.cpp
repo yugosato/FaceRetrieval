@@ -19,7 +19,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	//  The number of displayed images.
 	picA_ = 1;
-	picB_ = 128;
+	picB_ = 200;
 	picnum_ = picB_ - picA_ + 1;
 
 	//-----------------------------------------
@@ -305,7 +305,6 @@ void ofApp::update()
 		loading_->stopThread();
 		loading_->isLoaded_new_ = false;
 
-		search_->set_features(loading_->new_features_);
 		search_->startThread();
 	}
 
@@ -313,12 +312,12 @@ void ofApp::update()
 	{
 		search_->stopThread();
 		search_->isSearched_ = false;
-		search_->getNumber(&number_eval_); // Not Rerank.
 		search_->getNumber(&number_main_); // Rerank.
+		search_->getNumber(&number_eval_); // Not Rerank.
 
 		rerank_->set_newfeatures(loading_->new_features_);
 		rerank_->set_init_result(number_main_);
-		rerank_->set_queryvector(search_->queryvector_);
+		rerank_->setInput_multi(positives_, negatives_);
 		rerank_->startThread();
 	}
 
@@ -1374,11 +1373,12 @@ void ofApp::put_time(std::string& time_str)
 //--------------------------------------------------------------
 void ofApp::showProcessingTime()
 {
-	float others = process_time_ - trainer_->process_time_ - search_->process_time_;
+	float others = process_time_ - trainer_->process_time_ - search_->process_time_ - rerank_->process_time_;
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
 	std::cout << "Online Training (Main + LOOCV + Selection): " << trainer_->process_time_ << " sec." << std::endl;
 	std::cout << "Searching: " << search_->process_time_ << " sec." << std::endl;
+	std::cout << "Reranking: " << rerank_->process_time_ << " sec." << std::endl;
 	std::cout << "Others: " << others << " sec." << std::endl;
 	std::cout << "Total: " << process_time_ << " sec." << std::endl;
 	std::cout << "---------------------------------------------------------------------" << std::endl;
