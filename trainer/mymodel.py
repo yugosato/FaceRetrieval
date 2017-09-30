@@ -29,7 +29,7 @@ class MyModel(Chain):
 
     def extract(self, x):
         h = F.dropout(F.relu(self.fc1(x)), train=False, ratio=0.5)
-        return F.dropout(F.relu(self.fc2(h)), train=self.train, ratio=0.5)
+        return F.dropout(F.relu(self.fc2(h)), train=False, ratio=0.5)
 
 
     def forward(self, x):

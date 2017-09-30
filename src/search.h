@@ -20,7 +20,7 @@ public:
 	std::vector<std::vector<double>> irrelevance_;
 	bool isSearched_;
 	int clickNo_;
-	const int size_ = 200;
+	int size_;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
 	Rocchio* rocchio_;
@@ -28,10 +28,11 @@ public:
 
 
 public:
-	void setup(const std::string indexFile)
+	void setup(const std::string indexFile, const int size)
 	{
 		clickNo_ = -1;
 		indexFile_ = indexFile;
+		size_ = size;
 		index_ = new NGT::Index(indexFile_);
 		isSearched_ = false;
 		rocchio_ = new Rocchio;

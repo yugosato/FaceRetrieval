@@ -196,7 +196,7 @@ void ofApp::setup()
 
 	// Setup search method.
 	search_ = new Search();
-	search_->setup(indexFile_);
+	search_->setup(indexFile_, picnum_);
 
 	// Load image features (multi thread).
 	loading_ = new NowLoading();
