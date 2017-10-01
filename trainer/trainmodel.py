@@ -31,7 +31,7 @@ class TrainModel(object):
         self.unit_ = self.settings_["unit"]
 
         # Training parameter
-        self.epoch_ = 5
+        self.epoch_ = 10
         self.batch_size_ = 1
         self.gpu_id_ = 0
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import os
 import numpy as np
 import chainer
 import chainer.functions as F
@@ -8,11 +9,15 @@ from chainer import Chain
 from libact.base.interfaces import ProbabilisticModel
 
 
+home_dir = "/home/yugo/workspace/Interface/trainer"
+initial_W = np.load(os.path.join(home_dir, "initial_W.npy"))
+initial_b = np.load(os.path.join(home_dir, "initial_b.npy"))
+
 class MyModel(Chain):
     def __init__(self, unit):
         super(MyModel, self).__init__(
-            fc1=L.Linear(None, unit),
-            fc2=L.Linear(None, unit),
+            fc1=L.Linear(None, unit, initialW=initial_W, initial_bias=initial_b),
+            fc2=L.Linear(None, unit, initialW=initial_W, initial_bias=initial_b),
             fc3=L.Linear(None, 2)
         )
         self.train = True

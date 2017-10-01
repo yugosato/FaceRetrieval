@@ -5,7 +5,6 @@
 #include <vector>
 #include <fstream>
 #include <string>
-#include <algorithm>
 #include "ofMain.h"
 #include "NGT/Index.h"
 #include "rocchio.h"

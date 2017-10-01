@@ -5,6 +5,8 @@ template.xml
 .project
 *.pyc
 trainer/acc_val.npy
+trainer/initial_W.npy
+trainer/initial_b.npy
 
 # directories
 bin/
@@ -12,3 +14,4 @@ obj/
 .idea/
 .settings/
 trainer/result/
+
