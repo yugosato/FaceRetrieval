@@ -4,6 +4,7 @@ import random
 import numpy as np
 import cupy as xp
 import matplotlib.pyplot as plt
+import seaborn as sns
 import chainer
 from chainer import training
 from chainer import cuda
@@ -46,17 +47,18 @@ class TrainModel(object):
         len_acc = len(acc)
         x = [i for i in xrange(total_iter_num)]
 
+        sns.set_style("darkgrid")
         plt.figure(figsize=(11,3))
-        plt.fill_between(x[:len_acc], acc - val, acc + val, color="blue", alpha=0.1, label="variance")
-        plt.plot(x[:len_acc], acc, color="b", label="reliability")
-        plt.ylim([0.0, 1.0])
+        plt.ylim([-0.02, 1.02])
         plt.xlim([0, 10])
-        plt.tight_layout(pad=2)
-        plt.legend(loc="upper left")
+        plt.yticks(np.arange(0.0, 1.1, 0.2))
+        plt.xticks(np.arange(0, 11, 1))
+        plt.fill_between(x[:len_acc], acc - val, acc + val, color="lightcoral", alpha=0.5, label="variance")
+        plt.plot(x[:len_acc], acc, color="red", linewidth=1.5, label="reliability")
         plt.xlabel("Iteration")
         plt.ylabel("Reliability")
-        plt.yticks(np.arange(0.0, 1.1, 0.1))
-        plt.xticks(np.arange(0, 11, 1))
+        plt.tight_layout(pad=2)
+        plt.legend(loc="upper left")
         plt.savefig(os.path.join(home_dir, "result", "acc_val.png"))
 
 
