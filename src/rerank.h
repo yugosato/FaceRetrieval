@@ -8,42 +8,7 @@
 #include "ofMain.h"
 #include "NGT/Index.h"
 #include "rocchio.h"
-
-
-template<typename Sequence, typename BinaryPredicate>
-struct IndexCompareT
-{
-	IndexCompareT(const Sequence& seq, const BinaryPredicate comp) :
-			seq_(seq), comp_(comp)
-	{
-	}
-	bool operator()(const size_t a, const size_t b) const
-	{
-		return comp_(seq_[a], seq_[b]);
-	}
-	const Sequence seq_;
-	const BinaryPredicate comp_;
-};
-
-template<typename Sequence, typename BinaryPredicate>
-IndexCompareT<Sequence, BinaryPredicate> IndexCompare(const Sequence& seq,
-		const BinaryPredicate comp)
-{
-	return IndexCompareT<Sequence, BinaryPredicate>(seq, comp);
-}
-
-template<typename Sequence, typename BinaryPredicate>
-std::vector<int> ArgSort(const Sequence& seq, BinaryPredicate func)
-{
-	std::vector<int> index(seq.size());
-	for (int i = 0; i < (int) index.size(); i++)
-	{
-		index[i] = i;
-	}
-	std::sort(index.begin(), index.end(), IndexCompare(seq, func));
-
-	return index;
-}
+#include "sorting.h"
 
 
 class ReRank: public ofThread
@@ -52,7 +17,7 @@ public:
 	std::vector<double> queryvector_;
 	std::vector<std::vector<double>> relevance_;
 	std::vector<std::vector<double>> irrelevance_;
-	std::vector<std::vector<double>> new_features_;
+	std::vector<std::vector<double>> features_;
 	std::vector<int> init_result_;
 	std::vector<int> reranked_result_;
 	int size_;
@@ -70,9 +35,9 @@ public:
 		rocchio_ = new Rocchio;
 	}
 
-	void set_newfeatures(const std::vector<std::vector<double>>& new_features)
+	void set_features(const std::vector<std::vector<double>>& features)
 	{
-		new_features_ = new_features;
+		features_ = features;
 	}
 
 	void set_init_result(const std::vector<int>& result)
@@ -90,15 +55,15 @@ public:
 		irrelevance_.resize(negatives.size());
 
 		for (int i = 0; i < (int) positives.size(); ++i)
-			relevance_[i] = new_features_[positives[i]];
+			relevance_[i] = features_[positives[i]];
 
 		for (int i = 0; i < (int) negatives.size(); ++i)
-			irrelevance_[i] = new_features_[negatives[i]];
+			irrelevance_[i] = features_[negatives[i]];
 	}
 
 	inline void threadedFunction()
 	{
-		std::cout << "[ReRank] Start reranking results by trained model." << std::endl;
+		std::cout << "[ReRank] Start reranking results by rocchio query vector." << std::endl;
 		isReranked_ = false;
 		lock();
 		float start = ofGetElapsedTimef();
@@ -116,7 +81,7 @@ public:
 		int i = 0;
 		while(i < size_)
 		{
-			cos_distance = cosine_distance(queryvector_, new_features_[i]);
+			cos_distance = cosine_distance(queryvector_, features_[i]);
 			distance[i] = cos_distance;
 			++i;
 		}
@@ -127,10 +92,10 @@ public:
 		process_time_ = ofGetElapsedTimef() - start;
 		unlock();
 		isReranked_ = true;
-		std::cout << "[ReRank] Finished reranking results by trained model." << std::endl;
+		std::cout << "[ReRank] Finished reranking results by rocchio query vector." << std::endl;
 	}
 
-	inline void sort_result_by_index(const std::vector<int>& index)
+	void sort_result_by_index(const std::vector<int>& index)
 	{
 		reranked_result_.clear();
 		reranked_result_.resize(size_);

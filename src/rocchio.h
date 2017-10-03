@@ -50,7 +50,7 @@ public:
 		initquery_ = Eigen::VectorXd::Zero(dim_);
 		if (count_ > 0)
 			for (int i = 0; i < dim_; ++i)
-				initquery_[i] = initquery[i];
+				initquery_(i) = initquery[i];
 		++count_;
 	}
 
@@ -75,7 +75,7 @@ public:
 		for (int i = 0; i < size; ++i)
 		{
 			for (int j = 0; j < dim_; ++j)
-				average[j] += srcVec[i][j];
+				average(j) += srcVec[i][j];
 		}
 
 		average = average.array() / size;

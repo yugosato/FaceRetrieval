@@ -24,6 +24,7 @@
 #include "selection.h"
 #include "ScrollBar4OF.hpp"
 #include "rerank.h"
+#include "VisualRank.h"
 
 
 const int initWidth_ = 1600;			// Initial window size: Width.
@@ -286,4 +287,5 @@ public:
 	Trainer* trainer_;				// Online Trainer.
 	Selection* selection_;			// Active Selection.
 	ReRank* rerank_;				// Reranking method.
+	VisualRank* visualrank_;		// VisualRank method.
 };

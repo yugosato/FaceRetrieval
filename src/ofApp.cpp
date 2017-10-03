@@ -19,7 +19,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	//  The number of displayed images.
 	picA_ = 1;
-	picB_ = 200;
+	picB_ = 104;
 	picnum_ = picB_ - picA_ + 1;
 
 	//-----------------------------------------
@@ -221,6 +221,7 @@ void ofApp::setup()
 
 	// Setup reranking method.
 	rerank_ = new ReRank;
+	visualrank_ = new VisualRank;
 
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Matrix file: \"" << featuresfile_ << "\"" << std::endl;
@@ -260,6 +261,7 @@ void ofApp::exit()
 	delete trainer_;
 	delete selection_;
 	delete rerank_;
+	delete visualrank_;
 }
 
 //--------------------------------------------------------------
@@ -273,6 +275,7 @@ void ofApp::update()
 		loading_->stopThread();
 		loading_->isLoaded_init_ = false;
 		search_->set_features(loading_->features_);
+
 		canSearch_ = true;
 
 		logger_active_ = new Logger;
@@ -315,17 +318,32 @@ void ofApp::update()
 		search_->getNumber(&number_main_); // Rerank.
 		search_->getNumber(&number_eval_); // Not Rerank.
 
-		rerank_->set_newfeatures(loading_->new_features_);
-		rerank_->set_init_result(number_main_);
-		rerank_->setInput_multi(positives_, negatives_);
-		rerank_->startThread();
+		// Default Reranking.
+//		rerank_->set_features(loading_->new_features_);
+//		rerank_->set_init_result(number_main_);
+//		rerank_->setInput_multi(positives_, negatives_);
+//		rerank_->startThread();
+
+		// VisualRank Reranking.
+		visualrank_->set_features(loading_->features_);
+		visualrank_->set_init_result(number_main_);
+		visualrank_->startThread();
 	}
 
-	if (rerank_->isReranked_)
+//	if (rerank_->isReranked_)
+//	{
+//		rerank_->stopThread();
+//		rerank_->isReranked_ = false;
+//		rerank_->getNumber(&number_main_);
+//
+//		isSearchedAll_ = true;
+//	}
+
+	if (visualrank_->isReranked_)
 	{
-		rerank_->stopThread();
-		rerank_->isReranked_ = false;
-		rerank_->getNumber(&number_main_);
+		visualrank_->stopThread();
+		visualrank_->isReranked_ = false;
+		visualrank_->getNumber(&number_main_);
 
 		isSearchedAll_ = true;
 	}
