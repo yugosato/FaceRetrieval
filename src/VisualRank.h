@@ -91,7 +91,7 @@ public:
 
 		make_similarityMatrix();
 
-		Eigen::VectorXf init_visualrank = init_visualrank_score(false);
+		Eigen::VectorXf init_visualrank = init_visualrank_score("nonlinear");
 		Eigen::VectorXf bias = Eigen::VectorXf::Constant(size_, 1.0f / (float) size_);
 		Eigen::VectorXf visualrank = init_visualrank;
 
@@ -117,11 +117,11 @@ public:
 		std::cout << "[ReRank] Finished reranking results by VisuralRank." << std::endl;
 	}
 
-	Eigen::VectorXf init_visualrank_score(const bool& Constant)
+	Eigen::VectorXf init_visualrank_score(const std::string& method)
 	{
 		Eigen::VectorXf rankscore(size_);
 
-		if (!Constant)
+		if (method == "lenear")
 		{
 			float score = (float) size_;
 			int i = 0;
@@ -133,9 +133,22 @@ public:
 			}
 			rankscore /= rankscore.sum();
 		}
-		else
+		else if (method == "constant")
 		{
 			rankscore = Eigen::VectorXf::Constant(size_, 1.0f / (float) size_);
+		}
+		else if (method == "nonlenear")
+		{
+			float score = (float) size_;
+			float a = 2.0;
+			int i = 0;
+			while (i < size_)
+			{
+				rankscore(i) = a * pow(score, 2);
+				--score;
+				++i;
+			}
+			rankscore /= rankscore.sum();
 		}
 
 		return rankscore;
