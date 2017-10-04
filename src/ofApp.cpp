@@ -90,6 +90,7 @@ void ofApp::initparam()
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/" + time + "/";
 	candidatefile_active_ = logdir_ + "candidate_active.txt";
 	candidatefile_main_ = logdir_ + "candidate_main.txt";
+	candidatefile_visualrank_ = logdir_ + "candidate_visualrank.txt";
 	candidatefile_eval_ = logdir_ + "candidate_eval.txt";
 	init_candidatefile_ = binData_ + "cfd/initialize.txt";
 
@@ -109,6 +110,7 @@ void ofApp::initparam()
 	// Retrieval results.
 	isactive_ = true;
 	ismain_ = false;
+	isvisualrank_ = false;
 	iseval_ = false;
 
 	//-----------------------------------------
@@ -152,6 +154,8 @@ void ofApp::loadImageandFont()
 	button2_active_.load(binData_ + "items/active2.png");
 	button1_main_.load(binData_ + "items/main1.png");
 	button2_main_.load(binData_ + "items/main2.png");
+	button1_visualrank_.load(binData_ + "items/visualrank1.png");
+	button2_visualrank_.load(binData_ + "items/visualrank2.png");
 	button1_eval_.load(binData_ + "items/eval1.png");
 	button2_eval_.load(binData_ + "items/eval2.png");
 	graph_.load(binData_ + "items/init_graph.png");
@@ -282,15 +286,18 @@ void ofApp::update()
 
 		logger_active_ = new Logger;
 		logger_main_ = new Logger;
+		logger_visualrank_ = new Logger;
 		logger_eval_ = new Logger;
 
 		logger_active_->setup(samplefile_, candidatefile_active_, pysettingfile_, npyFile_, loading_->col_);
 		logger_main_->setup(samplefile_, candidatefile_main_, pysettingfile_, npyFile_, loading_->col_);
+		logger_visualrank_->setup(samplefile_, candidatefile_visualrank_, pysettingfile_, npyFile_, loading_->col_);
 		logger_eval_->setup(samplefile_, candidatefile_eval_, pysettingfile_, npyFile_, loading_->col_);
 		logger_main_->writePySetting();
 
 		number_active_ = database_->number_main_;
 		number_main_ = database_->number_main_;
+		number_visualrank_ = database_->number_visualrank_;
 		number_eval_ = database_->number_eval_;
 
 		writelog();
@@ -320,11 +327,18 @@ void ofApp::update()
 		search_->getNumber(&number_main_); // Rerank.
 		search_->getNumber(&number_eval_); // Not Rerank.
 
-		// Default Reranking.
-//		rerank_->set_features(loading_->new_features_);
-//		rerank_->set_init_result(number_main_);
-//		rerank_->setInput_multi(positives_, negatives_);
-//		rerank_->startThread();
+		// Main Reranking.
+		rerank_->set_features(loading_->new_features_);
+		rerank_->set_init_result(number_main_);
+		rerank_->setInput_multi(positives_, negatives_);
+		rerank_->startThread();
+	}
+
+	if (rerank_->isReranked_)
+	{
+		rerank_->stopThread();
+		rerank_->isReranked_ = false;
+		rerank_->getNumber(&number_main_);
 
 		// VisualRank Reranking.
 		visualrank_->set_features(loading_->features_);
@@ -332,20 +346,11 @@ void ofApp::update()
 		visualrank_->startThread();
 	}
 
-//	if (rerank_->isReranked_)
-//	{
-//		rerank_->stopThread();
-//		rerank_->isReranked_ = false;
-//		rerank_->getNumber(&number_main_);
-//
-//		isSearchedAll_ = true;
-//	}
-
 	if (visualrank_->isReranked_)
 	{
 		visualrank_->stopThread();
 		visualrank_->isReranked_ = false;
-		visualrank_->getNumber(&number_main_);
+		visualrank_->getNumber(&number_visualrank_);
 
 		isSearchedAll_ = true;
 	}
@@ -368,6 +373,7 @@ void ofApp::update()
 		isReady_ = false;
 		database_->setNumber_active(number_active_);
 		database_->setNumber_main(number_main_);
+		database_->setNumber_visualrank(number_visualrank_);
 		database_->setNumber_eval(number_eval_);
 
 		graph_.load(resultGraphfile_);
@@ -375,7 +381,9 @@ void ofApp::update()
 
 		isactive_ = true;
 		ismain_ = false;
+		isvisualrank_ = false;
 		iseval_ = false;
+
 		calculate();
 		onPaint(showList_active_);
 		inputHistory();
@@ -471,41 +479,38 @@ void ofApp::draw()
     ofDrawRectangle(leftsize_, 0, windowWidth_ - leftsize_, uppersize_);
 
    	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-
-	// Forward button.
-//	if (!canBack_)
-//		backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
-//	else
-//		backbutton1_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
-//
-//	// Back button.
-//	if (!canForward_)
-//		forwardbutton0_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_,
-//				buttonheight_);
-//	else
-//		forwardbutton1_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
-
-	searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
+   	searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
 
 	std::string text;
 	if (isactive_)
 	{
 		button2_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button1_visualrank_.draw(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		text = "Selection";
+		text = "Active Selection";
 	}
 	else if (ismain_)
 	{
 		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button2_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button1_visualrank_.draw(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		text = "Rerank";
+	}
+	else if (isvisualrank_)
+	{
+		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button2_visualrank_.draw(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button1_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		text = "VisualRank";
 	}
 	else if (iseval_)
 	{
 		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		button1_visualrank_.draw(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button2_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		text = "Original";
 	}
@@ -646,26 +651,6 @@ void ofApp::keyPressed(int key)
 		}
 	}
 }
-
-//--------------------------------------------------------------
-//void ofApp::back()
-//{
-//	ishistory_ = true;
-//	backhistory();
-//	database_->setNumber_main(numberhistory_[nowhistory_]);
-//	calculate();
-//	onPaint(showList_main_);
-//}
-
-//--------------------------------------------------------------
-//void ofApp::forward()
-//{
-//	ishistory_ = true;
-//	forwardhistory();
-//	database_->setNumber_main(numberhistory_[nowhistory_]);
-//	calculate();
-//	onPaint(showList_main_);
-//}
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key)
@@ -995,6 +980,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			isactive_ = true;
 			ismain_ = false;
+			isvisualrank_ = false;
 			iseval_ = false;
 			onPaint(showList_active_);
 		}
@@ -1002,24 +988,26 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			isactive_ = false;
 			ismain_ = true;
+			isvisualrank_ = false;
 			iseval_ = false;
 			onPaint(showList_main_);
 		}
-#ifndef EXPERIMENT
+		else if (isReleasedArea(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
+		{
+			isactive_ = false;
+			ismain_ = false;
+			isvisualrank_ = true;
+			iseval_ = false;
+			onPaint(showList_visualrank_);
+		}
 		else if (isReleasedArea(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
 		{
 			isactive_ = false;
 			ismain_ = false;
+			isvisualrank_ = false;
 			iseval_ = true;
 			onPaint(showList_eval_);
 		}
-#endif
-
-//		if (canBack_ && isReleasedArea(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
-//			back();
-//
-//		if (canForward_ && isReleasedArea(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
-//			forward();
 
 		if (isReleasedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 		{
@@ -1147,6 +1135,9 @@ void ofApp::calculate()
 	database_->makeShowList_main(picA_, picB_);
 	showList_main_ = database_->getShowList();
 
+	database_->makeShowList_visualrank(picA_, picB_);
+	showList_visualrank_ = database_->getShowList();
+
 	database_->makeShowList_eval(picA_, picB_);
 	showList_eval_ = database_->getShowList();
 }
@@ -1200,58 +1191,30 @@ void ofApp::inputHistory()
 //--------------------------------------------------------------
 void ofApp::writelog()
 {
-	std::vector<int> candidate_active, candidate_main, candidate_eval;
+	std::vector<int> candidate_active, candidate_main, candidate_visualrank, candidate_eval;
+
 	candidate_active.resize(picnum_);
 	candidate_main.resize(picnum_);
+	candidate_visualrank.resize(picnum_);
 	candidate_eval.resize(picnum_);
+
 	for (int i = 0; i < picnum_; ++i)
 	{
 		int num_active = number_active_[i];
 		int num_main = number_main_[i];
+		int num_visualrank = number_visualrank_[i];
 		int num_eval = number_eval_[i];
 		candidate_active[i] = num_active;
 		candidate_main[i] = num_main;
+		candidate_visualrank[i] = num_visualrank;
 		candidate_eval[i] = num_eval;
 		candidatehistory_.push_back(num_active);
 	}
 	database_->setHistory(candidatehistory_);
 	logger_active_->writeCandidate(candidate_active);
 	logger_main_->writeCandidate(candidate_main);
+	logger_visualrank_->writeCandidate(candidate_visualrank);
 	logger_eval_->writeCandidate(candidate_eval);
-}
-
-//--------------------------------------------------------------
-void ofApp::backhistory()
-{
-	if (nowhistory_ < 2)
-	{
-		canForward_ = true;
-		canBack_ = false;
-		nowhistory_ = 0;
-	}
-	else
-	{
-		canForward_ = true;
-		canBack_ = true;
-		nowhistory_ += -1;
-	}
-}
-
-//--------------------------------------------------------------
-void ofApp::forwardhistory()
-{
-	if (nowhistory_ > historysize_ - 3)
-	{
-		canForward_ = false;
-		canBack_ = true;
-		nowhistory_ = historysize_ - 1;
-	}
-	else
-	{
-		canForward_ = true;
-		canBack_ = true;
-		nowhistory_ += 1;
-	}
 }
 
 //--------------------------------------------------------------
@@ -1278,6 +1241,8 @@ void ofApp::sizeChanged()
 		sList = &showList_active_;
 	else if (ismain_)
 		sList = &showList_main_;
+	else if (isvisualrank_)
+		sList = &showList_visualrank_;
 	else if (iseval_)
 		sList = &showList_eval_;
 
@@ -1381,7 +1346,8 @@ void ofApp::showProcessingTime()
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
 	std::cout << "Online Training (Main + LOOCV + Selection): " << trainer_->process_time_ << " sec." << std::endl;
 	std::cout << "Searching: " << search_->process_time_ << " sec." << std::endl;
-	std::cout << "Reranking: " << rerank_->process_time_ + visualrank_->process_time_ << " sec." << std::endl;
+	std::cout << "Reranking (main): " << rerank_->process_time_ + visualrank_->process_time_ << " sec." << std::endl;
+	std::cout << "Reranking (VisualRank): " << visualrank_->process_time_ << " sec." << std::endl;
 	std::cout << "Others: " << others << " sec." << std::endl;
 	std::cout << "Total: " << process_time_ << " sec." << std::endl;
 	std::cout << "---------------------------------------------------------------------" << std::endl;

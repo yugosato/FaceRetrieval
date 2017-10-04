@@ -62,14 +62,11 @@ public:
 	const int historybuttonwidth_ = buttonheight_;	// History button width.
 	const int buttonwidth_active_ = buttonheight_;	// Show active selection results button width.
 	const int buttonposy_line1_ = 5;				// The Y-coordinate of buttons on the 1st line.
-	const int backbuttonposx_ = 1505;				// The X-coordinate of step back button.
-	const int forwardbuttonposx_ = 1540;			// The X-coordinate of step forward button.
 	const int searchbuttonposx_ = 1000;				// The X-coordinate of search button.
 	const int searchbuttonwidth_ = 90;				// Search button width.
-	const int buttonposy_line2_ = buttonposy_line1_
-			+ buttonheight_ + 5;					// The Y-coordinate of buttons on the 1st line.
 	const int buttonposx_active_ = 1095;			// The X-coordinate of button displays the active selection results.
 	const int buttonposx_main_ = 1130;				// The X-coordinate of button displays the main results.
+	const int buttonposx_visualrank_ = 1200;		// The X-coordinate of button displays the visualrank results.
 	const int buttonposx_eval_ = 1165;				// The X-coordinate of button displays the camparison results.
 	const int guiScrollarea_height_ = 280;			// ScrollableCanvas's height (ofxUI).
 
@@ -116,32 +113,33 @@ public:
 
 	//-----------------------------------------
 	// Path Settings.
-	std::string binData_;				// Data (ofApp) directory.
-	std::string datasetdir_;			// Dataset directory.
-	std::string dataset_;				// Dataset name.
-	std::string nameFile_;				// Image list file.
-	std::string featuresfile_;			// Image features file (tsv).
-	std::string npyFile_;				// Image features file (npy).
-	std::string indexFile_;				// Index directory (for NGT).
+	std::string binData_;					// Data (ofApp) directory.
+	std::string datasetdir_;				// Dataset directory.
+	std::string dataset_;					// Dataset name.
+	std::string nameFile_;					// Image list file.
+	std::string featuresfile_;				// Image features file (tsv).
+	std::string npyFile_;					// Image features file (npy).
+	std::string indexFile_;					// Index directory (for NGT).
 
 	// Log Settings.
-	std::string logdir_;				// Log output directory.
-	std::string candidatefile_active_;	// Candidate list (active selection).
-	std::string candidatefile_main_;	// Candidate list (main).
-	std::string candidatefile_eval_;	// Candidate list (comparison).
-	std::string init_candidatefile_;	// Initial candidates list.
+	std::string logdir_;					// Log output directory.
+	std::string candidatefile_active_;		// Candidate list (active selection).
+	std::string candidatefile_main_;		// Candidate list (main).
+	std::string candidatefile_visualrank_;	// Candidate list (visualrank).
+	std::string candidatefile_eval_;		// Candidate list (comparison).
+	std::string init_candidatefile_;		// Initial candidates list.
 
 	// Python Settings.
-	std::string pysettingfile_;			// Python settings.
-	std::string samplefile_;			// Training sample list.
-	std::string scriptfile_;			// Script file (Trainer).
-	std::string positiveIndexfile_;		// Estimated positive index file.
-	std::string negativeIndexfile_;		// Estimated negative index file.
-	std::string activeIndexfile_;		// Active Selection index file.
-	std::string cueflikIndexfile_;		// Active Selection index file (CueFlik).
-	std::string randomIndexfile_;		// Random Selection index file.
-	std::string resultGraphfile_;		// For update graph.
-	std::string new_featuresfile_;		// For rerank method.
+	std::string pysettingfile_;				// Python settings.
+	std::string samplefile_;				// Training sample list.
+	std::string scriptfile_;				// Script file (Trainer).
+	std::string positiveIndexfile_;			// Estimated positive index file.
+	std::string negativeIndexfile_;			// Estimated negative index file.
+	std::string activeIndexfile_;			// Active Selection index file.
+	std::string cueflikIndexfile_;			// Active Selection index file (CueFlik).
+	std::string randomIndexfile_;			// Random Selection index file.
+	std::string resultGraphfile_;			// For update graph.
+	std::string new_featuresfile_;			// For rerank method.
 
 
 	//-----------------------------------------
@@ -187,13 +185,16 @@ public:
 	//-----------------------------------------
 	// Retrieval results.
 	std::vector<int> number_active_;		// Active selection results.
-	std::vector<int> number_main_;			// Retrieval results (main: images' ids).
+	std::vector<int> number_main_;			// Main reranking results.
+	std::vector<int> number_visualrank_;	// Visualrank reranking results.
 	std::vector<int> number_eval_;			// Retrieval results (comparison: images' ids).
 	std::vector<int> showList_active_;		// Selection image (active selection: show list).
-	std::vector<int> showList_main_;	 	// Retrieval results (main: show list).
+	std::vector<int> showList_main_;	 	// Main reranking results (show list).
+	std::vector<int> showList_visualrank_; 	// Visualrank reranking results (show list).
 	std::vector<int> showList_eval_;	 	// Retrieval results (compatison: show list).
 	bool isactive_;							// Switch: Display active selection results.
 	bool ismain_;							// Switch: Display main results.
+	bool isvisualrank_;							// Switch: Display visualrank results.
 	bool iseval_;							// Switch: Display comparison results.
 
 	//-----------------------------------------
@@ -228,10 +229,6 @@ public:
 	inline void inputHistory();
 	inline void initRange(const int& begin_, const int& end_);
 	inline void sizeChanged();
-	inline void backhistory();
-	inline void forwardhistory();
-//	inline void back();
-//	inline void forward();
 	inline bool isReleasedArea(float x, float y, float w, float h);
 	inline bool isInsideDragingArea(float x, float y, float w, float h);
 	inline bool isInsideMouseoverArea(float x, float y, float w, float h);
@@ -269,6 +266,8 @@ public:
 	ofImage button2_active_;
 	ofImage button1_main_;
 	ofImage button2_main_;
+	ofImage button1_visualrank_;
+	ofImage button2_visualrank_;
 	ofImage button1_eval_;
 	ofImage button2_eval_;
 
@@ -285,6 +284,7 @@ public:
 	SampleWriter* samplewriter_;	// Training sample writer
 	Logger* logger_active_;			// Logger (active selection).
 	Logger* logger_main_;			// Logger (main).
+	Logger* logger_visualrank_;		// Logger (visualrank).
 	Logger* logger_eval_;			// Logger (comparison method).
 	Trainer* trainer_;				// Online Trainer.
 	Selection* selection_;			// Active Selection.

@@ -19,6 +19,7 @@ public:
 	std::vector<std::string> name_;
 	std::vector<int> number_active_;
 	std::vector<int> number_main_;
+	std::vector<int> number_visualrank_;
 	std::vector<int> number_eval_;
 	std::vector<int> showList_;
 	std::vector<int> history_;
@@ -38,6 +39,7 @@ public:
 		//random();
 		//init_clustering();
 		number_active_ = number_main_;
+		number_visualrank_ = number_main_;
 		number_eval_ = number_main_;
 	}
 
@@ -133,6 +135,18 @@ public:
 			showList_[i] = number_main_[begin + i - 1];
 	}
 
+	inline void makeShowList_visualrank(const int begin, const int end)
+	{
+		const int size = end - begin + 1;
+
+		showList_.clear();
+		std::vector<int>().swap(showList_);
+		showList_.resize(size);
+
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_visualrank_[begin + i - 1];
+	}
+
 	inline void makeShowList_eval(const int begin, const int end)
 	{
 		const int size = end - begin + 1;
@@ -172,6 +186,18 @@ public:
 
 		for (int i = 0; i < size; ++i)
 			number_main_[i] = number[i];
+	}
+
+	inline void setNumber_visualrank(const std::vector<int>& number)
+	{
+		const int size = number.size();
+
+		number_visualrank_.clear();
+		std::vector<int>().swap(number_visualrank_);
+		number_visualrank_.resize(size);
+
+		for (int i = 0; i < size; ++i)
+			number_visualrank_[i] = number[i];
 	}
 
 	inline void setNumber_eval(const std::vector<int>& number)
