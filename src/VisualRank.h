@@ -96,13 +96,15 @@ public:
 		Eigen::VectorXf visualrank = init_visualrank;
 
 		const int alpha = 1.0;
-		int iter = 10;
-
-		int i = 0;
-		while (i < iter)
+		Eigen::VectorXf previousrank = Eigen::VectorXf::Random(size_);
+		while (1)
 		{
 			visualrank = alpha * (similarity_matrix_ * visualrank).array(); // + (1 - alpha) * bias.array();
-			++i;
+
+			if (previousrank == visualrank)
+				break;
+
+			previousrank = visualrank;
 		}
 
 		std::vector<float> score = eigen2stlvector(visualrank);
