@@ -65,9 +65,9 @@ public:
 	const int searchbuttonposx_ = 1000;				// The X-coordinate of search button.
 	const int searchbuttonwidth_ = 90;				// Search button width.
 	const int buttonposx_active_ = 1095;			// The X-coordinate of button displays the active selection results.
-	const int buttonposx_main_ = 1130;				// The X-coordinate of button displays the main results.
+	const int buttonposx_origin_ = 1130;			// The X-coordinate of button displays the camparison results.
+	const int buttonposx_main_ = 1165;				// The X-coordinate of button displays the main results.
 	const int buttonposx_visualrank_ = 1200;		// The X-coordinate of button displays the visualrank results.
-	const int buttonposx_eval_ = 1165;				// The X-coordinate of button displays the camparison results.
 	const int guiScrollarea_height_ = 280;			// ScrollableCanvas's height (ofxUI).
 
 	//-----------------------------------------
@@ -124,9 +124,9 @@ public:
 	// Log Settings.
 	std::string logdir_;					// Log output directory.
 	std::string candidatefile_active_;		// Candidate list (active selection).
+	std::string candidatefile_origin_;		// Candidate list (comparison).
 	std::string candidatefile_main_;		// Candidate list (main).
 	std::string candidatefile_visualrank_;	// Candidate list (visualrank).
-	std::string candidatefile_eval_;		// Candidate list (comparison).
 	std::string init_candidatefile_;		// Initial candidates list.
 
 	// Python Settings.
@@ -185,17 +185,17 @@ public:
 	//-----------------------------------------
 	// Retrieval results.
 	std::vector<int> number_active_;		// Active selection results.
+	std::vector<int> number_origin_;		// Retrieval results (comparison: images' ids).
 	std::vector<int> number_main_;			// Main reranking results.
 	std::vector<int> number_visualrank_;	// Visualrank reranking results.
-	std::vector<int> number_eval_;			// Retrieval results (comparison: images' ids).
 	std::vector<int> showList_active_;		// Selection image (active selection: show list).
+	std::vector<int> showList_origin_;	 	// Retrieval results (compatison: show list).
 	std::vector<int> showList_main_;	 	// Main reranking results (show list).
 	std::vector<int> showList_visualrank_; 	// Visualrank reranking results (show list).
-	std::vector<int> showList_eval_;	 	// Retrieval results (compatison: show list).
 	bool isactive_;							// Switch: Display active selection results.
+	bool isorigin_;							// Switch: Display comparison results.
 	bool ismain_;							// Switch: Display main results.
-	bool isvisualrank_;							// Switch: Display visualrank results.
-	bool iseval_;							// Switch: Display comparison results.
+	bool isvisualrank_;						// Switch: Display visualrank results.
 
 	//-----------------------------------------
 	// Scroll Bar..
@@ -264,12 +264,12 @@ public:
 	ofImage searchbutton2_;
 	ofImage button1_active_;
 	ofImage button2_active_;
+	ofImage button1_origin_;
+	ofImage button2_origin_;
 	ofImage button1_main_;
 	ofImage button2_main_;
 	ofImage button1_visualrank_;
 	ofImage button2_visualrank_;
-	ofImage button1_eval_;
-	ofImage button2_eval_;
 
 
 public:
@@ -283,9 +283,9 @@ public:
 	Search* search_;				// Search image from database.
 	SampleWriter* samplewriter_;	// Training sample writer
 	Logger* logger_active_;			// Logger (active selection).
+	Logger* logger_origin_;			// Logger (comparison method).
 	Logger* logger_main_;			// Logger (main).
 	Logger* logger_visualrank_;		// Logger (visualrank).
-	Logger* logger_eval_;			// Logger (comparison method).
 	Trainer* trainer_;				// Online Trainer.
 	Selection* selection_;			// Active Selection.
 	ReRank* rerank_;				// Reranking method.
