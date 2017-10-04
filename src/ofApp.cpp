@@ -371,6 +371,9 @@ void ofApp::update()
 		graph_.load(resultGraphfile_);
 		graph_.update();
 
+		isactive_ = true;
+		ismain_ = false;
+		iseval_ = false;
 		calculate();
 		onPaint(showList_active_);
 		inputHistory();
@@ -981,78 +984,58 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 	if (click_ == true)
 	{
-		const int x_dash = x - leftsize_;
-		const int y_dash = y - scroll_areaA_ - uppersize_;
-
-		if (canSearch_)
+		if (isReleasedArea(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
 		{
-			if (isReleasedArea(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
-			{
-				isactive_ = true;
-				ismain_ = false;
-				iseval_ = false;
-				onPaint(showList_active_);
-			}
-			else if (isReleasedArea(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
-			{
-				isactive_ = false;
-				ismain_ = true;
-				iseval_ = false;
-				onPaint(showList_main_);
-			}
+			isactive_ = true;
+			ismain_ = false;
+			iseval_ = false;
+			onPaint(showList_active_);
+		}
+		else if (isReleasedArea(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
+		{
+			isactive_ = false;
+			ismain_ = true;
+			iseval_ = false;
+			onPaint(showList_main_);
+		}
 #ifndef EXPERIMENT
-			else if (isReleasedArea(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
-			{
-				isactive_ = false;
-				ismain_ = false;
-				iseval_ = true;
-				onPaint(showList_eval_);
-			}
+		else if (isReleasedArea(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
+		{
+			isactive_ = false;
+			ismain_ = false;
+			iseval_ = true;
+			onPaint(showList_eval_);
+		}
 #endif
 
-			if (isactive_)
-			{
-//				if (canBack_ && isReleasedArea(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
-//					back();
+//		if (canBack_ && isReleasedArea(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
+//			back();
 //
-//				if (canForward_ && isReleasedArea(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
-//					forward();
+//		if (canForward_ && isReleasedArea(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_))
+//			forward();
 
-				if (isReleasedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
-				{
-					if (len_positives_ == 0)
-						std::cerr << "[Warning] Please select positive sample." << std::endl;
-
-					if (len_negatives_ == 0)
-						std::cerr << "[Warning] Please select negative sample." << std::endl;
-
-					if (len_positives_ > 0 && len_negatives_ > 0)
-					{
-						epoch_++;
-						std::cout << "[ofApp] " << "Feedback: " << epoch_ << std::endl;
-
-						clickflag_ = true;
-						canSearch_ = false;
-
-						samplewriter_->write(positives_, negatives_);
-						search_->setInput_multi(positives_, negatives_);
-
-						trainer_->startThread();
-						timer_start_ = ofGetElapsedTimef();
-					}
-				}
-			}
-			else
-			{
-				if (isReleasedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
-				{
-					std::cerr << "[Warning] Cannot search. Please search on state \"A\"" << std::endl;
-				}
-			}
-		}
-		else if (y_dash >= 0 && y > uppersize_ && x_dash >= 0 && x > leftsize_)
+		if (isReleasedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 		{
-			std::cerr << "[Warning] Cannot select. please wait." << std::endl;
+			if (len_positives_ == 0)
+				std::cerr << "[Warning] Please select positive sample." << std::endl;
+
+			if (len_negatives_ == 0)
+				std::cerr << "[Warning] Please select negative sample." << std::endl;
+
+			if (len_positives_ > 0 && len_negatives_ > 0)
+			{
+				epoch_++;
+				std::cout << "[ofApp] " << "Feedback: " << epoch_ << std::endl;
+
+				clickflag_ = true;
+				canSearch_ = false;
+
+				samplewriter_->write(positives_, negatives_);
+				search_->setInput_multi(positives_, negatives_);
+
+				trainer_->startThread();
+				timer_start_ = ofGetElapsedTimef();
+			}
 		}
 	}
 
@@ -1391,12 +1374,13 @@ void ofApp::put_time(std::string& time_str)
 //--------------------------------------------------------------
 void ofApp::showProcessingTime()
 {
-	float others = process_time_ - trainer_->process_time_ - search_->process_time_ - rerank_->process_time_;
+	float others = process_time_ - trainer_->process_time_ - search_->process_time_
+			- rerank_->process_time_ - visualrank_->process_time_;
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
 	std::cout << "Online Training (Main + LOOCV + Selection): " << trainer_->process_time_ << " sec." << std::endl;
 	std::cout << "Searching: " << search_->process_time_ << " sec." << std::endl;
-	std::cout << "Reranking: " << rerank_->process_time_ << " sec." << std::endl;
+	std::cout << "Reranking: " << rerank_->process_time_ + visualrank_->process_time_ << " sec." << std::endl;
 	std::cout << "Others: " << others << " sec." << std::endl;
 	std::cout << "Total: " << process_time_ << " sec." << std::endl;
 	std::cout << "---------------------------------------------------------------------" << std::endl;
