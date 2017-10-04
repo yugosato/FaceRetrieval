@@ -37,16 +37,16 @@ class ofApp: public ofBaseApp
 public:
 	//-----------------------------------------
 	// History.
-	int historysize_;					// The number of saved history.
-	int backcount_;						// Back count.
-	int forwardcount_;					// Forward count.
+	int historysize_;								// The number of saved history.
+	int backcount_;									// Back count.
+	int forwardcount_;								// Forward count.
 	std::vector<std::vector<int>> numberhistory_;	// Histories (images' ids).
-	std::vector<int> candidatehistory_;	// Histories (images' ids; removed duplication).
-	int nowhistory_;					// Current history position.
-	std::vector<int> firstshowlist_;	// Initial showlist (images' ids).
-	bool ishistory_;					// Flag: History showed.
-	bool canBack_;						// Flag: User can step back to previous results.
-	bool canForward_;					// Flag: User can step forward to next results.
+	std::vector<int> candidatehistory_;				// Histories (images' ids; removed duplication).
+	int nowhistory_;								// Current history position.
+	std::vector<int> firstshowlist_;				// Initial showlist (images' ids).
+	bool ishistory_;								// Flag: History showed.
+	bool canBack_;									// Flag: User can step back to previous results.
+	bool canForward_;								// Flag: User can step forward to next results.
 
 	//-----------------------------------------
 	// The number of displayed images (display range [picA - picB]).
@@ -56,22 +56,22 @@ public:
 
 	//-----------------------------------------
 	// GUI settings' parameters.
-	const int leftsize_ = 1000;			// Left region.
-	const int uppersize_ = 40;			// Upper region.
-	const int fontsize_ = 16;			// Font size.
-	const int buttonheight_ = 30;		// Button height.
+	const int leftsize_ = 1000;						// Left region.
+	const int uppersize_ = 40;						// Upper region.
+	const int buttonheight_ = 30;					// Button height.
 	const int historybuttonwidth_ = buttonheight_;	// History button width.
 	const int buttonwidth_active_ = buttonheight_;	// Show active selection results button width.
-	const int buttonposy_line1_ = 5;	// The Y-coordinate of buttons on the 1st line.
-	const int backbuttonposx_ = 1505;	// The X-coordinate of step back button.
-	const int forwardbuttonposx_ = 1540;// The X-coordinate of step forward button.
-	const int searchbuttonposx_ = 1000;	// The X-coordinate of search button.
-	const int searchbuttonwidth_ = 90;	// Search button width.
-	const int buttonposy_line2_ = buttonposy_line1_ + buttonheight_ + 5;	// The Y-coordinate of buttons on the 1st line.
-	const int buttonposx_active_ = 1095;	// The X-coordinate of button displays the active selection results.
-	const int buttonposx_main_ = 1130;		// The X-coordinate of button displays the main results.
-	const int buttonposx_eval_ = 1165;		// The X-coordinate of button displays the camparison results.
-	const int guiScrollarea_height_ = 280;	// ScrollableCanvas's height (ofxUI).
+	const int buttonposy_line1_ = 5;				// The Y-coordinate of buttons on the 1st line.
+	const int backbuttonposx_ = 1505;				// The X-coordinate of step back button.
+	const int forwardbuttonposx_ = 1540;			// The X-coordinate of step forward button.
+	const int searchbuttonposx_ = 1000;				// The X-coordinate of search button.
+	const int searchbuttonwidth_ = 90;				// Search button width.
+	const int buttonposy_line2_ = buttonposy_line1_
+			+ buttonheight_ + 5;					// The Y-coordinate of buttons on the 1st line.
+	const int buttonposx_active_ = 1095;			// The X-coordinate of button displays the active selection results.
+	const int buttonposx_main_ = 1130;				// The X-coordinate of button displays the main results.
+	const int buttonposx_eval_ = 1165;				// The X-coordinate of button displays the camparison results.
+	const int guiScrollarea_height_ = 280;			// ScrollableCanvas's height (ofxUI).
 
 	//-----------------------------------------
 	// Database information.
@@ -112,6 +112,7 @@ public:
 	//-----------------------------------------
 	// Font.
 	std::string ttf_;					// Font data.
+	const int fontsize_ = 16;			// Font size.
 
 	//-----------------------------------------
 	// Path Settings.
@@ -145,42 +146,43 @@ public:
 
 	//-----------------------------------------
 	// Overview Settings.
-	bool isHolding_areaA_;				// Flag: Holding areaA.
-	bool isHolding_areaP_;				// Flag: Holding areaP.
-	bool isHolding_areaN_;				// Flag: Holding areaN.
-	bool isHoldAndDrag_;				// Flag: Holding and draging image.
-	bool isInsideWindow_;				// Flag: Mouse pointer is inside window.
-	bool isInside_areaA_;				// Flag: Holding inside area A.
-	bool isInside_areaP_;				// Flag: Holding inside area P.
-	bool isInside_areaN_;				// Flag: Holding inside area N.
-	int overview_d_size_;				// Size of each displayed image (overview).
-	int overview_colShow_;				// The number of cols.
-	int holdImgNum_;					// Holding image number;
-	int holding_x_;						// The X-coordinate of held image.
-	int holding_y_;						// The Y-coordinate of held image.
-	int width_areaA_;					// Area A width.
-	const int overview_margin_ = 30;	// Margin of Overview area.
-	int overviewP_posy_;				// The Y-coordinate of positive overview.
-	int overviewN_posy_;				// The Y-coordinate of negative overview.
-	int overviewR_posy_;				// The Y-coordinate of reliability overview.
-	int overview_width_;				// Every overview width.
-	int overview_height_;				// Every overview height.
-	int len_positives_;					// The number of positive samples.
-	int len_negatives_;					// The number of negative samples.
+	bool isHolding_areaA_;					// Flag: Holding areaA.
+	bool isHolding_areaP_;					// Flag: Holding areaP.
+	bool isHolding_areaN_;					// Flag: Holding areaN.
+	bool isHoldAndDrag_;					// Flag: Holding and draging image.
+	bool isInsideWindow_;					// Flag: Mouse pointer is inside window.
+	bool isInside_areaA_;					// Flag: Holding inside area A.
+	bool isInside_areaP_;					// Flag: Holding inside area P.
+	bool isInside_areaN_;					// Flag: Holding inside area N.
+	int overview_d_size_;					// Size of each displayed image (overview).
+	int overview_colShow_;					// The number of cols.
+	int holdImgNum_;						// Holding image number;
+	int holding_x_;							// The X-coordinate of held image.
+	int holding_y_;							// The Y-coordinate of held image.
+	int width_areaA_;						// Area A width.
+	const int overview_margin_ = 30;		// Margin of Overview area.
+	int overviewP_posy_;					// The Y-coordinate of positive overview.
+	int overviewN_posy_;					// The Y-coordinate of negative overview.
+	int overviewR_posy_;					// The Y-coordinate of reliability overview.
+	int overview_width_;					// Every overview width.
+	int overview_height_;					// Every overview height.
+	int len_positives_;						// The number of positive samples.
+	int len_negatives_;						// The number of negative samples.
 	std::vector<ofImage> positive_images_;	// Positive sample images.
 	std::vector<ofImage> negative_images_;	// Negative sample images.
-	std::vector<int> positives_;		// Positive Samples (image id).
-	std::vector<int> negatives_;		// Negative Samples (image id).
+	std::vector<int> positives_;			// Positive Samples (image id).
+	std::vector<int> negatives_;			// Negative Samples (image id).
 
 	//-----------------------------------------
 	// Others.
-	int epoch_;				// The number of current search iteration.
-	bool isSearchedAll_;	// Flag: Finished searching.
-	bool isReady_;			// Flag: Finished all background processes.
-	bool isActiveSelected_;	// Flag: Finished active selection.
-	bool canSearch_;		// Flag: Ready to search.
-	float process_time_;	// Total processing time.
-	float timer_start_;		// Timer (start).
+	int epoch_;							// The number of current search iteration.
+	bool isSearchedAll_;				// Flag: Finished searching.
+	bool isReady_;						// Flag: Finished all background processes.
+	bool isFinishedInitSet_;			// Flag: Finished initial settings.
+	bool isActiveSelected_;				// Flag: Finished active selection.
+	bool canSearch_;					// Flag: Ready to search.
+	float process_time_;				// Total processing time.
+	float timer_start_;					// Timer (start).
 
 	//-----------------------------------------
 	// Retrieval results.

@@ -133,6 +133,7 @@ void ofApp::initparam()
 	epoch_ = 0;
 	isSearchedAll_ = false;
 	isReady_ = false;
+	isFinishedInitSet_ = false;
 	isActiveSelected_ = false;
 	canSearch_ = false;
 }
@@ -276,6 +277,7 @@ void ofApp::update()
 		loading_->isLoaded_init_ = false;
 		search_->set_features(loading_->features_);
 
+		isFinishedInitSet_ = true;
 		canSearch_ = true;
 
 		logger_active_ = new Logger;
@@ -469,9 +471,6 @@ void ofApp::draw()
     ofDrawRectangle(leftsize_, 0, windowWidth_ - leftsize_, uppersize_);
 
    	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-	std::string search = "Search: ";
-	std::string epoch = ofToString(epoch_);
-	font_.drawString(search + epoch, buttonposx_eval_ + buttonwidth_active_ + 50, 25);
 
 	// Forward button.
 //	if (!canBack_)
@@ -486,28 +485,36 @@ void ofApp::draw()
 //	else
 //		forwardbutton1_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
 
-	backbutton0_.draw(backbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
-	forwardbutton0_.draw(forwardbuttonposx_, buttonposy_line1_, historybuttonwidth_, buttonheight_);
 	searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
 
+	std::string text;
 	if (isactive_)
 	{
 		button2_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		text = "Selection";
 	}
 	else if (ismain_)
 	{
 		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button2_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		text = "Rerank";
 	}
 	else if (iseval_)
 	{
 		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button2_eval_.draw(buttonposx_eval_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		text = "Original";
 	}
+
+	if (isFinishedInitSet_ && !canSearch_)
+		text = "Searching...";
+
+	float w = font_.stringWidth(text);
+	font_.drawString(text, windowWidth_ - w - ScrollBarWidth_ - 10, 27);
 
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
 	if (isInsideWindow_ && isactive_)
@@ -1336,18 +1343,12 @@ int ofApp::vector_finder(std::vector<int>& vec, int number)
 		auto itr = std::find(vec.begin(), vec.end(), number);
 		size_t index = std::distance(vec.begin(), itr);
 		if (index != vec.size())
-		{
 			return index;	// If the number exists in the vector.
-		}
 		else
-		{
 			return -1;		// If the number does not exist in the vector.
-		}
 	}
 	else
-	{
 		return -1;
-	}
 }
 
 //--------------------------------------------------------------
