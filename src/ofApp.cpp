@@ -494,7 +494,7 @@ void ofApp::draw()
 		button1_origin_.draw(buttonposx_origin_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
 		button1_visualrank_.draw(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		text = "Active Selection";
+		text = "ActiveSelection";
 	}
 	else if (isorigin_)
 	{
@@ -1156,7 +1156,7 @@ void ofApp::onPaint(const std::vector<int>& list)
 	loader_->setShowList(list);
 	loader_->load_images();
 	ishistory_ = false;
-	overview_d_size_ = d_size_ * 0.9;
+	overview_d_size_ = (leftsize_ - 2 * overview_margin_) / overview_colShow_;
 
 	int len = loader_->row_;
 	int draw_rows;
