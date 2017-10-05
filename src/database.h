@@ -116,7 +116,6 @@ public:
 		const int size = end - begin + 1;
 
 		showList_.clear();
-		std::vector<int>().swap(showList_);
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
@@ -128,7 +127,6 @@ public:
 		const int size = end - begin + 1;
 
 		showList_.clear();
-		std::vector<int>().swap(showList_);
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
@@ -140,7 +138,6 @@ public:
 		const int size = end - begin + 1;
 
 		showList_.clear();
-		std::vector<int>().swap(showList_);
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
@@ -152,7 +149,6 @@ public:
 		const int size = end - begin + 1;
 
 		showList_.clear();
-		std::vector<int>().swap(showList_);
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
@@ -169,7 +165,6 @@ public:
 		const int size = number.size();
 
 		number_active_.clear();
-		std::vector<int>().swap(number_active_);
 		number_active_.resize(size);
 
 		for (int i = 0; i < size; ++i)
@@ -181,7 +176,6 @@ public:
 		const int size = number.size();
 
 		number_origin_.clear();
-		std::vector<int>().swap(number_origin_);
 		number_origin_.resize(size);
 
 		for (int i = 0; i < size; ++i)
@@ -193,7 +187,6 @@ public:
 		const int size = number.size();
 
 		number_main_.clear();
-		std::vector<int>().swap(number_main_);
 		number_main_.resize(size);
 
 		for (int i = 0; i < size; ++i)
@@ -205,7 +198,6 @@ public:
 		const int size = number.size();
 
 		number_visualrank_.clear();
-		std::vector<int>().swap(number_visualrank_);
 		number_visualrank_.resize(size);
 
 		for (int i = 0; i < size; ++i)

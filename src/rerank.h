@@ -81,7 +81,7 @@ public:
 		int i = 0;
 		while(i < size_)
 		{
-			cos_distance = cosine_distance(queryvector_, features_[i]);
+			cos_distance = cosine_distance(queryvector_, features_[init_result_[i]]);
 			distance[i] = cos_distance;
 			++i;
 		}

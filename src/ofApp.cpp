@@ -316,7 +316,7 @@ void ofApp::update()
 		trainer_->isTrained_ = false;
 
 		loading_->isLoadNew_ = true;
-		loading_->startThread();
+		loading_->startThread();	// Load new features.
 	}
 
 	if (loading_->isLoaded_new_)
@@ -378,9 +378,9 @@ void ofApp::update()
 	{
 		isReady_ = false;
 		database_->setNumber_active(number_active_);
+		database_->setNumber_origin(number_origin_);
 		database_->setNumber_main(number_main_);
 		database_->setNumber_visualrank(number_visualrank_);
-		database_->setNumber_origin(number_origin_);
 
 		graph_.load(resultGraphfile_);
 		graph_.update();
