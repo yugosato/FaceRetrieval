@@ -1030,10 +1030,9 @@ void ofApp::mouseReleased(int x, int y, int button)
 		if (isReleasedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
 		{
 			if (len_positives_ == 0)
-				std::cerr << "[Warning] Please select positive sample." << std::endl;
-
-			if (len_negatives_ == 0)
-				std::cerr << "[Warning] Please select negative sample." << std::endl;
+				std::cerr << "[Warning] Please select positive sample (at least 1)." << std::endl;
+			else if (len_positives_ > 0 && len_negatives_ == 0)
+				autoselect_negative();
 
 			if (len_positives_ > 0 && len_negatives_ > 0)
 			{
@@ -1251,7 +1250,7 @@ void ofApp::sizeChanged()
 	d_size_ = (windowWidth_ - leftsize_ - ScrollBarWidth_) / colShow_;
 
 	if (d_size_ < 1)
-	{
+	{//--------------------------------------------------------------
 		d_size_ = 1;
 		colShow_ = windowWidth_ - leftsize_ - ScrollBarWidth_;
 	}
@@ -1372,3 +1371,24 @@ void ofApp::showProcessingTime()
 	std::cout << "Total: " << process_time_ << " sec." << std::endl;
 	std::cout << "---------------------------------------------------------------------" << std::endl;
 }
+
+//--------------------------------------------------------------
+void ofApp::autoselect_negative()
+{
+	for (int i = 0; i < picnum_; ++i)
+	{
+		int number = showList_active_[i];
+		int check_duplication_P = vector_finder(positives_, number);
+		int check_duplication_N = vector_finder(negatives_, number);
+
+		if (check_duplication_P < 0 && check_duplication_N < 0)
+		{
+			ofImage image = loader_->picture_[number];
+			negatives_.push_back(number);
+			negative_images_.push_back(image);
+			len_negatives_ = negatives_.size();
+		}
+	}
+	std::cout << "[ofApp] Auto sample selection." << std::endl;
+}
+

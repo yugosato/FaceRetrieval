@@ -243,6 +243,7 @@ public:
 	inline void initializeBars();
 	inline void calculateHoldingOriginPoint();
 	inline void showProcessingTime();
+	inline void autoselect_negative();
 
 
 public:
