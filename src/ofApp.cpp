@@ -93,6 +93,7 @@ void ofApp::initparam()
 	candidatefile_main_ = logdir_ + "candidate_main.txt";
 	candidatefile_visualrank_ = logdir_ + "candidate_visualrank.txt";
 	init_candidatefile_ = binData_ + "cfd/initialize.txt";
+	evaluationfile_ = logdir_ + "evaluation.csv";
 
 	// Python Settings.
 	pysettingfile_ = binData_ + "cfd/py_setting.txt";
@@ -273,6 +274,7 @@ void ofApp::exit()
 	delete selection_;
 	delete rerank_;
 	delete visualrank_;
+	delete single_evaluater_;
 }
 
 //--------------------------------------------------------------
@@ -301,6 +303,10 @@ void ofApp::update()
 		logger_visualrank_->setup(samplefile_, candidatefile_visualrank_, pysettingfile_, npyFile_, loading_->col_);
 
 		logger_main_->writePySetting();
+
+		single_evaluater_ = new SingleSearchEvaluater;
+		single_evaluater_->setup(searchTarget_, evaluationfile_);
+		single_evaluater_->set_features(loading_->features_);
 
 		number_active_ = database_->number_main_;
 		number_origin_ = database_->number_origin_;
@@ -377,6 +383,11 @@ void ofApp::update()
 	if (isReady_)
 	{
 		isReady_ = false;
+
+		// Single Search Evaluation.
+		single_evaluater_->set_inputpoint(search_->queryvector_, rerank_->queryvector_);
+		single_evaluater_->run();
+
 		database_->setNumber_active(number_active_);
 		database_->setNumber_origin(number_origin_);
 		database_->setNumber_main(number_main_);

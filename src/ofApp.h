@@ -25,10 +25,13 @@
 #include "ScrollBar4OF.hpp"
 #include "rerank.h"
 #include "VisualRank.h"
+#include "evaluation.h"
 
 
-const int initWidth_ = 1600;			// Initial window size: Width.
-const int initHeight_ = 1000;			// Initial window size: Height.
+const int searchTarget_ = 0;	// Single Search Target.
+
+const int initWidth_ = 1600;	// Initial window size: Width.
+const int initHeight_ = 1000;	// Initial window size: Height.
 
 
 // openFrameworks base class.
@@ -128,6 +131,7 @@ public:
 	std::string candidatefile_main_;		// Candidate list (main).
 	std::string candidatefile_visualrank_;	// Candidate list (visualrank).
 	std::string init_candidatefile_;		// Initial candidates list.
+	std::string evaluationfile_;			// Evaluation result file.
 
 	// Python Settings.
 	std::string pysettingfile_;				// Python settings.
@@ -277,17 +281,18 @@ public:
 
 
 public:
-	DataBase* database_;			// Database information.
-	NowLoading* loading_;			// Load Image features.
-	ImageLoader* loader_; 			// Load Images
-	Search* search_;				// Search image from database.
-	SampleWriter* samplewriter_;	// Training sample writer
-	Logger* logger_active_;			// Logger (active selection).
-	Logger* logger_origin_;			// Logger (comparison method).
-	Logger* logger_main_;			// Logger (main).
-	Logger* logger_visualrank_;		// Logger (visualrank).
-	Trainer* trainer_;				// Online Trainer.
-	Selection* selection_;			// Active Selection.
-	ReRank* rerank_;				// Reranking method.
-	VisualRank* visualrank_;		// VisualRank method.
+	DataBase* database_;						// Database information.
+	NowLoading* loading_;						// Load Image features.
+	ImageLoader* loader_; 						// Load Images
+	Search* search_;							// Search image from database.
+	SampleWriter* samplewriter_;				// Training sample writer
+	Logger* logger_active_;						// Logger (active selection).
+	Logger* logger_origin_;						// Logger (original).
+	Logger* logger_main_;						// Logger (main).
+	Logger* logger_visualrank_;					// Logger (visualrank).
+	Trainer* trainer_;							// Online Trainer.
+	Selection* selection_;						// Active Selection.
+	ReRank* rerank_;							// Reranking method.
+	VisualRank* visualrank_;					// VisualRank method.
+	SingleSearchEvaluater* single_evaluater_;	// Evaluater.
 };

@@ -6,9 +6,9 @@
 #include <fstream>
 #include <string>
 #include "ofMain.h"
-#include "NGT/Index.h"
 #include "rocchio.h"
 #include "sorting.h"
+#include "distance.h"
 
 
 class ReRank: public ofThread
@@ -81,7 +81,7 @@ public:
 		int i = 0;
 		while(i < size_)
 		{
-			cos_distance = cosine_distance(queryvector_, features_[init_result_[i]]);
+			cos_distance = cosine(queryvector_, features_[init_result_[i]], "distance");
 			distance[i] = cos_distance;
 			++i;
 		}
@@ -108,31 +108,7 @@ public:
 		}
 	}
 
-	inline double cosine_distance(const std::vector<double>& a, const std::vector<double>& b)
-	{
-		// Calculate the norm of A and B (the supplied vector).
-		double normA = 0.0F;
-		double normB = 0.0F;
-		double sum = 0.0F;
 
-		int dim = a.size();
-		int loc = 0;
-		while (loc < dim)
-		{
-			normA += (double) a[loc] * (double) a[loc];
-			normB += (double) b[loc] * (double) b[loc];
-			sum += (double) a[loc] * (double) b[loc];
-			++loc;
-		}
-
-		assert(normA > 0.0f);
-		assert(normB > 0.0f);
-
-		// Compute the dot product of the two vectors.
-		double cosine = sum / (sqrt(normA) * sqrt(normB));
-
-		return 1.0 - cosine;
-	}
 
 	inline void getNumber(std::vector<int>* number) const
 	{

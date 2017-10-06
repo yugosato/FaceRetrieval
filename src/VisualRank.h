@@ -8,10 +8,10 @@
 #include <fstream>
 #include <string>
 #include "ofMain.h"
-#include "NGT/Index.h"
 #include "Eigen/Core"
 #include "Eigen/Geometry"
 #include "sorting.h"
+#include "distance.h"
 
 
 class VisualRank: public ofThread
@@ -59,7 +59,7 @@ public:
 				if (i == j)
 					similarity_matrix_(i, j) = 1.0;
 				else if (i < j)
-					similarity_matrix_(i, j) = cosine_similarity(features_[init_result_[i]], features_[init_result_[j]]);
+					similarity_matrix_(i, j) = cosine(features_[init_result_[i]], features_[init_result_[j]], "similarity");
 				else
 					similarity_matrix_(i, j) = similarity_matrix_(j, i);
 				++j;
@@ -165,32 +165,6 @@ public:
 			reranked_result_[i] = init_result_[index[i]];
 			++i;
 		}
-	}
-
-	inline double cosine_similarity(const std::vector<double>& a, const std::vector<double>& b)
-	{
-		// Calculate the norm of A and B (the supplied vector).
-		size_t dim = features_[0].size();
-		double normA = 0.0F;
-		double normB = 0.0F;
-		double sum = 0.0F;
-
-		size_t loc = 0;
-		while (loc < dim)
-		{
-			normA += (double) a[loc] * (double) a[loc];
-			normB += (double) b[loc] * (double) b[loc];
-			sum += (double) a[loc] * (double) b[loc];
-			++loc;
-		}
-
-		assert(normA > 0.0f);
-		assert(normB > 0.0f);
-
-		// Compute the dot product of the two vectors.
-		double cosine = sum / (sqrt(normA) * sqrt(normB));
-
-		return cosine;
 	}
 
 	// For visualrank score.
