@@ -43,16 +43,16 @@ class TrainModel(object):
     def drawGraph(self):
         acc = self.acc_val_[0]
         val = self.acc_val_[1]
-        total_iter_num = 10
+        total_iter_num = 20
         len_acc = len(acc)
         x = [i for i in xrange(total_iter_num)]
 
         sns.set_style("darkgrid")
-        plt.figure(figsize=(11,3))
+        plt.figure(figsize=(18,3))
         plt.ylim([-0.02, 1.02])
-        plt.xlim([0, 10])
+        plt.xlim([0, 20])
         plt.yticks(np.arange(0.0, 1.1, 0.2))
-        plt.xticks(np.arange(0, 11, 1))
+        plt.xticks(np.arange(0, 21, 1))
         plt.fill_between(x[:len_acc], acc - val, acc + val, color="lightcoral", alpha=0.5, label="variance")
         plt.plot(x[:len_acc], acc, color="red", linewidth=1.5, label="reliability")
         plt.xlabel("Iteration")

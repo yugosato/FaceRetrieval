@@ -19,7 +19,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	//  The number of displayed images.
 	picA_ = 1;
-	picB_ = 104;
+	picB_ = 25;
 	picnum_ = picB_ - picA_ + 1;
 
 	//-----------------------------------------
@@ -38,7 +38,7 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Display Settings.
-	colShow_ = 8;
+	colShow_ = 5;
 	d_size_ = (initWidth_ - leftsize_ - ScrollBarWidth_) / colShow_;
 	width_areaA_ = 0;
 	rowshort_ = false;
@@ -164,7 +164,7 @@ void ofApp::loadImageandFont()
 	button1_visualrank_.load(binData_ + "items/visualrank1.png");
 	button2_visualrank_.load(binData_ + "items/visualrank2.png");
 
-	graph_.load(binData_ + "items/init_graph.png");
+	graph_.load(binData_ + "items/init_graph_wide.png");
 }
 
 //--------------------------------------------------------------
@@ -552,9 +552,6 @@ void ofApp::draw()
 	}
 
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-	graph_.draw(overview_margin_, overviewR_posy_, overview_width_, overview_height_);
-
-	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	std::string positive = "Positive Sample: ";
 	std::string negative = "Negative Sample: ";
 	std::string reliability = "Reliability Graph";
@@ -568,6 +565,7 @@ void ofApp::draw()
 	overviewN_posy_ = posy_negative_txt + 10;
 	overviewR_posy_ = posy_reliability_txt + 10;
 	overview_width_ = overview_d_size_ * overview_colShow_;
+	overview_width_wide_ = windowWidth_ - 2 * overview_margin_;
 	overview_height_ = overview_d_size_ * 4;
 
 	font_.drawString(positive + ofToString(len_positives_), overview_margin_, posy_positive_txt);
@@ -625,7 +623,10 @@ void ofApp::draw()
 		}
 	}
 
-	vscroll_areaA_.draw();
+	//vscroll_areaA_.draw();
+
+	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+	graph_.draw(overview_margin_, overviewR_posy_, overview_width_wide_, overview_height_);
 
 	if (isHoldAndDrag_)
 	{
@@ -1250,7 +1251,7 @@ void ofApp::sizeChanged()
 	d_size_ = (windowWidth_ - leftsize_ - ScrollBarWidth_) / colShow_;
 
 	if (d_size_ < 1)
-	{//--------------------------------------------------------------
+	{
 		d_size_ = 1;
 		colShow_ = windowWidth_ - leftsize_ - ScrollBarWidth_;
 	}
@@ -1283,6 +1284,7 @@ void ofApp::updateScrollBars()
 {
 	if (drawHeight_areaA_ < vscroll_areaA_.bar_length())
 	{
+		vscroll_areaA_.bar_length(drawHeight_areaA_);
 		vscroll_areaA_.max(0);
 		vscroll_areaA_.change_by_bar(0);
 		vscroll_areaA_.current(0);
@@ -1352,8 +1354,7 @@ void ofApp::put_time(std::string& time_str)
     std::string sec = toString<int>(local->tm_sec);
     std::string delim = "-";
 
-    time_str = year + delim + month + delim + day + delim + hour +
-    		delim + min + delim + sec;
+    time_str = year + delim + month + delim + day + delim + hour + delim + min + delim + sec;
 }
 
 //--------------------------------------------------------------

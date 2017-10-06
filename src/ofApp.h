@@ -167,6 +167,7 @@ public:
 	int overviewN_posy_;					// The Y-coordinate of negative overview.
 	int overviewR_posy_;					// The Y-coordinate of reliability overview.
 	int overview_width_;					// Every overview width.
+	int overview_width_wide_;				// Every overview width (wide).
 	int overview_height_;					// Every overview height.
 	int len_positives_;						// The number of positive samples.
 	int len_negatives_;						// The number of negative samples.
