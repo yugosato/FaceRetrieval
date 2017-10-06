@@ -456,35 +456,35 @@ public:
 		Location::draw_rectangle(bar_pos_widthdir_ + border_weight_, bar_pos_lengthdir_ + border_weight_, bar_width_ - border_weight_ * 2, bar_width_ - border_weight_ * 2);
 		Location::draw_rectangle(bar_pos_widthdir_ + border_weight_, bar_pos_lengthdir_ + border_weight_ + bar_length_ - bar_width_, bar_width_ - border_weight_ * 2, bar_width_ - border_weight_ * 2);
 
-		// ---------- Borders of the whole scroll bar
-		// Right/Bottom
-		// Brightness: 224��192
-		for (int i = 0; i < border_weight_; ++i) {
-			ofSetColor(224 - 32 * i / (border_weight_ - 1));
-			Location::draw_line(bar_endpos_widthdir_ - i, bar_pos_lengthdir_ + bar_width_ + i, bar_endpos_widthdir_ - i, bar_endpos_lengthdir_ - bar_width_ - i);
-			Location::draw_line(bar_pos_widthdir_ + i, bar_endpos_lengthdir_ - bar_width_ - i, bar_endpos_widthdir_ - i, bar_endpos_lengthdir_ - bar_width_ - i);
-		}
-
-		// Left/Top
-		// Brightness�F0��128
-		for (int i = 0; i < border_weight_; ++i) {
-			ofSetColor(128 * i / (border_weight_ - 1));
-			Location::draw_line(bar_pos_widthdir_ + i, bar_pos_lengthdir_ + bar_width_ + i, bar_endpos_widthdir_ - i, bar_pos_lengthdir_ + bar_width_ + i);
-			Location::draw_line(bar_pos_widthdir_ + i, bar_pos_lengthdir_ + bar_width_ + i, bar_pos_widthdir_ + i, bar_endpos_lengthdir_ - bar_width_ - i);
-		}
-
-		// ---------- Borders of the knob
-		draw_border(bar_pos_widthdir_ + border_weight_, knob_top + border_weight_, bar_width_ - 2 * border_weight_, knob_size_ - 2 * border_weight_);
-
-		// ---------- Borders/triangles of increment/decrement button
-		draw_border(bar_pos_widthdir_, bar_pos_lengthdir_, bar_width_, bar_width_);
+//		// ---------- Borders of the whole scroll bar
+//		// Right/Bottom
+//		// Brightness: 224��192
+//		for (int i = 0; i < border_weight_; ++i) {
+//			ofSetColor(224 - 32 * i / (border_weight_ - 1));
+//			Location::draw_line(bar_endpos_widthdir_ - i, bar_pos_lengthdir_ + bar_width_ + i, bar_endpos_widthdir_ - i, bar_endpos_lengthdir_ - bar_width_ - i);
+//			Location::draw_line(bar_pos_widthdir_ + i, bar_endpos_lengthdir_ - bar_width_ - i, bar_endpos_widthdir_ - i, bar_endpos_lengthdir_ - bar_width_ - i);
+//		}
+//
+//		// Left/Top
+//		// Brightness�F0��128
+//		for (int i = 0; i < border_weight_; ++i) {
+//			ofSetColor(128 * i / (border_weight_ - 1));
+//			Location::draw_line(bar_pos_widthdir_ + i, bar_pos_lengthdir_ + bar_width_ + i, bar_endpos_widthdir_ - i, bar_pos_lengthdir_ + bar_width_ + i);
+//			Location::draw_line(bar_pos_widthdir_ + i, bar_pos_lengthdir_ + bar_width_ + i, bar_pos_widthdir_ + i, bar_endpos_lengthdir_ - bar_width_ - i);
+//		}
+//
+//		// ---------- Borders of the knob
+//		draw_border(bar_pos_widthdir_ + border_weight_, knob_top + border_weight_, bar_width_ - 2 * border_weight_, knob_size_ - 2 * border_weight_);
+//
+//		// ---------- Borders/triangles of increment/decrement button
+//		draw_border(bar_pos_widthdir_, bar_pos_lengthdir_, bar_width_, bar_width_);
 		ofSetColor(0);
 		ofFill();
 		Location::draw_triangle(
 			bar_pos_widthdir_ + bar_width_ / 2, bar_pos_lengthdir_ + bar_width_ / 4,
 			bar_pos_widthdir_ + bar_width_ / 4, bar_pos_lengthdir_ + bar_width_ * 3 / 4,
 			bar_pos_widthdir_ + bar_width_ * 3 / 4, bar_pos_lengthdir_ + bar_width_ * 3 / 4);
-		draw_border(bar_pos_widthdir_, bar_pos_lengthdir_ + bar_length_ - bar_width_, bar_width_, bar_width_);
+//		draw_border(bar_pos_widthdir_, bar_pos_lengthdir_ + bar_length_ - bar_width_, bar_width_, bar_width_);
 		ofSetColor(0);
 		ofFill();
 		Location::draw_triangle(

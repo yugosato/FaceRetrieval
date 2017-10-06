@@ -98,7 +98,6 @@ public:
 	int rowShow_;						// The number of rows.
 	int d_size_;						// Size of each displayed image.
 	int bottom_;						// The Y-coordinate of current bottom.
-	bool rowshort_;						// Flag: Small displayed rows.
 
 	//-----------------------------------------
 	// Input Query.
@@ -156,15 +155,16 @@ public:
 	bool isInside_areaA_;					// Flag: Holding inside area A.
 	bool isInside_areaP_;					// Flag: Holding inside area P.
 	bool isInside_areaN_;					// Flag: Holding inside area N.
-	int overview_d_size_;					// Size of each displayed image (overview).
 	int overview_colShow_;					// The number of cols.
 	int overviewP_rowShow_;					// The number of rows (area P).
 	int overviewN_rowShow_;					// The number of rows (area N).
+	int overview_d_size_;					// Size of each displayed image (overview).
 	int holdImgNum_;						// Holding image number;
 	int holding_x_;							// The X-coordinate of held image.
 	int holding_y_;							// The Y-coordinate of held image.
 	int width_areaA_;						// Area A width.
 	const int overview_areamargin_ = 30;	// Margin of Overview area.
+	int perHeight3_;						// Split window into 3 parts.
 	int positive_txt_posy_;					// "Positive" text position.
 	int negative_txt_posy_;					// "Negative" text position.
 	int reliability_txt_posy_;				// "Reliability" text position.
@@ -183,14 +183,14 @@ public:
 
 	//-----------------------------------------
 	// Others.
-	int epoch_;							// The number of current search iteration.
-	bool isSearchedAll_;				// Flag: Finished searching.
-	bool isReady_;						// Flag: Finished all background processes.
-	bool isFinishedInitSet_;			// Flag: Finished initial settings.
-	bool isActiveSelected_;				// Flag: Finished active selection.
-	bool canSearch_;					// Flag: Ready to search.
-	float process_time_;				// Total processing time.
-	float timer_start_;					// Timer (start).
+	int epoch_;								// The number of current search iteration.
+	bool isSearchedAll_;					// Flag: Finished searching.
+	bool isReady_;							// Flag: Finished all background processes.
+	bool isFinishedInitSet_;				// Flag: Finished initial settings.
+	bool isActiveSelected_;					// Flag: Finished active selection.
+	bool canSearch_;						// Flag: Ready to search.
+	float process_time_;					// Total processing time.
+	float timer_start_;						// Timer (start).
 
 	//-----------------------------------------
 	// Retrieval results.
@@ -210,11 +210,15 @@ public:
 	//-----------------------------------------
 	// Scroll Bar..
 	VerticalScrollBar vscroll_areaA_;		// ScrollBar: All results viewer.
+	VerticalScrollBar vscroll_areaP_;		// ScrollBar: Positive sample viewer.
+	VerticalScrollBar vscroll_areaN_;		// ScrollBar: Negative sample viewer.
 	const int ScrollBarWidth_ = 30;			// ScrollBar width.
 	int drawHeight_areaA_;					// Scrollable area height.
 	int drawHeight_areaP_;					// Scrollable area height.
 	int drawHeight_areaN_;					// Scrollable area height.
 	int scroll_areaA_;						// Current scroll position.
+	int scroll_areaP_;						// Current scroll position.
+	int scroll_areaN_;						// Current scroll position.
 
 
 public:
@@ -235,23 +239,23 @@ public:
 
 
 public:
-	inline void initparam();
-	inline void calculate();
-	inline void onPaint(const std::vector<int>& list);
-	inline void inputHistory();
-	inline void initRange(const int& begin_, const int& end_);
-	inline void sizeChanged();
-	inline bool isReleasedArea(float x, float y, float w, float h);
-	inline bool isInsideDragingArea(float x, float y, float w, float h);
-	inline bool isInsideMouseoverArea(float x, float y, float w, float h);
-	inline bool isFileexists(const std::string& filepath);
-	inline void writelog();
-	inline void loadImageandFont();
-	inline void updateScrollBars();
-	inline void initializeBars();
-	inline void calculateHoldingOriginPoint();
-	inline void showProcessingTime();
-	inline void autoselect_negative();
+	void initparam();
+	void calculate();
+	void onPaint(const std::vector<int>& list);
+	void inputHistory();
+	void initRange(const int& begin_, const int& end_);
+	void sizeChanged();
+	bool isReleasedArea(float x, float y, float w, float h);
+	bool isInsideDragingArea(float x, float y, float w, float h);
+	bool isInsideMouseoverArea(float x, float y, float w, float h);
+	bool isFileexists(const std::string& filepath);
+	void writelog();
+	void loadImageandFont();
+	void updateScrollBars();
+	void initializeBars();
+	void calculateHoldingOriginPoint();
+	void showProcessingTime();
+	void autoselect_negative();
 
 
 public:
@@ -305,3 +309,19 @@ public:
 	VisualRank* visualrank_;					// VisualRank method.
 	SingleSearchEvaluater* single_evaluater_;	// Evaluater.
 };
+
+inline int toInt(std::string s)
+{
+	int v;
+	std::istringstream sin(s);
+	sin >> v;
+	return v;
+}
+
+template<class T> inline std::string toString(T x)
+{
+	std::ostringstream sout;
+	sout << x;
+	return sout.str();
+}
+
