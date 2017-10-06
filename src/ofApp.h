@@ -158,17 +158,22 @@ public:
 	bool isInside_areaN_;					// Flag: Holding inside area N.
 	int overview_d_size_;					// Size of each displayed image (overview).
 	int overview_colShow_;					// The number of cols.
+	int overviewP_rowShow_;					// The number of rows (area P).
+	int overviewN_rowShow_;					// The number of rows (area N).
 	int holdImgNum_;						// Holding image number;
 	int holding_x_;							// The X-coordinate of held image.
 	int holding_y_;							// The Y-coordinate of held image.
 	int width_areaA_;						// Area A width.
-	const int overview_margin_ = 30;		// Margin of Overview area.
-	int overviewP_posy_;					// The Y-coordinate of positive overview.
-	int overviewN_posy_;					// The Y-coordinate of negative overview.
-	int overviewR_posy_;					// The Y-coordinate of reliability overview.
-	int overview_width_;					// Every overview width.
-	int overview_width_wide_;				// Every overview width (wide).
-	int overview_height_;					// Every overview height.
+	const int overview_areamargin_ = 30;	// Margin of Overview area.
+	int positive_txt_posy_;					// "Positive" text position.
+	int negative_txt_posy_;					// "Negative" text position.
+	int reliability_txt_posy_;				// "Reliability" text position.
+	int overviewP_areaposy_;				// The Y-coordinate of positive overview.
+	int overviewN_areaposy_;				// The Y-coordinate of negative overview.
+	int overviewR_areaposy_;				// The Y-coordinate of reliability overview.
+	int overview_areawidth_;				// Every overview width.
+	int overview_areawidth_wide_;			// Every overview width (wide).
+	int overview_areaheight_;				// Every overview height.
 	int len_positives_;						// The number of positive samples.
 	int len_negatives_;						// The number of negative samples.
 	std::vector<ofImage> positive_images_;	// Positive sample images.
@@ -207,6 +212,8 @@ public:
 	VerticalScrollBar vscroll_areaA_;		// ScrollBar: All results viewer.
 	const int ScrollBarWidth_ = 30;			// ScrollBar width.
 	int drawHeight_areaA_;					// Scrollable area height.
+	int drawHeight_areaP_;					// Scrollable area height.
+	int drawHeight_areaN_;					// Scrollable area height.
 	int scroll_areaA_;						// Current scroll position.
 
 

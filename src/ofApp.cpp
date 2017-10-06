@@ -125,9 +125,18 @@ void ofApp::initparam()
 	isInside_areaP_ = false;
 	isInside_areaN_ = false;
 	overview_colShow_ = 15;
+	overviewN_rowShow_ = 0;
+	overviewN_rowShow_ = 0;
 	holdImgNum_ = -1;
 	holding_x_ = -1;
 	holding_y_ = -1;
+	int perHeight = windowHeight_ / 3;
+	positive_txt_posy_ = 25;
+	negative_txt_posy_ = 25 + perHeight;
+	reliability_txt_posy_ = 25 + 2 * perHeight;
+	overviewP_areaposy_ = positive_txt_posy_ + 10;
+	overviewN_areaposy_ = negative_txt_posy_ + 10;
+	overviewR_areaposy_ = reliability_txt_posy_ + 10;
 	len_positives_ = 0;
 	len_negatives_ = 0;
 
@@ -543,11 +552,11 @@ void ofApp::draw()
 	{
 		if (isInside_areaP_)
 		{
-			ofDrawRectangle(overview_margin_, overviewP_posy_, overview_width_, overview_height_);
+			ofDrawRectangle(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_);
 		}
 		else if (isInside_areaN_)
 		{
-			ofDrawRectangle(overview_margin_, overviewN_posy_, overview_width_, overview_height_);
+			ofDrawRectangle(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_);
 		}
 	}
 
@@ -556,21 +565,8 @@ void ofApp::draw()
 	std::string negative = "Negative Sample: ";
 	std::string reliability = "Reliability Graph";
 
-	int perHeight = windowHeight_ / 3;
-	int posy_positive_txt = 25;
-	int posy_negative_txt = 25 + perHeight;
-	int posy_reliability_txt = 25 + 2 * perHeight;
-
-	overviewP_posy_ = posy_positive_txt + 10;
-	overviewN_posy_ = posy_negative_txt + 10;
-	overviewR_posy_ = posy_reliability_txt + 10;
-	overview_width_ = overview_d_size_ * overview_colShow_;
-	overview_width_wide_ = windowWidth_ - 2 * overview_margin_;
-	overview_height_ = overview_d_size_ * 4;
-
-	font_.drawString(positive + ofToString(len_positives_), overview_margin_, posy_positive_txt);
-	font_.drawString(negative + ofToString(len_negatives_), overview_margin_, posy_negative_txt);
-	font_.drawString(reliability, overview_margin_, posy_reliability_txt);
+	font_.drawString(positive + ofToString(len_positives_), overview_areamargin_, positive_txt_posy_);
+	font_.drawString(negative + ofToString(len_negatives_), overview_areamargin_, negative_txt_posy_);
 
 	const int len_positive_images = positive_images_.size();
 	const int len_negative_images = negative_images_.size();
@@ -582,15 +578,13 @@ void ofApp::draw()
 			const int j = i % overview_colShow_;
 			const int k = i / overview_colShow_;
 
-			int drawx = overview_margin_ + overview_d_size_ * j;
-			int drawy = overviewP_posy_ + overview_d_size_ * k;
+			int drawx = overview_areamargin_ + overview_d_size_ * j;
+			int drawy = overviewP_areaposy_ + overview_d_size_ * k;
 
 			ofImage img_positive = positive_images_[i];
 
 			if (!img_positive.isAllocated())
-			{
 				break;
-			}
 			else
 			{
 				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
@@ -606,8 +600,8 @@ void ofApp::draw()
 			const int j = i % overview_colShow_;
 			const int k = i / overview_colShow_;
 
-			int drawx = overview_margin_ + overview_d_size_ * j;
-			int drawy = overviewN_posy_ + overview_d_size_ * k;
+			int drawx = overview_areamargin_ + overview_d_size_ * j;
+			int drawy = overviewN_areaposy_ + overview_d_size_ * k;
 
 			ofImage img_negative = negative_images_[i];
 
@@ -625,8 +619,9 @@ void ofApp::draw()
 
 	//vscroll_areaA_.draw();
 
+	font_.drawString(reliability, overview_areamargin_, reliability_txt_posy_);
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-	graph_.draw(overview_margin_, overviewR_posy_, overview_width_wide_, overview_height_);
+	graph_.draw(overview_areamargin_, overviewR_areaposy_, overview_areawidth_wide_, overview_areaheight_);
 
 	if (isHoldAndDrag_)
 	{
@@ -697,22 +692,22 @@ void ofApp::mouseMoved(int x, int y)
 				y_dash = y - scroll_areaA_ - uppersize_;
 				mouseover_ = x_dash / d_size_ + y_dash / d_size_ * colShow_;
 			}	// Area P.
-			else if (isInsideMouseoverArea(overview_margin_, overviewP_posy_, overview_width_, overview_height_))
+			else if (isInsideMouseoverArea(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = true;
 				isInside_areaN_ = false;
-				x_dash = x - overview_margin_;
-				y_dash = y - overviewP_posy_;
+				x_dash = x - overview_areamargin_;
+				y_dash = y - overviewP_areaposy_;
 				mouseover_ = x_dash / overview_d_size_ + y_dash / overview_d_size_ * overview_colShow_;
 			}	// Area N.
-			else if (isInsideMouseoverArea(overview_margin_, overviewN_posy_, overview_width_, overview_height_))
+			else if (isInsideMouseoverArea(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
 				isInside_areaN_ = true;
-				x_dash = x - overview_margin_;
-				y_dash = y - overviewN_posy_;
+				x_dash = x - overview_areamargin_;
+				y_dash = y - overviewN_areaposy_;
 				mouseover_ = x_dash / overview_d_size_ + y_dash / overview_d_size_ * overview_colShow_;
 			}
 			else
@@ -802,13 +797,13 @@ void ofApp::mouseDragged(int x, int y, int button)
 				isInside_areaP_ = false;
 				isInside_areaN_ = false;
 			}	// Area P.
-			else if (isInsideDragingArea(overview_margin_, overviewP_posy_, overview_width_, overview_height_))
+			else if (isInsideDragingArea(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = true;
 				isInside_areaN_ = false;
 			}	// Area N.
-			else if (isInsideDragingArea(overview_margin_, overviewN_posy_, overview_width_, overview_height_))
+			else if (isInsideDragingArea(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
@@ -1032,7 +1027,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			if (len_positives_ == 0)
 				std::cerr << "[Warning] Please select positive sample (at least 1)." << std::endl;
-			else if (len_positives_ > 0 && len_negatives_ == 0)
+			else if (len_positives_ + len_negatives_ != (int) showList_active_.size())
 				autoselect_negative();
 
 			if (len_positives_ > 0 && len_negatives_ > 0)
@@ -1167,18 +1162,17 @@ void ofApp::onPaint(const std::vector<int>& list)
 	loader_->setShowList(list);
 	loader_->load_images();
 	ishistory_ = false;
-	overview_d_size_ = (leftsize_ - 2 * overview_margin_) / overview_colShow_;
-
-	int len = loader_->row_;
-	int draw_rows;
-
-	if (len % colShow_ > 0)
-		draw_rows = len / colShow_ + 1;
-	else
-		draw_rows = len / colShow_;
 
 	width_areaA_ = d_size_ * colShow_;
-	drawHeight_areaA_ = d_size_ * draw_rows;
+	drawHeight_areaA_ = d_size_ * rowShow_;
+
+	overview_d_size_ = (leftsize_ - 2 * overview_areamargin_) / overview_colShow_;
+	overview_areawidth_ = overview_d_size_ * overview_colShow_;
+	overview_areawidth_wide_ = windowWidth_ - 2 * overview_areamargin_;
+	overview_areaheight_ = overview_d_size_ * 4;
+	drawHeight_areaP_ = overview_d_size_ * overviewP_rowShow_;
+	drawHeight_areaN_ = overview_d_size_ * overviewN_rowShow_;
+
 	updateScrollBars();
 }
 
@@ -1275,6 +1269,16 @@ void ofApp::sizeChanged()
 		rowshort_ = true;
 	else
 		rowshort_ = false;
+
+	if (len_positives_ > 0)
+		overviewP_rowShow_ = (positives_.size() + overview_colShow_ - 1) / overview_colShow_;
+	else
+		overviewP_rowShow_ = 0;
+
+	if (len_negatives_ > 0)
+		overviewN_rowShow_ = (negatives_.size() + overview_colShow_ - 1) / overview_colShow_;
+	else
+		overviewN_rowShow_ = 0;
 }
 
 //--------------------------------------------------------------
@@ -1300,6 +1304,7 @@ void ofApp::updateScrollBars()
 //--------------------------------------------------------------
 void ofApp::initializeBars()
 {
+	// All results viewer.
 	scroll_areaA_ = 0;
 	vscroll_areaA_.min(0);
 	vscroll_areaA_.bar_width(ScrollBarWidth_);
