@@ -48,17 +48,18 @@ class TrainModel(object):
         x = [i for i in xrange(total_iter_num)]
 
         sns.set_style("darkgrid")
-        plt.figure(figsize=(18,3))
+        plt.figure(figsize=(16,3))
         plt.ylim([-0.02, 1.02])
         plt.xlim([0, 20])
         plt.yticks(np.arange(0.0, 1.1, 0.2))
         plt.xticks(np.arange(0, 21, 1))
         plt.fill_between(x[:len_acc], acc - val, acc + val, color="lightcoral", alpha=0.5, label="variance")
         plt.plot(x[:len_acc], acc, color="red", linewidth=1.5, label="reliability")
-        plt.xlabel("Iteration")
-        plt.ylabel("Reliability")
-        plt.tight_layout(pad=2)
-        plt.legend(loc="upper left")
+        plt.xlabel("Iteration", fontsize=14)
+        plt.ylabel("Reliability", fontsize=14)
+        plt.tick_params(labelsize=12)
+        plt.tight_layout(pad=1)
+        plt.legend(loc="lower right", fontsize=14)
         plt.savefig(os.path.join(home_dir, "result", "acc_val.png"))
 
 

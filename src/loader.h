@@ -127,6 +127,8 @@ public:
 public:
 	inline void load_images()
 	{
+		picture_.clear();
+		picture_.resize(row_);
 		for (int i = 0; i < row_; i++)
 			picture_[i].load(name_[showList_[i]]);
 	}
@@ -144,10 +146,6 @@ public:
 
 		showList_ = showList;
 		row_ = showList_.size();
-
-		picture_.clear();
-		std::vector<ofImage>().swap(picture_);
-		picture_.resize(row_);
 	}
 
 	void setRow(const int row)

@@ -36,7 +36,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	// Display Settings.
 	colShow_ = 5;
-	rowShow_ = 0;
+	rowShow_ = 100;
 	d_size_ = (initWidth_ - leftsize_ - 2 * ScrollBarWidth_) / colShow_;
 	area_width_ = d_size_ * colShow_;
 	area_height_ = d_size_ * 5;
@@ -134,12 +134,17 @@ void ofApp::initparam()
 	positive_txt_posy_ = fontposy_top_;
 	negative_txt_posy_ = positive_txt_posy_ + perHeight_ + uppersize_;
 	reliability_txt_posy_ = negative_txt_posy_ + perHeight_ + uppersize_;
+	propose_txt_posy_ = reliability_txt_posy_;
 	overviewP_areaposy_ = positive_txt_posy_ + 10;
 	overviewN_areaposy_ = negative_txt_posy_ + 10;
 	overviewR_areaposy_ = reliability_txt_posy_ + 10;
 	overview_areawidth_ = overview_d_size_ * overview_colShow_;
 	overview_areawidth_wide_ = windowWidth_ - 2 * overview_areamargin_;
 	overview_areaheight_ = perHeight_;
+	graph_width_ = overview_areawidth_wide_ - overview_areaheight_ - overview_areamargin_ - 10;
+	propose_imgsize_ = overview_areaheight_;
+	propose_img_posx_ = windowWidth_ - overview_areamargin_ - propose_imgsize_;
+	propose_img_posy_ = overviewR_areaposy_;
 	len_positives_ = 0;
 	len_negatives_ = 0;
 
@@ -158,12 +163,6 @@ void ofApp::loadImageandFont()
 {
 	font_.load(ttf_, fontsize_);
 
-	backbutton0_.load(binData_ + "items/cantBack.png");
-	backbutton1_.load(binData_ + "items/canBack1.png");
-
-	forwardbutton0_.load(binData_ + "items/cantForward.png");
-	forwardbutton1_.load(binData_ + "items/canForward1.png");
-
 	searchbutton1_.load(binData_ + "items/search1.png");
 	searchbutton2_.load(binData_ + "items/search2.png");
 
@@ -179,7 +178,7 @@ void ofApp::loadImageandFont()
 	buttonD1_.load(binData_ + "items/D1.png");
 	buttonD2_.load(binData_ + "items/D2.png");
 
-	graph_.load(binData_ + "items/init_graph_wide.png");
+	graph_.load(binData_ + "items/init_graph.png");
 }
 
 //--------------------------------------------------------------
@@ -410,6 +409,7 @@ void ofApp::update()
 
 		graph_.load(resultGraphfile_);
 		graph_.update();
+		topface_main_.load(loader_->name_[number_main_[0]]);
 
 		isactive_ = true;
 		isorigin_ = false;
@@ -418,6 +418,7 @@ void ofApp::update()
 
 		calculate();
 		onPaint(showList_active_);
+
 		inputHistory();
 
 		canSearch_ = true;
@@ -649,8 +650,22 @@ void ofApp::draw()
 	//------------------------------------------------------------------------------
 
 	// Reliability graph viewer.
+	graph_.draw(overview_areamargin_, overviewR_areaposy_, graph_width_, overview_areaheight_);
+
+	// Proposed image.
+	std::string propose = "Is this person?";
+	int propose_txt_width = font_.stringWidth(propose);
+	propose_txt_posx_ = propose_img_posx_ + (propose_imgsize_ - propose_txt_width) / 2;
+	font_.drawString(propose, propose_txt_posx_, propose_txt_posy_);
+
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-	graph_.draw(overview_areamargin_, overviewR_areaposy_, overview_areawidth_wide_, overview_areaheight_);
+	ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
+	if (epoch_ > 0 && topface_main_.isAllocated())
+	{
+		int margin = 10;
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+		topface_main_.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+	}
 
 	// Holding image.
 	if (isHoldAndDrag_)
@@ -665,7 +680,7 @@ void ofApp::draw()
 			holdImg = negative_images_[holdImgNum_];
 
 		if (holdImg.isAllocated())
-			holdImg.draw(holding_x_, holding_y_, d_size_, d_size_);
+			holdImg.draw(holding_x_, holding_y_, holdImg_scale_ * d_size_, holdImg_scale_ * d_size_);
 	}
 }
 
@@ -1384,8 +1399,8 @@ void ofApp::initializeBars()
 void ofApp::calculateHoldingOriginPoint()
 {
 	int x, y;
-	x = dragx_ - d_size_ / 2;
-	y = dragy_ - d_size_ / 2;
+	x = dragx_ - holdImg_scale_ * d_size_ / 2;
+	y = dragy_ - holdImg_scale_ * d_size_ / 2;
 
 	holding_x_ = x;
 	holding_y_ = y;

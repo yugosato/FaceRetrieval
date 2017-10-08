@@ -61,7 +61,7 @@ public:
 	// GUI settings' parameters.
 	const int leftsize_ = 1000;						// Left region.
 	const int uppermargin_ = 20;					// Upper margin.
-	int uppersize_ = uppermargin_ + 40;				// Upper region.
+	const int uppersize_ = uppermargin_ + 40;				// Upper region.
 	const int button_height_ = 30;					// Button height.
 	const int button_width_ = button_height_;		// Show active selection results button width.
 	const int buttonposy_line1_ = uppermargin_ + 5;	// The Y-coordinate of buttons on the 1st line.
@@ -159,6 +159,7 @@ public:
 	int overview_colShow_;					// The number of cols.
 	int overviewP_rowShow_;					// The number of rows (area P).
 	int overviewN_rowShow_;					// The number of rows (area N).
+	const float holdImg_scale_ = 0.8;		// Holding image scale.
 	int holdImgNum_;						// Holding image number;
 	int holding_x_;							// The X-coordinate of held image.
 	int holding_y_;							// The Y-coordinate of held image.
@@ -168,12 +169,18 @@ public:
 	int positive_txt_posy_;					// "Positive" text position.
 	int negative_txt_posy_;					// "Negative" text position.
 	int reliability_txt_posy_;				// "Reliability" text position.
+	int propose_txt_posx_;					// "Is this person?" text position.
+	int propose_txt_posy_;					// "Is this person?" text position.
 	int overviewP_areaposy_;				// The Y-coordinate of positive overview.
 	int overviewN_areaposy_;				// The Y-coordinate of negative overview.
 	int overviewR_areaposy_;				// The Y-coordinate of reliability overview.
 	int overview_areawidth_;				// Every overview width.
 	int overview_areawidth_wide_;			// Every overview width (wide).
 	int overview_areaheight_;				// Every overview height.
+	int graph_width_;						// Graph width.
+	int propose_imgsize_;					// Proposed image size
+	int propose_img_posx_;
+	int propose_img_posy_;
 	int len_positives_;						// The number of positive samples.
 	int len_negatives_;						// The number of negative samples.
 	std::vector<ofImage> positive_images_;	// Positive sample images.
@@ -272,12 +279,6 @@ public:
 
 public:
 	ofTrueTypeFont font_;
-	ofImage backbutton0_;
-	ofImage backbutton1_;
-	ofImage backbutton2_;
-	ofImage forwardbutton0_;
-	ofImage forwardbutton1_;
-	ofImage forwardbutton2_;
 	ofImage searchbutton1_;
 	ofImage searchbutton2_;
 	ofImage buttonA1_;
@@ -292,6 +293,7 @@ public:
 
 public:
 	ofImage graph_;
+	ofImage topface_main_;
 
 
 public:
