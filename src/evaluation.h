@@ -12,7 +12,7 @@
 class SingleSearchEvaluater
 {
 public:
-	int target_;
+	int searchTarget_;
 	float distance_origin_;
 	float distance_main_;
 	int count_;
@@ -27,13 +27,13 @@ public:
 	{
 		distance_origin_ = 9999.9f;
 		distance_main_ = 9999.9f;
-		target_ = -1;
+		searchTarget_ = -1;
 		count_ = 0;
 	}
 
-	void setup(const int target, const std::string filename)
+	void setup(const int searchTarget, const std::string filename)
 	{
-		target_ = target;
+		searchTarget_ = searchTarget;
 		filename_ = filename;
 	}
 
@@ -57,8 +57,8 @@ public:
 	// Calculate distance between the target and input point.
 	void calculate_distance()
 	{
-		distance_origin_ = cosine(features_[target_], inputpoint_origin_, "distance");
-		distance_main_ = cosine(features_[target_], inputpoint_main_, "distance");
+		distance_origin_ = cosine(features_[searchTarget_], inputpoint_origin_, "distance");
+		distance_main_ = cosine(features_[searchTarget_], inputpoint_main_, "distance");
 	}
 
 	void write()
@@ -69,7 +69,7 @@ public:
 
 		if (count_ == 0)
 		{
-			writer << "Target: " << target_ << std::endl;
+			writer << "Target: " << searchTarget_ << std::endl;
 			writer << "original" << "," << "main" << std::endl;
 		}
 

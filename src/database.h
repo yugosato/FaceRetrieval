@@ -13,6 +13,8 @@
 class DataBase
 {
 public:
+	int searchTarget_;
+
 	std::string nameFile_;
 	std::string initFile_;
 	int row_;
@@ -35,12 +37,17 @@ public:
 
 		// Allocate memory & initialize.
 		number_origin_.resize(row_);
-		init();
+		//init();
 		//random();
-		//init_clustering();
+		init_clustering();
 		number_active_ = number_origin_;
 		number_main_ = number_origin_;
 		number_visualrank_ = number_origin_;
+	}
+
+	void set_searchTarget(const int searchTarget)
+	{
+		searchTarget_ = searchTarget;
 	}
 
 	// Load image list.

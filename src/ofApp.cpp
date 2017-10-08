@@ -205,6 +205,7 @@ void ofApp::setup()
 	// Get Database information.
 	database_ = new DataBase();
 	database_->setup(nameFile_, init_candidatefile_);
+	database_->set_searchTarget(searchTarget_);
 	row_ = database_->getRow();
 	database_->getName(&name_);
 	database_->getPersonID(&person_ids_);
@@ -246,8 +247,8 @@ void ofApp::setup()
 
 	// Setup active selection.
 	selection_ = new Selection;
-	selection_->setup(positiveIndexfile_, negativeIndexfile_, activeIndexfile_,
-			cueflikIndexfile_, randomIndexfile_);
+	selection_->setup(positiveIndexfile_, negativeIndexfile_, activeIndexfile_, cueflikIndexfile_, randomIndexfile_);
+	selection_->set_searchTarget(searchTarget_);
 
 	// Setup reranking method.
 	rerank_ = new ReRank;
@@ -1118,7 +1119,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			onPaint(showList_visualrank_);
 		}
 
-		if (isReleasedArea(searchbutton_posx_, buttonposy_line1_, searchbutton_width_, button_height_))
+		if (canSearch_ && isReleasedArea(searchbutton_posx_, buttonposy_line1_, searchbutton_width_, button_height_))
 		{
 			if (len_positives_ == 0)
 				std::cerr << "[Warning] Please select positive sample (at least 1)." << std::endl;
