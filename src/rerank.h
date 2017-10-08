@@ -15,15 +15,12 @@ class ReRank: public ofThread
 {
 public:
 	std::vector<double> queryvector_;
-	std::vector<std::vector<double>> relevance_;
-	std::vector<std::vector<double>> irrelevance_;
 	std::vector<std::vector<double>> features_;
 	std::vector<int> init_result_;
 	std::vector<int> reranked_result_;
 	int size_;
 	bool isReranked_;
 	float process_time_;
-	Rocchio* rocchio_;
 
 
 public:
@@ -32,7 +29,6 @@ public:
 		size_ = 0;
 		isReranked_ = false;
 		process_time_ = 0.0f;
-		rocchio_ = new Rocchio;
 	}
 
 	void set_features(const std::vector<std::vector<double>>& features)
@@ -46,19 +42,9 @@ public:
 		size_ = (int) init_result_.size();
 	}
 
-	inline void setInput_multi(const std::vector<int>& positives, const std::vector<int>& negatives)
+	void set_queryvector(const std::vector<double>& queryvector)
 	{
-		relevance_.clear();
-		irrelevance_.clear();
-
-		relevance_.resize(positives.size());
-		irrelevance_.resize(negatives.size());
-
-		for (int i = 0; i < (int) positives.size(); ++i)
-			relevance_[i] = features_[positives[i]];
-
-		for (int i = 0; i < (int) negatives.size(); ++i)
-			irrelevance_[i] = features_[negatives[i]];
+		queryvector_ = queryvector;
 	}
 
 	inline void threadedFunction()
@@ -67,12 +53,6 @@ public:
 		isReranked_ = false;
 		lock();
 		float start = ofGetElapsedTimef();
-
-		// Rocchio Algorithm.
-		rocchio_->set_vector(relevance_, irrelevance_);
-		rocchio_->setInitquery(queryvector_);
-		rocchio_->calculate(1.0f, 0.8f, 0.3f);
-		rocchio_->getquery(&queryvector_);
 
 		std::vector<double> distance;
 		distance.resize(size_);
@@ -108,8 +88,6 @@ public:
 		}
 	}
 
-
-
 	inline void getNumber(std::vector<int>* number) const
 	{
 		number->clear();
@@ -121,12 +99,6 @@ public:
 			++i;
 		}
 	}
-
-	virtual ~ReRank()
-	{
-		delete rocchio_;
-	}
-
 };
 
 #endif /* SRC_RERANK_H_ */

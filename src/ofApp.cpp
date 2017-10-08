@@ -16,7 +16,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	//  The number of displayed images.
 	picA_ = 1;
-	picB_ = 100;
+	picB_ = 25;
 	picnum_ = picB_ - picA_ + 1;
 
 	//-----------------------------------------
@@ -36,7 +36,6 @@ void ofApp::initparam()
 	//-----------------------------------------
 	// Display Settings.
 	colShow_ = 5;
-	rowShow_ = 100;
 	d_size_ = (initWidth_ - leftsize_ - 2 * ScrollBarWidth_) / colShow_;
 	area_width_ = d_size_ * colShow_;
 	area_height_ = d_size_ * 5;
@@ -156,6 +155,8 @@ void ofApp::initparam()
 	isFinishedInitSet_ = false;
 	isActiveSelected_ = false;
 	canSearch_ = false;
+	isSearched_origin_ = false;
+	isSearched_main_ = false;
 }
 
 //--------------------------------------------------------------
@@ -235,6 +236,10 @@ void ofApp::setup()
 	samplewriter_ = new SampleWriter(samplefile_);
 	samplewriter_->init_write();
 
+	// Setup rocchio algorithm.
+	rocchio_origin_ = new Rocchio;
+	rocchio_main_ = new Rocchio;
+
 	// Setup online trainer.
 	trainer_ = new Trainer;
 	trainer_->setup(scriptfile_);
@@ -289,6 +294,8 @@ void ofApp::exit()
 	delete rerank_;
 	delete visualrank_;
 	delete single_evaluater_;
+	delete rocchio_origin_;
+	delete rocchio_main_;
 }
 
 //--------------------------------------------------------------
@@ -301,7 +308,6 @@ void ofApp::update()
 	{
 		loading_->stopThread();
 		loading_->isLoaded_init_ = false;
-		search_->set_features(loading_->features_);
 
 		isFinishedInitSet_ = true;
 		canSearch_ = true;
@@ -344,6 +350,20 @@ void ofApp::update()
 		loading_->stopThread();
 		loading_->isLoaded_new_ = false;
 
+		// -------- Calculdate query vector by rocchio algorithm --------
+		// orignal (initial features)
+		rocchio_origin_->set_features(loading_->features_);
+		rocchio_origin_->setInput_multi(positives_, negatives_);
+		rocchio_origin_->run();
+
+		// main (new features)
+		rocchio_main_->set_features(loading_->new_features_);
+		rocchio_main_->setInput_multi(positives_, negatives_);
+		rocchio_main_->run();
+		// --------------------------------------------------------------
+
+		// Search by original query vector.
+		search_->set_queryvector(rocchio_origin_->queryvector_);
 		search_->startThread();
 	}
 
@@ -351,12 +371,32 @@ void ofApp::update()
 	{
 		search_->stopThread();
 		search_->isSearched_ = false;
-		search_->getNumber(&number_origin_);
 
-		// Main Reranking.
+		if (!isSearched_origin_)
+		{
+			search_->getNumber(&number_origin_);
+			isSearched_origin_ = true;
+
+			// Search by original query vector.
+			search_->set_queryvector(rocchio_main_->queryvector_);
+			search_->startThread();
+		}
+		else
+		{
+			search_->getNumber(&number_main_);
+			isSearched_main_ = true;
+		}
+	}
+
+	if (isSearched_origin_ && isSearched_main_)
+	{
+		isSearched_origin_ = false;
+		isSearched_main_ = false;
+
+		// Main results reranking.
 		rerank_->set_features(loading_->new_features_);
-		rerank_->set_init_result(number_origin_);
-		rerank_->setInput_multi(positives_, negatives_);
+		rerank_->set_init_result(number_main_);
+		rerank_->set_queryvector(rocchio_main_->queryvector_);
 		rerank_->startThread();
 	}
 
@@ -364,11 +404,10 @@ void ofApp::update()
 	{
 		rerank_->stopThread();
 		rerank_->isReranked_ = false;
-		rerank_->getNumber(&number_main_);
 
 		// VisualRank Reranking.
-		visualrank_->set_features(loading_->features_);
-		visualrank_->set_init_result(number_origin_);
+		visualrank_->set_features(loading_->new_features_);
+		visualrank_->set_init_result(number_main_);
 		visualrank_->startThread();
 	}
 
@@ -376,8 +415,10 @@ void ofApp::update()
 	{
 		visualrank_->stopThread();
 		visualrank_->isReranked_ = false;
-		visualrank_->getNumber(&number_visualrank_);
 
+		// Get reranked results.
+		rerank_->getNumber(&number_main_);
+		visualrank_->getNumber(&number_visualrank_);
 		isSearchedAll_ = true;
 	}
 
@@ -399,7 +440,7 @@ void ofApp::update()
 		isReady_ = false;
 
 		// Single Search Evaluation.
-		single_evaluater_->set_inputpoint(search_->queryvector_, rerank_->queryvector_);
+		single_evaluater_->set_inputpoint(rocchio_origin_->queryvector_, rocchio_main_->queryvector_);
 		single_evaluater_->run();
 
 		database_->setNumber_active(number_active_);
@@ -407,8 +448,10 @@ void ofApp::update()
 		database_->setNumber_main(number_main_);
 		database_->setNumber_visualrank(number_visualrank_);
 
+#ifdef RELIABILITY
 		graph_.load(resultGraphfile_);
 		graph_.update();
+#endif
 		topface_main_.load(loader_->name_[number_main_[0]]);
 
 		isactive_ = true;
@@ -658,11 +701,14 @@ void ofApp::draw()
 	propose_txt_posx_ = propose_img_posx_ + (propose_imgsize_ - propose_txt_width) / 2;
 	font_.drawString(propose, propose_txt_posx_, propose_txt_posy_);
 
+	int margin = 10;
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
+	ofSetColor(ofColor(128.0f, 128.0f, 128.0f, 255.0f));
+	ofDrawRectangle(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+
 	if (epoch_ > 0 && topface_main_.isAllocated())
 	{
-		int margin = 10;
 		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 		topface_main_.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
 	}
@@ -1087,9 +1133,8 @@ void ofApp::mouseReleased(int x, int y, int button)
 				clickflag_ = true;
 				canSearch_ = false;
 
+				// Run Trainer.
 				samplewriter_->write(positives_, negatives_);
-				search_->setInput_multi(positives_, negatives_);
-
 				trainer_->startThread();
 				timer_start_ = ofGetElapsedTimef();
 			}
@@ -1445,12 +1490,13 @@ void ofApp::put_time(std::string& time_str)
 //--------------------------------------------------------------
 void ofApp::showProcessingTime()
 {
-	float others = process_time_ - trainer_->process_time_ - search_->process_time_
-			- rerank_->process_time_ - visualrank_->process_time_;
+	float others = process_time_ - trainer_->process_time_ - rocchio_main_->process_time_
+			- search_->process_time_ - rerank_->process_time_ - visualrank_->process_time_;
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
 	std::cout << "Online Training (Main + LOOCV + Selection): " << trainer_->process_time_ << " sec." << std::endl;
-	std::cout << "Searching (Rocchio + NGT): " << search_->process_time_ << " sec." << std::endl;
+	std::cout << "Rocchio Algorithm: " << rocchio_main_->process_time_ << " sec." << std::endl;
+	std::cout << "Searching (NGT): " << search_->process_time_ << " sec." << std::endl;
 	std::cout << "Reranking (Main): " << rerank_->process_time_ + visualrank_->process_time_ << " sec." << std::endl;
 	std::cout << "Reranking (VisualRank): " << visualrank_->process_time_ << " sec." << std::endl;
 	std::cout << "Others: " << others << " sec." << std::endl;

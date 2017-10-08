@@ -6,6 +6,8 @@
 //#define GABOR
 //#define HISTOGRAM_GABOR
 
+#define RELIABILITY
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -26,6 +28,7 @@
 #include "rerank.h"
 #include "VisualRank.h"
 #include "evaluation.h"
+#include "rocchio.h"
 
 
 const int searchTarget_ = 0;	// Single Search Target.
@@ -198,6 +201,8 @@ public:
 	bool canSearch_;						// Flag: Ready to search.
 	float process_time_;					// Total processing time.
 	float timer_start_;						// Timer (start).
+	bool isSearched_origin_;				// Flag: Finished searching original.
+	bool isSearched_main_;					// Flag: Finished searching main.
 
 	//-----------------------------------------
 	// Retrieval results.
@@ -311,6 +316,8 @@ public:
 	ReRank* rerank_;							// Reranking method.
 	VisualRank* visualrank_;					// VisualRank method.
 	SingleSearchEvaluater* single_evaluater_;	// Evaluater.
+	Rocchio* rocchio_origin_;					// Rocchio algorithm (original).
+	Rocchio* rocchio_main_;						// Rocchio algorithm (main).
 };
 
 inline int toInt(std::string s)

@@ -14,47 +14,71 @@
 class Rocchio
 {
 public:
+	std::vector<std::vector<double>> features_;
 	std::vector<std::vector<double>> relevance_;
 	std::vector<std::vector<double>> irrelevance_;
-	Eigen::VectorXd initquery_;
-	Eigen::VectorXd newquery_;
+	std::vector<double> queryvector_;
+	Eigen::VectorXd queryvector_eigen_;
 	Eigen::VectorXd relevance_ave_;
 	Eigen::VectorXd irrelevance_ave_;
 	int dim_;
 	int relnum_;
 	int irrelnum_;
-	int count_;
+	float alpha_, beta_, gamma_;
+	float process_time_;
 
 
 public:
 	Rocchio()
 	{
-		dim_ = 0;
+		dim_ = 4096;
 		relnum_ = 0;
 		irrelnum_ = 0;
-		count_ = 0;
+		queryvector_eigen_ = Eigen::VectorXd::Zero(dim_);
+		alpha_ = 1.0f;
+		beta_ = 0.8f;
+		gamma_ = 0.3f;
+		process_time_ = 0.0f;
 	}
 
-	void set_vector(const std::vector<std::vector<double>>& relevance,
-			const std::vector<std::vector<double>>& irrelevance)
+	void set_features(const std::vector<std::vector<double>>& features)
 	{
-		relevance_ = relevance;
-		irrelevance_ = irrelevance;
-		relnum_ = relevance_.size();
-		irrelnum_ = irrelevance_.size();
-		dim_ = relevance_[0].size();
+		features_ = features;
 	}
 
-	inline void setInitquery(const std::vector<double> initquery)
+	void setInput_multi(const std::vector<int>& positives, const std::vector<int>& negatives)
 	{
-		initquery_ = Eigen::VectorXd::Zero(dim_);
-		if (count_ > 0)
-			for (int i = 0; i < dim_; ++i)
-				initquery_(i) = initquery[i];
-		++count_;
+		relevance_.clear();
+		irrelevance_.clear();
+
+		relevance_.resize(positives.size());
+		irrelevance_.resize(negatives.size());
+
+		for (int i = 0; i < (int) positives.size(); ++i)
+			relevance_[i] = features_[positives[i]];
+
+		for (int i = 0; i < (int) negatives.size(); ++i)
+			irrelevance_[i] = features_[negatives[i]];
+
+		relnum_ = positives.size();
+		irrelnum_ = negatives.size();
 	}
 
-	inline void calcAverage()
+	void run()
+	{
+		std::cout << "[Rocchio] Start calculating query vector by rocchio algorithm." << std::endl;
+		std::cout << "[Rocchio] Alpha: " << alpha_ << ", Beta: " << beta_ << ", Gamma: " << gamma_ << std::endl;
+		float start = ofGetElapsedTimef();
+
+		calcAverage();
+		queryvector_eigen_ = (alpha_ * queryvector_eigen_.array()) + (beta_ * relevance_ave_.array()) - (gamma_ * irrelevance_ave_.array());
+		queryvector_ = eigen2stlvector(queryvector_eigen_);
+
+		process_time_ = ofGetElapsedTimef() - start;
+		std::cout << "[Rocchio] Finished calculating query vector by rocchio algorithm." << std::endl;
+	}
+
+	void calcAverage()
 	{
 		if (relnum_ > 0)
 			average(relevance_, relevance_ave_);
@@ -67,7 +91,7 @@ public:
 			irrelevance_ave_ = Eigen::VectorXd::Zero(dim_);
 	}
 
-	inline void average(const std::vector<std::vector<double>>& srcVec, Eigen::VectorXd& dstVec)
+	void average(const std::vector<std::vector<double>>& srcVec, Eigen::VectorXd& dstVec)
 	{
 		const int size = srcVec.size();
 		Eigen::VectorXd average = Eigen::VectorXd::Zero(dim_);
@@ -82,20 +106,18 @@ public:
 		dstVec = average;
 	}
 
-	inline void calculate(const float alpha, const float beta, const float gamma)
+	std::vector<double> eigen2stlvector(const Eigen::VectorXd& eigenvector)
 	{
-		std::cout << "[Rocchio] Alpha: " << alpha << ", Beta: " << beta << ", Gamma: " << gamma << std::endl;
-		calcAverage();
-		newquery_ = Eigen::VectorXd::Zero(dim_);
-		newquery_ = (alpha * initquery_.array()) + (beta * relevance_ave_.array())
-				- (gamma * irrelevance_ave_.array());
-	}
+		int size = (int) eigenvector.size();
+		int i = 0;
+		std::vector<double> stlvector(size);
+		while (i < size)
+		{
+			stlvector[i] = eigenvector(i);
+			++i;
+		}
 
-	inline void getquery(std::vector<double>* query) const
-	{
-		query->resize(dim_);
-		for (int i = 0; i < dim_; ++i)
-			(*query)[i] = newquery_[i];
+		return stlvector;
 	}
 };
 
