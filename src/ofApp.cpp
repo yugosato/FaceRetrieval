@@ -1495,7 +1495,11 @@ void ofApp::showProcessingTime()
 			- search_->process_time_ - rerank_->process_time_ - visualrank_->process_time_;
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
+#ifdef RELIABILITY
 	std::cout << "Online Training (Main + LOOCV + Selection): " << trainer_->process_time_ << " sec." << std::endl;
+#else
+	std::cout << "Online Training (Main + Selection): " << trainer_->process_time_ << " sec." << std::endl;
+#endif
 	std::cout << "Rocchio Algorithm: " << rocchio_main_->process_time_ << " sec." << std::endl;
 	std::cout << "Searching (NGT): " << search_->process_time_ << " sec." << std::endl;
 	std::cout << "Reranking (Main): " << rerank_->process_time_ + visualrank_->process_time_ << " sec." << std::endl;
