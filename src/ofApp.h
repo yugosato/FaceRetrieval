@@ -6,7 +6,7 @@
 //#define GABOR
 //#define HISTOGRAM_GABOR
 
-#define RELIABILITY
+//#define RELIABILITY
 
 #include <iostream>
 #include <vector>

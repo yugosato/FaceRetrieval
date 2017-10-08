@@ -19,7 +19,7 @@ class OnlineProcessing(TrainModel, ActiveSelection):
     def run_trainmodel(self):
         self.run_train()
         self.run_feature_extraction()
-        self.run_LOOCV()
+        # self.run_LOOCV()
 
 
     def run_activeSelection(self):
