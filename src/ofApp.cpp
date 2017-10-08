@@ -16,7 +16,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	//  The number of displayed images.
 	picA_ = 1;
-	picB_ = 25;
+	picB_ = 100;
 	picnum_ = picB_ - picA_ + 1;
 
 	//-----------------------------------------
@@ -37,8 +37,9 @@ void ofApp::initparam()
 	// Display Settings.
 	colShow_ = 5;
 	rowShow_ = 0;
-	d_size_ = (initWidth_ - leftsize_ - ScrollBarWidth_) / colShow_;
-	width_areaA_ = 0;
+	d_size_ = (initWidth_ - leftsize_ - 2 * ScrollBarWidth_) / colShow_;
+	area_width_ = d_size_ * colShow_;
+	area_height_ = d_size_ * 5;
 
 	//-----------------------------------------
 	// Input Query.
@@ -124,21 +125,21 @@ void ofApp::initparam()
 	overview_colShow_ = 15;
 	overviewP_rowShow_ = 0;
 	overviewP_rowShow_ = 0;
-	overview_d_size_ = (leftsize_ - 2 * overview_areamargin_) / overview_colShow_;
 	holdImgNum_ = -1;
 	holding_x_ = -1;
 	holding_y_ = -1;
-	width_areaA_ = d_size_ * colShow_;
-	perHeight3_ = windowHeight_ / 3;
-	positive_txt_posy_ = 25;
-	negative_txt_posy_ = 25 + perHeight3_;
-	reliability_txt_posy_ = 25 + 2 * perHeight3_;
+	overview_areamargin_ = ScrollBarWidth_;
+	overview_d_size_ = (leftsize_ - 3 * overview_areamargin_) / overview_colShow_;
+	perHeight_ = ((uppersize_ + area_height_) - 2 * uppersize_) / 2;
+	positive_txt_posy_ = fontposy_top_;
+	negative_txt_posy_ = positive_txt_posy_ + perHeight_ + uppersize_;
+	reliability_txt_posy_ = negative_txt_posy_ + perHeight_ + uppersize_;
 	overviewP_areaposy_ = positive_txt_posy_ + 10;
 	overviewN_areaposy_ = negative_txt_posy_ + 10;
 	overviewR_areaposy_ = reliability_txt_posy_ + 10;
 	overview_areawidth_ = overview_d_size_ * overview_colShow_;
 	overview_areawidth_wide_ = windowWidth_ - 2 * overview_areamargin_;
-	overview_areaheight_ = overview_d_size_ * 4;
+	overview_areaheight_ = perHeight_;
 	len_positives_ = 0;
 	len_negatives_ = 0;
 
@@ -166,17 +167,17 @@ void ofApp::loadImageandFont()
 	searchbutton1_.load(binData_ + "items/search1.png");
 	searchbutton2_.load(binData_ + "items/search2.png");
 
-	button1_active_.load(binData_ + "items/active1.png");
-	button2_active_.load(binData_ + "items/active2.png");
+	button1_active_.load(binData_ + "items/A1.png");
+	button2_active_.load(binData_ + "items/A2.png");
 
-	button1_origin_.load(binData_ + "items/origin1.png");
-	button2_origin_.load(binData_ + "items/origin2.png");
+	button1_origin_.load(binData_ + "items/B1.png");
+	button2_origin_.load(binData_ + "items/B2.png");
 
-	button1_main_.load(binData_ + "items/main1.png");
-	button2_main_.load(binData_ + "items/main2.png");
+	button1_main_.load(binData_ + "items/C1.png");
+	button2_main_.load(binData_ + "items/C2.png");
 
-	button1_visualrank_.load(binData_ + "items/visualrank1.png");
-	button2_visualrank_.load(binData_ + "items/visualrank2.png");
+	button1_visualrank_.load(binData_ + "items/D1.png");
+	button2_visualrank_.load(binData_ + "items/D2.png");
 
 	graph_.load(binData_ + "items/init_graph_wide.png");
 }
@@ -407,8 +408,8 @@ void ofApp::update()
 		database_->setNumber_main(number_main_);
 		database_->setNumber_visualrank(number_visualrank_);
 
-		graph_.load(resultGraphfile_);
-		graph_.update();
+//		graph_.load(resultGraphfile_);
+//		graph_.update();
 
 		isactive_ = true;
 		isorigin_ = false;
@@ -429,9 +430,12 @@ void ofApp::update()
 	}
 
 	// Scroll Bar.
-	//vscroll_areaA_.update();
+	vscroll_areaA_.update();
 	vscroll_areaP_.update();
 	vscroll_areaN_.update();
+
+	update_overview_info();
+	updateScrollBars();
 }
 
 //--------------------------------------------------------------
@@ -440,22 +444,25 @@ void ofApp::draw()
 	ofFill();
 	ofSetLineWidth(1);
 
+	scroll_areaA_ = - vscroll_areaA_.current();
+	scroll_areaP_ = - vscroll_areaP_.current();
+	scroll_areaN_ = - vscroll_areaN_.current();
+
 	ofImage img;
 	const int len = loader_->row_;
-	scroll_areaA_ = - vscroll_areaA_.current();
 
 	for (int i = 0; i < len; ++i)
 	{
 		const int j = i % colShow_;
 		const int k = i / colShow_;
 
-		if (windowHeight_ < uppersize_ + d_size_ * k + scroll_areaA_)
-			break;
-		else if (0 > uppersize_ + d_size_ * (k + 1) + scroll_areaA_)
-			continue;
-
 		int drawx = leftsize_ + d_size_ * j;
 		int drawy = uppersize_ + d_size_ * k + scroll_areaA_;
+
+		if (uppersize_ + area_height_ < drawy)
+			break;
+		else if (0 > d_size_ * (k + 1) + scroll_areaA_)
+			continue;
 
 		img = loader_->picture_[i];
 
@@ -509,11 +516,93 @@ void ofApp::draw()
 		}
 	}
 
-    ofSetColor(ofColor(0.0f, 0.0f, 0.0f, 255.0f));
-    ofDrawRectangle(leftsize_, 0, windowWidth_ - leftsize_, uppersize_);
+    const int len_positive_images = positive_images_.size();
+	const int len_negative_images = negative_images_.size();
 
-   	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-   	searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
+	// Positive sample viewer.
+	if (isInsideWindow_ && isInside_areaP_)
+	{
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
+		ofDrawRectangle(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_);
+	}
+
+    if (len_positive_images > 0)
+	{
+		for (int i = 0; i < len_positive_images; ++i)
+		{
+			const int j = i % overview_colShow_;
+			const int k = i / overview_colShow_;
+
+			int drawx = overview_areamargin_ + overview_d_size_ * j;
+			int drawy = overviewP_areaposy_ + overview_d_size_ * k + scroll_areaP_;
+
+			if (overviewP_areaposy_ + overview_areaheight_ < drawy)
+				break;
+			else if (0 > overview_d_size_ * (k + 1) + scroll_areaP_)
+				continue;
+
+			ofImage img_positive = positive_images_[i];
+			if (!img_positive.isAllocated())
+				break;
+			else
+			{
+				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+				img_positive.draw(drawx, drawy, overview_d_size_, overview_d_size_);
+			}
+		}
+	}
+
+    // Negative sample viewer.
+	if (isInsideWindow_ && isInside_areaN_)
+	{
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
+		ofDrawRectangle(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_);
+	}
+
+	if (len_negative_images > 0)
+	{
+		for (int i = 0; i < len_negative_images; ++i)
+		{
+			const int j = i % overview_colShow_;
+			const int k = i / overview_colShow_;
+
+			int drawx = overview_areamargin_ + overview_d_size_ * j;
+			int drawy = overviewN_areaposy_ + overview_d_size_ * k + scroll_areaN_;
+
+			if (overviewN_areaposy_ + overview_areaheight_ < drawy)
+				break;
+			else if (0 > overview_d_size_ * (k + 1) + scroll_areaN_)
+				continue;
+
+			ofImage img_negative = negative_images_[i];
+			if (!img_negative.isAllocated())
+				break;
+			else
+			{
+				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+				img_negative.draw(drawx, drawy, overview_d_size_, overview_d_size_);
+			}
+		}
+	}
+
+	//------------------------------------------------------------------------------
+    // Dummy Rectangles.
+	ofSetColor(ofColor(0.0f, 0.0f, 0.0f, 255.0f));
+    ofDrawRectangle(0, 0, windowWidth_, uppersize_);
+    ofDrawRectangle(0, overviewP_areaposy_ + overview_areaheight_, overview_areamargin_ + overview_areawidth_, overviewN_areaposy_ - (overviewP_areaposy_ + overview_areaheight_));
+    ofDrawRectangle(0, overviewN_areaposy_ + overview_areaheight_, windowWidth_, windowHeight_ - (overviewN_areaposy_ + overview_areaheight_));
+
+	// Scroll Bar.
+	vscroll_areaA_.draw();
+	vscroll_areaP_.draw();
+	vscroll_areaN_.draw();
+
+    // Buttons.
+    ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+   	if (canSearch_)
+   		searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
+   	else
+   		searchbutton2_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
 
 	std::string text;
 	if (isactive_)
@@ -553,93 +642,21 @@ void ofApp::draw()
 		text = "Searching...";
 
 	float w = font_.stringWidth(text);
-	font_.drawString(text, windowWidth_ - w - ScrollBarWidth_ - 10, 27);
+	font_.drawString(text, windowWidth_ - w - ScrollBarWidth_ - 10, fontposy_top_);
 
-	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	std::string positive = "Positive Sample: ";
 	std::string negative = "Negative Sample: ";
 	std::string reliability = "Reliability Graph";
 
-    const int len_positive_images = positive_images_.size();
-	const int len_negative_images = negative_images_.size();
-
-	if (isInsideWindow_ && isactive_ && isInside_areaP_)
-	{
-		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
-		ofDrawRectangle(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_);
-	}
-
-	// Positive sample viewer.
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
     font_.drawString(positive + ofToString(len_positives_), overview_areamargin_, positive_txt_posy_);
-	if (len_positive_images > 0)
-	{
-		for (int i = 0; i < len_positive_images; ++i)
-		{
-			const int j = i % overview_colShow_;
-			const int k = i / overview_colShow_;
-
-			int drawx = overview_areamargin_ + overview_d_size_ * j;
-			int drawy = overviewP_areaposy_ + overview_d_size_ * k;
-
-			ofImage img_positive = positive_images_[i];
-			if (!img_positive.isAllocated())
-				break;
-			else
-			{
-				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-				img_positive.draw(drawx, drawy, overview_d_size_, overview_d_size_);
-			}
-		}
-	}
-
-	// Negative sample viewer.
-	int slide1 = overviewP_areaposy_ + overview_areaheight_;
-	ofSetColor(ofColor(0.0f, 0.0f, 0.0f, 255.0f));
-	ofDrawRectangle(overview_areamargin_, slide1, overview_areawidth_, overview_areaheight_ + slide1);
-
-	if (isInsideWindow_ && isactive_ && isInside_areaN_)
-	{
-		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
-		ofDrawRectangle(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_);
-	}
-
-	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	font_.drawString(negative + ofToString(len_negatives_), overview_areamargin_, negative_txt_posy_);
-	if (len_negative_images > 0)
-	{
-		for (int i = 0; i < len_negative_images; ++i)
-		{
-			const int j = i % overview_colShow_;
-			const int k = i / overview_colShow_;
-
-			int drawx = overview_areamargin_ + overview_d_size_ * j;
-			int drawy = overviewN_areaposy_ + overview_d_size_ * k;
-
-			ofImage img_negative = negative_images_[i];
-			if (!img_negative.isAllocated())
-				break;
-			else
-			{
-				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-				img_negative.draw(drawx, drawy, overview_d_size_, overview_d_size_);
-			}
-		}
-	}
+	font_.drawString(reliability, overview_areamargin_, reliability_txt_posy_);
+	//------------------------------------------------------------------------------
 
 	// Reliability graph viewer.
-	int slide2 = overviewN_areaposy_ + overview_areaheight_;
-	ofSetColor(ofColor(0.0f, 0.0f, 0.0f, 255.0f));
-	ofDrawRectangle(overview_areamargin_, slide2, overview_areawidth_, overview_areaheight_ + slide2);
-
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-	font_.drawString(reliability, overview_areamargin_, reliability_txt_posy_);
 	graph_.draw(overview_areamargin_, overviewR_areaposy_, overview_areawidth_wide_, overview_areaheight_);
-
-	// Scroll Bar.
-	//vscroll_areaA_.draw();
-	vscroll_areaP_.draw();
-	vscroll_areaN_.draw();
 
 	// Holding image.
 	if (isHoldAndDrag_)
@@ -693,10 +710,10 @@ void ofApp::mouseMoved(int x, int y)
 	int x_dash, y_dash;
 	if (isInsideWindow_)
 	{
-		if (isactive_)
+		if (canSearch_)
 		{
 			// Area A.
-			if (isInsideMouseoverArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
+			if (isactive_ && isInsideMouseoverArea(leftsize_, uppersize_, area_width_, area_height_))
 			{
 				isInside_areaA_ = true;
 				isInside_areaP_ = false;
@@ -711,7 +728,7 @@ void ofApp::mouseMoved(int x, int y)
 				isInside_areaP_ = true;
 				isInside_areaN_ = false;
 				x_dash = x - overview_areamargin_;
-				y_dash = y - overviewP_areaposy_;
+				y_dash = y - scroll_areaP_ - overviewP_areaposy_;
 				mouseover_ = x_dash / overview_d_size_ + y_dash / overview_d_size_ * overview_colShow_;
 			}	// Area N.
 			else if (isInsideMouseoverArea(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_))
@@ -720,7 +737,7 @@ void ofApp::mouseMoved(int x, int y)
 				isInside_areaP_ = false;
 				isInside_areaN_ = true;
 				x_dash = x - overview_areamargin_;
-				y_dash = y - overviewN_areaposy_;
+				y_dash = y - scroll_areaN_ - overviewN_areaposy_;
 				mouseover_ = x_dash / overview_d_size_ + y_dash / overview_d_size_ * overview_colShow_;
 			}
 			else
@@ -758,65 +775,70 @@ void ofApp::mouseDragged(int x, int y, int button)
 	if (vscroll_areaA_.mouseDragged(x, y))
 		return;
 
+	if (vscroll_areaP_.mouseDragged(x, y ))
+		return;
+
+	if (vscroll_areaN_.mouseDragged(x, y ))
+		return;
+
 	if (isInsideWindow_)
 	{
-		if (isactive_)
+		if (canSearch_ && mouseover_ >= 0)
 		{
-			if (canSearch_ && mouseover_ >= 0)
+			if (isHolding_areaA_)
 			{
-				if (isHolding_areaA_)
-				{
-					int imgId = showList_active_[mouseover_];
-					int exist_positive = vector_finder(positives_, imgId);
-					int exist_negative = vector_finder(negatives_, imgId);
+				int imgId = showList_active_[mouseover_];
+				int exist_positive = vector_finder(positives_, imgId);
+				int exist_negative = vector_finder(negatives_, imgId);
 
-					if (exist_positive < 0 && exist_negative < 0)
-					{
-						holdImgNum_ = mouseover_;
-						isHoldAndDrag_ = true;
-						calculateHoldingOriginPoint();
-					}
+				if (exist_positive < 0 && exist_negative < 0)
+				{
+					holdImgNum_ = mouseover_;
+					isHoldAndDrag_ = true;
+					calculateHoldingOriginPoint();
 				}
-				else if (isHolding_areaP_)
-				{
-					int imgId = positives_[mouseover_];
-					int exist_negative = vector_finder(negatives_, imgId);
+			}
+			else if (isHolding_areaP_)
+			{
+				int imgId = positives_[mouseover_];
+				int exist_negative = vector_finder(negatives_, imgId);
 
-					if (exist_negative < 0)
-					{
-						holdImgNum_ = mouseover_;
-						isHoldAndDrag_ = true;
-						calculateHoldingOriginPoint();
-					}
+				if (exist_negative < 0)
+				{
+					holdImgNum_ = mouseover_;
+					isHoldAndDrag_ = true;
+					calculateHoldingOriginPoint();
 				}
-				else if (isHolding_areaN_)
-				{
-					int imgId = negatives_[mouseover_];
-					int exist_positive = vector_finder(positives_, imgId);
+			}
+			else if (isHolding_areaN_)
+			{
+				int imgId = negatives_[mouseover_];
+				int exist_positive = vector_finder(positives_, imgId);
 
-					if (exist_positive < 0)
-					{
-						holdImgNum_ = mouseover_;
-						isHoldAndDrag_ = true;
-						calculateHoldingOriginPoint();
-					}
+				if (exist_positive < 0)
+				{
+					holdImgNum_ = mouseover_;
+					isHoldAndDrag_ = true;
+					calculateHoldingOriginPoint();
 				}
 			}
 
 			// Area A.
-			if (isInsideDragingArea(leftsize_, uppersize_, width_areaA_, windowHeight_ - uppersize_))
+			if (isactive_ && isInsideDragingArea(leftsize_, uppersize_, area_width_, area_height_))
 			{
 				isInside_areaA_ = true;
 				isInside_areaP_ = false;
 				isInside_areaN_ = false;
 			}	// Area P.
-			else if (isInsideDragingArea(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_))
+			else if (isInsideDragingArea(overview_areamargin_, overviewP_areaposy_,
+					overview_areawidth_, overview_areaheight_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = true;
 				isInside_areaN_ = false;
 			}	// Area N.
-			else if (isInsideDragingArea(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_))
+			else if (isInsideDragingArea(overview_areamargin_, overviewN_areaposy_,
+					overview_areawidth_, overview_areaheight_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
@@ -860,9 +882,15 @@ void ofApp::mousePressed(int x, int y, int button)
 	if (vscroll_areaA_.mousePressed(clickx_, clicky_))
 		return;
 
+	if (vscroll_areaP_.mousePressed(clickx_, clicky_))
+		return;
+
+	if (vscroll_areaN_.mousePressed(clickx_, clicky_))
+		return;
+
 	if (isInsideWindow_)
 	{
-		if (isactive_ && mouseover_ >= 0)
+		if (canSearch_ && mouseover_ >= 0)
 		{
 			// Area A.
 			if (mouseover_ < picnum_ && isInside_areaA_)
@@ -910,7 +938,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 {
 	if (isInsideWindow_)
 	{
-		if (isactive_ && holdImgNum_ >= 0)
+		if (holdImgNum_ >= 0)
 		{
 			if (isHolding_areaA_)
 			{
@@ -1062,6 +1090,12 @@ void ofApp::mouseReleased(int x, int y, int button)
 	if (vscroll_areaA_.mouseReleased(x, y))
 		return;
 
+	if (vscroll_areaP_.mouseReleased(x, y))
+		return;
+
+	if (vscroll_areaN_.mouseReleased(x, y))
+		return;
+
 	clickx_ = -1;
 	clicky_ = -1;
 	click_ = false;
@@ -1179,6 +1213,7 @@ void ofApp::onPaint(const std::vector<int>& list)
 	drawHeight_areaP_ = overview_d_size_ * overviewP_rowShow_;
 	drawHeight_areaN_ = overview_d_size_ * overviewN_rowShow_;
 
+	vscroll_areaA_.current(0);
 	updateScrollBars();
 }
 
@@ -1248,14 +1283,6 @@ void ofApp::initRange(const int& begin, const int& end)
 //--------------------------------------------------------------
 void ofApp::sizeChanged()
 {
-	d_size_ = (windowWidth_ - leftsize_ - ScrollBarWidth_) / colShow_;
-
-	if (d_size_ < 1)
-	{
-		d_size_ = 1;
-		colShow_ = windowWidth_ - leftsize_ - ScrollBarWidth_;
-	}
-
 	std::vector<int>* sList;
 	if (isactive_)
 		sList = &showList_active_;
@@ -1266,25 +1293,12 @@ void ofApp::sizeChanged()
 	else if (isorigin_)
 		sList = &showList_origin_;
 
-	overview_d_size_ = (leftsize_ - 2 * overview_areamargin_) / overview_colShow_;
-
-	// All results viewer.
 	rowShow_ = (sList->size() + colShow_ - 1) / colShow_;
 	if (rowShow_ < 1)
 		rowShow_ = 1;
-	bottom_ = - uppersize_ - (d_size_ * rowShow_) + windowHeight_;
 
-	// Positive sample viewer.
-	if (len_positives_ > 0)
-		overviewP_rowShow_ = (positives_.size() + overview_colShow_ - 1) / overview_colShow_;
-	else
-		overviewP_rowShow_ = 0;
-
-	// Negative sample viewer.
-	if (len_negatives_ > 0)
-		overviewN_rowShow_ = (negatives_.size() + overview_colShow_ - 1) / overview_colShow_;
-	else
-		overviewN_rowShow_ = 0;
+	overviewP_rowShow_ = (positives_.size() + overview_colShow_ - 1) / overview_colShow_;
+	overviewN_rowShow_ = (negatives_.size() + overview_colShow_ - 1) / overview_colShow_;
 }
 
 //--------------------------------------------------------------
@@ -1292,10 +1306,10 @@ void ofApp::sizeChanged()
 // (Called when the window size or the image size is changed)
 void ofApp::updateScrollBars()
 {
+	//---------------------------------------------------------------------------
 	// All results viewer.
-	if (drawHeight_areaA_ < vscroll_areaA_.bar_length())
+	if (drawHeight_areaA_ < area_height_)
 	{
-		vscroll_areaA_.bar_length(drawHeight_areaA_);
 		vscroll_areaA_.max(0);
 		vscroll_areaA_.change_by_bar(0);
 		vscroll_areaA_.current(0);
@@ -1303,12 +1317,12 @@ void ofApp::updateScrollBars()
 	else
 	{
 		vscroll_areaA_.max(drawHeight_areaA_ - vscroll_areaA_.bar_length());
-		vscroll_areaA_.change_by_bar(vscroll_areaA_.max() / 4);
-		vscroll_areaA_.current(0);
+		vscroll_areaA_.change_by_bar(vscroll_areaA_.max());
 	}
 
+	//---------------------------------------------------------------------------
 	// Positive results viewer.
-	if (drawHeight_areaP_ <= overview_areaheight_)
+	if (drawHeight_areaP_ < overview_areaheight_)
 	{
 		vscroll_areaP_.max(0);
 		vscroll_areaP_.change_by_bar(0);
@@ -1317,48 +1331,50 @@ void ofApp::updateScrollBars()
 	else
 	{
 		vscroll_areaP_.max(drawHeight_areaP_ - vscroll_areaP_.bar_length());
-		vscroll_areaP_.change_by_bar(vscroll_areaP_.max() / 4);
-		//vscroll_areaP_.current(0);
+		vscroll_areaP_.change_by_bar(vscroll_areaP_.max());
 	}
 
+	//---------------------------------------------------------------------------
 	// Negative results viewer.
-	if (drawHeight_areaN_ <= overview_areaheight_)
+	if (drawHeight_areaN_ < overview_areaheight_)
 	{
 		vscroll_areaN_.max(0);
 		vscroll_areaN_.change_by_bar(0);
-		vscroll_areaN_.current(0);
+		vscroll_areaP_.current(0);
 	}
 	else
 	{
 		vscroll_areaN_.max(drawHeight_areaN_ - vscroll_areaN_.bar_length());
-		vscroll_areaN_.change_by_bar(vscroll_areaN_.max() / 4);
-		//vscroll_areaN_.current(0);
+		vscroll_areaN_.change_by_bar(vscroll_areaN_.max());
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::initializeBars()
 {
+	//---------------------------------------------------------------------------
 	// All results viewer.
 	scroll_areaA_ = 0;
 	vscroll_areaA_.min(0);
 	vscroll_areaA_.bar_width(ScrollBarWidth_);
-	vscroll_areaA_.bar_length(windowHeight_ - uppersize_);
-	vscroll_areaA_.bar_pos_widthdir(windowWidth_ - ScrollBarWidth_);
+	vscroll_areaA_.bar_length(area_height_);
+	vscroll_areaA_.bar_pos_widthdir(leftsize_ + area_width_);
 	vscroll_areaA_.bar_pos_lengthdir(uppersize_);
 	vscroll_areaA_.change_by_button(30);
 	vscroll_areaA_.current(0);
 
+	//---------------------------------------------------------------------------
 	// Positive sample viewer.
 	scroll_areaP_ = 0;
 	vscroll_areaP_.min(0);
 	vscroll_areaP_.bar_width(ScrollBarWidth_);
 	vscroll_areaP_.bar_length(overview_areaheight_);
 	vscroll_areaP_.bar_pos_widthdir(overview_areamargin_ + overview_areawidth_);
-	vscroll_areaP_.bar_pos_lengthdir(overviewP_areaposy_);
+	vscroll_areaP_.bar_pos_lengthdir(uppersize_);
 	vscroll_areaP_.change_by_button(30);
 	vscroll_areaP_.current(0);
 
+	//---------------------------------------------------------------------------
 	// Negative sample viewer.
 	scroll_areaN_ = 0;
 	vscroll_areaN_.min(0);
@@ -1450,4 +1466,13 @@ void ofApp::autoselect_negative()
 	}
 	len_negatives_ = negatives_.size();
 	std::cout << "[ofApp] Auto sample selection." << std::endl;
+}
+
+//--------------------------------------------------------------
+void ofApp::update_overview_info()
+{
+	overviewP_rowShow_ = (positives_.size() + overview_colShow_ - 1) / overview_colShow_;
+	overviewN_rowShow_ = (negatives_.size() + overview_colShow_ - 1) / overview_colShow_;
+	drawHeight_areaP_ = overview_d_size_ * overviewP_rowShow_;
+	drawHeight_areaN_ = overview_d_size_ * overviewN_rowShow_;
 }

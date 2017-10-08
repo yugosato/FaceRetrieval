@@ -31,7 +31,7 @@
 const int searchTarget_ = 0;	// Single Search Target.
 
 const int initWidth_ = 1600;	// Initial window size: Width.
-const int initHeight_ = 1000;	// Initial window size: Height.
+const int initHeight_ = 920;	// Initial window size: Height.
 
 
 // openFrameworks base class.
@@ -60,11 +60,12 @@ public:
 	//-----------------------------------------
 	// GUI settings' parameters.
 	const int leftsize_ = 1000;						// Left region.
-	const int uppersize_ = 40;						// Upper region.
+	const int uppermargin_ = 20;					// Upper margin.
+	int uppersize_ = uppermargin_ + 40;				// Upper region.
 	const int buttonheight_ = 30;					// Button height.
 	const int historybuttonwidth_ = buttonheight_;	// History button width.
 	const int buttonwidth_active_ = buttonheight_;	// Show active selection results button width.
-	const int buttonposy_line1_ = 5;				// The Y-coordinate of buttons on the 1st line.
+	const int buttonposy_line1_ = uppermargin_ + 5;	// The Y-coordinate of buttons on the 1st line.
 	const int searchbuttonposx_ = 1000;				// The X-coordinate of search button.
 	const int searchbuttonwidth_ = 90;				// Search button width.
 	const int buttonposx_active_ = 1095;			// The X-coordinate of button displays the active selection results.
@@ -97,7 +98,8 @@ public:
 	int colShow_;						// The number of cols.
 	int rowShow_;						// The number of rows.
 	int d_size_;						// Size of each displayed image.
-	int bottom_;						// The Y-coordinate of current bottom.
+	int area_width_;					// Area A width.
+	int area_height_;					// Area A height.
 
 	//-----------------------------------------
 	// Input Query.
@@ -110,8 +112,9 @@ public:
 
 	//-----------------------------------------
 	// Font.
-	std::string ttf_;					// Font data.
-	const int fontsize_ = 16;			// Font size.
+	std::string ttf_;								// Font data.
+	const int fontsize_ = 16;						// Font size.
+	const int fontposy_top_ = + uppermargin_ + 27;	// The Y-coordinate of top line text.
 
 	//-----------------------------------------
 	// Path Settings.
@@ -144,7 +147,6 @@ public:
 	std::string resultGraphfile_;			// For update graph.
 	std::string new_featuresfile_;			// For rerank method.
 
-
 	//-----------------------------------------
 	// Overview Settings.
 	bool isHolding_areaA_;					// Flag: Holding areaA.
@@ -158,13 +160,12 @@ public:
 	int overview_colShow_;					// The number of cols.
 	int overviewP_rowShow_;					// The number of rows (area P).
 	int overviewN_rowShow_;					// The number of rows (area N).
-	int overview_d_size_;					// Size of each displayed image (overview).
 	int holdImgNum_;						// Holding image number;
 	int holding_x_;							// The X-coordinate of held image.
 	int holding_y_;							// The Y-coordinate of held image.
-	int width_areaA_;						// Area A width.
-	const int overview_areamargin_ = 30;	// Margin of Overview area.
-	int perHeight3_;						// Split window into 3 parts.
+	int overview_areamargin_;				// Margin of Overview area.
+	int overview_d_size_;					// Size of each displayed image (overview).
+	int perHeight_;							// Split window into parts.
 	int positive_txt_posy_;					// "Positive" text position.
 	int negative_txt_posy_;					// "Negative" text position.
 	int reliability_txt_posy_;				// "Reliability" text position.
@@ -256,6 +257,7 @@ public:
 	void calculateHoldingOriginPoint();
 	void showProcessingTime();
 	void autoselect_negative();
+	void update_overview_info();
 
 
 public:
