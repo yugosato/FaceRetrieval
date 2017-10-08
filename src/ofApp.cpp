@@ -167,17 +167,17 @@ void ofApp::loadImageandFont()
 	searchbutton1_.load(binData_ + "items/search1.png");
 	searchbutton2_.load(binData_ + "items/search2.png");
 
-	button1_active_.load(binData_ + "items/A1.png");
-	button2_active_.load(binData_ + "items/A2.png");
+	buttonA1_.load(binData_ + "items/A1.png");
+	buttonA2_.load(binData_ + "items/A2.png");
 
-	button1_origin_.load(binData_ + "items/B1.png");
-	button2_origin_.load(binData_ + "items/B2.png");
+	buttonB1_.load(binData_ + "items/B1.png");
+	buttonB2_.load(binData_ + "items/B2.png");
 
-	button1_main_.load(binData_ + "items/C1.png");
-	button2_main_.load(binData_ + "items/C2.png");
+	buttonC1_.load(binData_ + "items/C1.png");
+	buttonC2_.load(binData_ + "items/C2.png");
 
-	button1_visualrank_.load(binData_ + "items/D1.png");
-	button2_visualrank_.load(binData_ + "items/D2.png");
+	buttonD1_.load(binData_ + "items/D1.png");
+	buttonD2_.load(binData_ + "items/D2.png");
 
 	graph_.load(binData_ + "items/init_graph_wide.png");
 }
@@ -408,8 +408,8 @@ void ofApp::update()
 		database_->setNumber_main(number_main_);
 		database_->setNumber_visualrank(number_visualrank_);
 
-//		graph_.load(resultGraphfile_);
-//		graph_.update();
+		graph_.load(resultGraphfile_);
+		graph_.update();
 
 		isactive_ = true;
 		isorigin_ = false;
@@ -520,11 +520,8 @@ void ofApp::draw()
 	const int len_negative_images = negative_images_.size();
 
 	// Positive sample viewer.
-	if (isInsideWindow_ && isInside_areaP_)
-	{
-		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
-		ofDrawRectangle(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_);
-	}
+	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
+	ofDrawRectangle(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_);
 
     if (len_positive_images > 0)
 	{
@@ -553,11 +550,8 @@ void ofApp::draw()
 	}
 
     // Negative sample viewer.
-	if (isInsideWindow_ && isInside_areaN_)
-	{
-		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
-		ofDrawRectangle(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_);
-	}
+	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
+	ofDrawRectangle(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_);
 
 	if (len_negative_images > 0)
 	{
@@ -600,41 +594,41 @@ void ofApp::draw()
     // Buttons.
     ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
    	if (canSearch_)
-   		searchbutton1_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
+   		searchbutton1_.draw(searchbutton_posx_, buttonposy_line1_, searchbutton_width_, button_height_);
    	else
-   		searchbutton2_.draw(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_);
+   		searchbutton2_.draw(searchbutton_posx_, buttonposy_line1_, searchbutton_width_, button_height_);
 
 	std::string text;
 	if (isactive_)
 	{
-		button2_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button1_origin_.draw(buttonposx_origin_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button1_visualrank_.draw(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		buttonA2_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 		text = "ActiveSelection";
 	}
 	else if (isorigin_)
 	{
-		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button2_origin_.draw(buttonposx_origin_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button1_visualrank_.draw(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonB2_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 		text = "Original";
 	}
 	else if (ismain_)
 	{
-		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button1_origin_.draw(buttonposx_origin_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button2_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button1_visualrank_.draw(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonC2_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 		text = "Rerank";
 	}
 	else if (isvisualrank_)
 	{
-		button1_active_.draw(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button1_origin_.draw(buttonposx_origin_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button1_main_.draw(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
-		button2_visualrank_.draw(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_);
+		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonD2_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 		text = "VisualRank";
 	}
 
@@ -1030,7 +1024,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 	if (click_ == true)
 	{
-		if (isReleasedArea(buttonposx_active_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
+		if (isReleasedArea(buttonA_posx_, buttonposy_line1_, button_width_, button_height_))
 		{
 			isactive_ = true;
 			isorigin_ = false;
@@ -1038,7 +1032,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			isvisualrank_ = false;
 			onPaint(showList_active_);
 		}
-		else if (isReleasedArea(buttonposx_origin_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
+		else if (isReleasedArea(buttonB_posx_, buttonposy_line1_, button_width_, button_height_))
 		{
 			isactive_ = false;
 			isorigin_ = true;
@@ -1046,7 +1040,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			isvisualrank_ = false;
 			onPaint(showList_origin_);
 		}
-		else if (isReleasedArea(buttonposx_main_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
+		else if (isReleasedArea(buttonC_posx_, buttonposy_line1_, button_width_, button_height_))
 		{
 			isactive_ = false;
 			isorigin_ = false;
@@ -1054,7 +1048,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			isvisualrank_ = false;
 			onPaint(showList_main_);
 		}
-		else if (isReleasedArea(buttonposx_visualrank_, buttonposy_line1_, buttonwidth_active_, buttonheight_))
+		else if (isReleasedArea(buttonD_posx_, buttonposy_line1_, button_width_, button_height_))
 		{
 			isactive_ = false;
 			isorigin_ = false;
@@ -1063,7 +1057,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			onPaint(showList_visualrank_);
 		}
 
-		if (isReleasedArea(searchbuttonposx_, buttonposy_line1_, searchbuttonwidth_, buttonheight_))
+		if (isReleasedArea(searchbutton_posx_, buttonposy_line1_, searchbutton_width_, button_height_))
 		{
 			if (len_positives_ == 0)
 				std::cerr << "[Warning] Please select positive sample (at least 1)." << std::endl;

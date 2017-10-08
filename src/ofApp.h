@@ -62,16 +62,15 @@ public:
 	const int leftsize_ = 1000;						// Left region.
 	const int uppermargin_ = 20;					// Upper margin.
 	int uppersize_ = uppermargin_ + 40;				// Upper region.
-	const int buttonheight_ = 30;					// Button height.
-	const int historybuttonwidth_ = buttonheight_;	// History button width.
-	const int buttonwidth_active_ = buttonheight_;	// Show active selection results button width.
+	const int button_height_ = 30;					// Button height.
+	const int button_width_ = button_height_;		// Show active selection results button width.
 	const int buttonposy_line1_ = uppermargin_ + 5;	// The Y-coordinate of buttons on the 1st line.
-	const int searchbuttonposx_ = 1000;				// The X-coordinate of search button.
-	const int searchbuttonwidth_ = 90;				// Search button width.
-	const int buttonposx_active_ = 1095;			// The X-coordinate of button displays the active selection results.
-	const int buttonposx_origin_ = 1130;			// The X-coordinate of button displays the camparison results.
-	const int buttonposx_main_ = 1165;				// The X-coordinate of button displays the main results.
-	const int buttonposx_visualrank_ = 1200;		// The X-coordinate of button displays the visualrank results.
+	const int searchbutton_posx_ = 1000;			// The X-coordinate of search button.
+	const int searchbutton_width_ = 90;				// Search button width.
+	const int buttonA_posx_ = 1095;					// The X-coordinate of button displays the active selection results.
+	const int buttonB_posx_ = 1130;					// The X-coordinate of button displays the camparison results.
+	const int buttonC_posx_ = 1165;					// The X-coordinate of button displays the main results.
+	const int buttonD_posx_ = 1200;					// The X-coordinate of button displays the visualrank results.
 	const int guiScrollarea_height_ = 280;			// ScrollableCanvas's height (ofxUI).
 
 	//-----------------------------------------
@@ -281,14 +280,14 @@ public:
 	ofImage forwardbutton2_;
 	ofImage searchbutton1_;
 	ofImage searchbutton2_;
-	ofImage button1_active_;
-	ofImage button2_active_;
-	ofImage button1_origin_;
-	ofImage button2_origin_;
-	ofImage button1_main_;
-	ofImage button2_main_;
-	ofImage button1_visualrank_;
-	ofImage button2_visualrank_;
+	ofImage buttonA1_;
+	ofImage buttonA2_;
+	ofImage buttonB1_;
+	ofImage buttonB2_;
+	ofImage buttonC1_;
+	ofImage buttonC2_;
+	ofImage buttonD1_;
+	ofImage buttonD2_;
 
 
 public:
