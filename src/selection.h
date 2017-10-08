@@ -56,8 +56,8 @@ public:
 		//read_index(positive_indexfile_, number_estPositive_);
 		//read_index(negative_indexfile_, number_estNegative_);
 		read_index(uncertain_indexfile_, number_uncertain_);
-		read_index(cueflik_indexfile_, number_cueflik_);
-		read_index(random_indexfile_, number_random_);
+		//read_index(cueflik_indexfile_, number_cueflik_);
+		//read_index(random_indexfile_, number_random_);
 		isLoaded_ = true;
 	}
 
@@ -83,10 +83,10 @@ public:
 	inline void getNumber(std::vector<int>* number) const
 	{
 		number->clear();
-		int size = (int) number_cueflik_.size();
+		int size = (int) number_uncertain_.size();
 		number->resize(size);
 		for (int i = 0; i < size; ++i)
-			(*number)[i] = number_cueflik_[i];
+			(*number)[i] = number_uncertain_[i];
 	}
 
 };

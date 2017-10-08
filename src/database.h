@@ -40,6 +40,7 @@ public:
 		//init();
 		//random();
 		init_clustering();
+		removeTarget();
 		number_active_ = number_origin_;
 		number_main_ = number_origin_;
 		number_visualrank_ = number_origin_;
@@ -48,6 +49,20 @@ public:
 	void set_searchTarget(const int searchTarget)
 	{
 		searchTarget_ = searchTarget;
+	}
+
+	void removeTarget()
+	{
+		int size = number_origin_.size();
+		for (int i = 0; i < size; ++i)
+		{
+			int num = number_origin_[i];
+			if (num == searchTarget_)
+			{
+				number_origin_.erase(number_origin_.begin() + i);
+				break;
+			}
+		}
 	}
 
 	// Load image list.
