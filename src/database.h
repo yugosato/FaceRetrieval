@@ -49,24 +49,9 @@ public:
 		else
 			init();
 
-		removeTarget();
 		number_active_ = number_origin_;
 		number_main_ = number_origin_;
 		number_visualrank_ = number_origin_;
-	}
-
-	void removeTarget()
-	{
-		int size = number_origin_.size();
-		for (int i = 0; i < size; ++i)
-		{
-			int num = number_origin_[i];
-			if (num == searchTarget_)
-			{
-				number_origin_.erase(number_origin_.begin() + i);
-				break;
-			}
-		}
 	}
 
 	// Load image list.
@@ -91,14 +76,24 @@ public:
 		}
 	}
 
-	inline void init()
+	void init()
 	{
 		number_origin_.resize(init_size_);
-		for (int i = 0; i < init_size_; ++i)
-			number_origin_[i] = i;
+
+		int loc = 0;
+		int num = 0;
+		while (loc < init_size_)
+		{
+			if (num != searchTarget_)
+			{
+				number_origin_[loc] = num;
+				loc++;
+			}
+			num++;
+		}
 	}
 
-	inline void random()
+	void random()
 	{
 		init();
 		for (int i = 0; i < init_size_; ++i)
@@ -111,7 +106,7 @@ public:
 	}
 
 	// k-means clustering initialization
-	inline void init_clustering()
+	void init_clustering()
 	{
 		std::ifstream ifs(initFile_, std::ios::in);
 		if(!ifs)
@@ -130,8 +125,25 @@ public:
 			{
 				number_origin_[i] = std::atoi(tokens[i].c_str());
 			}
+
+			removeTarget();
 		}
 	}
+
+	void removeTarget()
+	{
+		int size = number_origin_.size();
+		for (int i = 0; i < size; ++i)
+		{
+			int num = number_origin_[i];
+			if (num == searchTarget_)
+			{
+				number_origin_.erase(number_origin_.begin() + i);
+				break;
+			}
+		}
+	}
+
 
 	inline void makeShowList_active()
 	{

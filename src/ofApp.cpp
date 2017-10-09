@@ -208,7 +208,7 @@ void ofApp::setup()
 	// Get Database information.
 	database_ = new DataBase();
 	database_->setup(searchTarget_, active_size_, nameFile_, init_candidatefile_);
-	database_->initialize("kmeans");
+	database_->initialize("in");
 	row_ = database_->getRow();
 	database_->getName(&name_);
 	database_->getPersonID(&person_ids_);
