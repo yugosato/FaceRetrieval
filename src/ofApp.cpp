@@ -246,7 +246,8 @@ void ofApp::setup()
 
 	// Setup rocchio algorithm.
 	rocchio_origin_ = new Rocchio;
-	rocchio_main_ = new Rocchio;
+	rocchio_new_ = new Rocchio;
+	rocchio_custom_ = new Rocchio;
 
 	// Setup online trainer.
 	trainer_ = new Trainer;
@@ -324,7 +325,8 @@ void ofApp::exit()
 	delete visualrank_;
 	delete single_evaluater_;
 	delete rocchio_origin_;
-	delete rocchio_main_;
+	delete rocchio_new_;
+	delete rocchio_custom_;
 }
 
 //--------------------------------------------------------------
@@ -380,15 +382,28 @@ void ofApp::update()
 		loading_->isLoaded_new_ = false;
 
 		// -------- Calculdate query vector by rocchio algorithm --------
-		// orignal (initial features)
+		// Original query vector (initail features).
 		rocchio_origin_->set_features(loading_->features_);
 		rocchio_origin_->setInput_multi(positives_, negatives_);
+		rocchio_origin_->set_weight(1.0, 0.8, 0.3);
 		rocchio_origin_->run();
 
-		// main (new features)
-		rocchio_main_->set_features(loading_->new_features_);
-		rocchio_main_->setInput_multi(positives_, negatives_);
-		rocchio_main_->run();
+		// User settings.
+		const int alpha = 1.0;
+		const int beta = 0.8;
+		const int gamma = 0.3;
+
+		// New query vector (new features).
+		rocchio_new_->set_features(loading_->new_features_);
+		rocchio_new_->setInput_multi(positives_, negatives_);
+		rocchio_new_->set_weight(alpha, beta, gamma);
+		rocchio_new_->run();
+
+		// User-customized query vector (initail features).
+		rocchio_custom_->set_features(loading_->features_);
+		rocchio_custom_->setInput_multi(positives_, negatives_);
+		rocchio_custom_->set_weight(alpha, beta, gamma);
+		rocchio_custom_->run();
 		// --------------------------------------------------------------
 
 		// Search by original query vector.
@@ -406,8 +421,8 @@ void ofApp::update()
 			search_->getNumber(&number_origin_);
 			isSearched_origin_ = true;
 
-			// Search by original query vector.
-			search_->set_queryvector(rocchio_origin_->queryvector_);
+			// Search by user-customized query vector.
+			search_->set_queryvector(rocchio_custom_->queryvector_);
 			search_->startThread();
 		}
 		else
@@ -425,7 +440,7 @@ void ofApp::update()
 		// Reranking by new features query vector.
 		rerank_->set_features(loading_->new_features_);
 		rerank_->set_init_result(number_main_);
-		rerank_->set_queryvector(rocchio_main_->queryvector_);
+		rerank_->set_queryvector(rocchio_new_->queryvector_);
 		rerank_->startThread();
 	}
 
@@ -469,7 +484,7 @@ void ofApp::update()
 		isReady_ = false;
 
 		// Single Search Evaluation.
-		single_evaluater_->set_inputpoint(rocchio_origin_->queryvector_, rocchio_main_->queryvector_);
+		single_evaluater_->set_inputpoint(rocchio_origin_->queryvector_, rocchio_custom_->queryvector_);
 		single_evaluater_->run();
 
 		database_->setNumber_active(number_active_);
@@ -1519,7 +1534,7 @@ void ofApp::put_time(std::string& time_str)
 //--------------------------------------------------------------
 void ofApp::showProcessingTime()
 {
-	float others = process_time_ - trainer_->process_time_ - rocchio_main_->process_time_
+	float others = process_time_ - trainer_->process_time_ - rocchio_custom_->process_time_
 			- search_->process_time_ - rerank_->process_time_ - visualrank_->process_time_;
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
@@ -1528,7 +1543,7 @@ void ofApp::showProcessingTime()
 #else
 	std::cout << "Online Training (Main + Selection): " << trainer_->process_time_ << " sec." << std::endl;
 #endif
-	std::cout << "Rocchio Algorithm: " << rocchio_main_->process_time_ << " sec." << std::endl;
+	std::cout << "Rocchio Algorithm: " << rocchio_custom_->process_time_ << " sec." << std::endl;
 	std::cout << "Searching (NGT): " << search_->process_time_ << " sec." << std::endl;
 	std::cout << "Reranking (Main): " << rerank_->process_time_ + visualrank_->process_time_ << " sec." << std::endl;
 	std::cout << "Reranking (VisualRank): " << visualrank_->process_time_ << " sec." << std::endl;

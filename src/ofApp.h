@@ -326,7 +326,8 @@ public:
 	VisualRank* visualrank_;					// VisualRank method.
 	SingleSearchEvaluater* single_evaluater_;	// Evaluater.
 	Rocchio* rocchio_origin_;					// Rocchio algorithm (original).
-	Rocchio* rocchio_main_;						// Rocchio algorithm (main).
+	Rocchio* rocchio_new_;						// Rocchio algorithm (new feature).
+	Rocchio* rocchio_custom_;					// Rocchio algorithm (user custom)..
 };
 
 inline int toInt(std::string s)

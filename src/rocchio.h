@@ -64,6 +64,13 @@ public:
 		irrelnum_ = negatives.size();
 	}
 
+	void set_weight(const int alpha, const float beta, const float gamma)
+	{
+		alpha_ = alpha;
+		beta_ = beta;
+		gamma_ = gamma;
+	}
+
 	void run()
 	{
 		std::cout << "[Rocchio] Start calculating query vector by rocchio algorithm." << std::endl;
