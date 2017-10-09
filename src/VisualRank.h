@@ -103,6 +103,8 @@ public:
 
 			if (previousrank == visualrank)
 				break;
+			else if (ofGetElapsedTimef() - start > 10.0f)
+				break;
 
 			previousrank = visualrank;
 		}
