@@ -379,7 +379,7 @@ void ofApp::update()
 			isSearched_origin_ = true;
 
 			// Search by original query vector.
-			search_->set_queryvector(rocchio_main_->queryvector_);
+			search_->set_queryvector(rocchio_origin_->queryvector_);
 			search_->startThread();
 		}
 		else
@@ -394,7 +394,7 @@ void ofApp::update()
 		isSearched_origin_ = false;
 		isSearched_main_ = false;
 
-		// Main results reranking.
+		// Reranking by new features query vector.
 		rerank_->set_features(loading_->new_features_);
 		rerank_->set_init_result(number_main_);
 		rerank_->set_queryvector(rocchio_main_->queryvector_);
