@@ -182,8 +182,8 @@ public:
 	int overview_areaheight_;				// Every overview height.
 	int graph_width_;						// Graph width.
 	int propose_imgsize_;					// Proposed image size
-	int propose_img_posx_;
-	int propose_img_posy_;
+	int propose_img_posx_;					// Proposed image position.
+	int propose_img_posy_;					// Proposed image position.
 	int len_positives_;						// The number of positive samples.
 	int len_negatives_;						// The number of negative samples.
 	std::vector<ofImage> positive_images_;	// Positive sample images.
@@ -231,6 +231,14 @@ public:
 	int scroll_areaA_;						// Current scroll position.
 	int scroll_areaP_;						// Current scroll position.
 	int scroll_areaN_;						// Current scroll position.
+
+	//-----------------------------------------
+	// User Evaluation.
+	int slider_posx_;						// Slider position.
+	int slider_posy_;						// Slider position.
+	int slider_width_;						// Slider width.
+	const int slider_height_ = 20;			// Slider height.
+	float slider_value_;					// User evaluation parameter of proposed face.
 
 
 public:
@@ -280,6 +288,7 @@ public:
 	void guiSetup();
 	void guiEvent(ofxUIEventArgs& e);
 	void exit();
+	void add_slider();
 
 
 public:

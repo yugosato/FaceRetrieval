@@ -141,8 +141,8 @@ void ofApp::initparam()
 	overview_areawidth_wide_ = windowWidth_ - 2 * overview_areamargin_;
 	overview_areaheight_ = perHeight_;
 	graph_width_ = overview_areawidth_wide_ - overview_areaheight_ - overview_areamargin_ - 10;
-	propose_imgsize_ = overview_areaheight_;
-	propose_img_posx_ = windowWidth_ - overview_areamargin_ - propose_imgsize_;
+	propose_imgsize_ = overview_areaheight_ - 2 * slider_height_;
+	propose_img_posx_ = windowWidth_ - overview_areamargin_ - propose_imgsize_ - 30;
 	propose_img_posy_ = overviewR_areaposy_;
 	len_positives_ = 0;
 	len_negatives_ = 0;
@@ -157,6 +157,13 @@ void ofApp::initparam()
 	canSearch_ = false;
 	isSearched_origin_ = false;
 	isSearched_main_ = false;
+
+	//-----------------------------------------
+	// User Evaluation.
+	slider_posx_ = propose_img_posx_ - 4;
+	slider_posy_ = propose_img_posy_ + propose_imgsize_;
+	slider_width_ = propose_imgsize_;
+	slider_value_ = 0.8f;
 }
 
 //--------------------------------------------------------------
@@ -268,13 +275,34 @@ void ofApp::guiSetup()
 	gui_ = new ofxUIScrollableCanvas(0, 0, windowWidth_, windowHeight_);
 	gui_->setScrollAreaHeight(guiScrollarea_height_);
 	gui_->setScrollableDirections(false, false);
-	gui_->setColorBack(ofColor(0.0f, 0.0f, 0.0f, 0.0f));
+	gui_->setColorBack(ofColor(0.0f, 0.0f, 0.0f, 255.0f));
+	add_slider();
+//	ofAddListener(gui_->newGUIEvent,this,&ofApp::guiEvent);
+}
+
+//--------------------------------------------------------------
+void ofApp::add_slider()
+{
+	gui_->setFont(ttf_);
+
+	gui_->setColorOutline(ofColor(255, 255, 255, 255));
+	gui_->setColorOutlineHighlight(ofColor(255, 255, 255, 200));
+	gui_->setColorFill(ofColor(255, 255, 255, 200));
+	gui_->setColorFillHighlight(ofColor(255, 255, 255, 255));
+
+	gui_->addSlider("Set Similarity", 0.0f, 1.0f, slider_value_, slider_width_, slider_height_);
+	gui_->setPosition(slider_posx_, slider_posy_);
+	ofAddListener(gui_->newGUIEvent, this, &ofApp::guiEvent);
 }
 
 //--------------------------------------------------------------
 void ofApp::guiEvent(ofxUIEventArgs& e)
 {
-
+    if(e.getName() == "Set Similarity")
+    {
+        ofxUISlider *slider = e.getSlider();
+        slider_value_ = slider->getScaledValue();
+    }
 }
 
 //--------------------------------------------------------------
