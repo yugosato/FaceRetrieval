@@ -163,7 +163,7 @@ void ofApp::initparam()
 	slider_posx_ = propose_img_posx_ - 4;
 	slider_posy_ = propose_img_posy_ + propose_imgsize_;
 	slider_width_ = propose_imgsize_;
-	slider_value_ = 0.8f;
+	slider_value_ = 0.2f;
 }
 
 //--------------------------------------------------------------
@@ -389,9 +389,9 @@ void ofApp::update()
 		rocchio_origin_->run();
 
 		// User settings.
-		const int alpha = 1.0;
-		const int beta = 0.8;
-		const int gamma = 0.3;
+		float alpha = 1.0;
+		float beta = 1.0 - slider_value_;
+		float gamma = 0.3;
 
 		// New query vector (new features).
 		rocchio_new_->set_features(loading_->new_features_);
