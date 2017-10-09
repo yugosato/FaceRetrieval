@@ -30,6 +30,7 @@ public:
 	std::vector<int> number_random_;
 
 	bool isLoaded_;
+	int size_;
 
 
 public:
@@ -48,6 +49,11 @@ public:
 	void set_searchTarget(const int searchTarget)
 	{
 		searchTarget_ = searchTarget;
+	}
+
+	void set_size(const int size)
+	{
+		size_ = size;
 	}
 
 	void load()
@@ -71,12 +77,14 @@ public:
 		std::vector<int>().swap(vec);
 		std::string buf;
 
-		while (ifs && std::getline(ifs, buf))
+		int i = 0;
+		while (ifs && std::getline(ifs, buf) && i < size_)
 		{
 			int index = std::atoi(buf.c_str());
 			if (index == searchTarget_)
 				continue;
 			vec.push_back(index);
+			i++;
 		}
 	}
 

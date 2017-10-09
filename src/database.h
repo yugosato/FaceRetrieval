@@ -26,29 +26,33 @@ public:
 	std::vector<int> showList_;
 	std::vector<int> history_;
 	std::vector<int> ids_;
+	int init_size_;
 
 
 public:
-	inline void setup(const std::string nameFile, const std::string initFile)
+	void setup(const int searchTarget, const int init_size, const std::string nameFile, const std::string initFile)
 	{
+		searchTarget_ = searchTarget;
+		init_size_ = init_size;
 		nameFile_ = nameFile;
 		initFile_ = initFile;
+	}
+
+	void initialize(std::string init_method)
+	{
 		loadFileName();
 
-		// Allocate memory & initialize.
-		number_origin_.resize(row_);
-		//init();
-		//random();
-		init_clustering();
+		if (init_method == "raadom")
+			random();
+		else if (init_method == "kmeans")
+			init_clustering();
+		else
+			init();
+
 		removeTarget();
 		number_active_ = number_origin_;
 		number_main_ = number_origin_;
 		number_visualrank_ = number_origin_;
-	}
-
-	void set_searchTarget(const int searchTarget)
-	{
-		searchTarget_ = searchTarget;
 	}
 
 	void removeTarget()
@@ -89,16 +93,17 @@ public:
 
 	inline void init()
 	{
-		for (int i = 0; i < row_; ++i)
+		number_origin_.resize(init_size_);
+		for (int i = 0; i < init_size_; ++i)
 			number_origin_[i] = i;
 	}
 
 	inline void random()
 	{
 		init();
-		for (int i = 0; i < row_; ++i)
+		for (int i = 0; i < init_size_; ++i)
 		{
-			const int j = rand() % row_;
+			const int j = rand() % init_size_;
 			const int tempNo = number_origin_[i];
 			number_origin_[i] = number_origin_[j];
 			number_origin_[j] = tempNo;
@@ -120,61 +125,52 @@ public:
 			std::vector<std::string> tokens;
 			NGT::Common::tokenize(line, tokens, " ");
 
-			std::vector<int> num;
-			for (int i = 0; i < (int) tokens.size(); ++i)
+			number_origin_.resize(init_size_);
+			for (int i = 0; i < init_size_; ++i)
 			{
-				num.push_back(std::atoi(tokens[i].c_str()));
-			}
-
-			for (int i = 0; i < (int) num.size(); ++i)
-			{
-				number_origin_[i] = num[i];
+				number_origin_[i] = std::atoi(tokens[i].c_str());
 			}
 		}
 	}
 
-	inline void makeShowList_active(const int begin, const int end)
+	inline void makeShowList_active()
 	{
-		const int size = end - begin + 1;
-
+		const int size = number_active_.size();
 		showList_.clear();
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
-			showList_[i] = number_active_[begin + i - 1];
+			showList_[i] = number_active_[i];
 	}
 
-	inline void makeShowList_origin(const int begin, const int end)
+	inline void makeShowList_origin()
 	{
-		const int size = end - begin + 1;
-
+		const int size = number_origin_.size();
 		showList_.clear();
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
-			showList_[i] = number_origin_[begin + i - 1];
+			showList_[i] = number_origin_[i];
 	}
 
-	inline void makeShowList_main(const int begin, const int end)
+	inline void makeShowList_main()
 	{
-		const int size = end - begin + 1;
-
+		const int size = number_main_.size();
 		showList_.clear();
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
-			showList_[i] = number_main_[begin + i - 1];
+			showList_[i] = number_main_[i];
 	}
 
-	inline void makeShowList_visualrank(const int begin, const int end)
+	inline void makeShowList_visualrank()
 	{
-		const int size = end - begin + 1;
-
+		const int size = number_visualrank_.size();
 		showList_.clear();
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
-			showList_[i] = number_visualrank_[begin + i - 1];
+			showList_[i] = number_visualrank_[i];
 	}
 
 	void setHistory(const std::vector<int>& history)

@@ -55,12 +55,6 @@ public:
 	bool canForward_;								// Flag: User can step forward to next results.
 
 	//-----------------------------------------
-	// The number of displayed images (display range [picA - picB]).
-	int picA_;							// Start.
-	int picB_;							// End.
-	int picnum_;						// Total size.
-
-	//-----------------------------------------
 	// GUI settings' parameters.
 	const int leftsize_ = 1000;						// Left region.
 	const int uppermargin_ = 20;					// Upper margin.
@@ -203,9 +197,12 @@ public:
 	float timer_start_;						// Timer (start).
 	bool isSearched_origin_;				// Flag: Finished searching original.
 	bool isSearched_main_;					// Flag: Finished searching main.
+	int len_current_showlist_;				// The number of current shown images.
 
 	//-----------------------------------------
 	// Retrieval results.
+	int active_size_;							// The number of displayed images (active selection).
+	int search_window_size_;				// Search window size
 	std::vector<int> number_active_;		// Active selection results.
 	std::vector<int> number_origin_;		// Retrieval results (comparison: images' ids).
 	std::vector<int> number_main_;			// Main reranking results.
@@ -263,7 +260,6 @@ public:
 	void calculate();
 	void onPaint(const std::vector<int>& list);
 	void inputHistory();
-	void initRange(const int& begin_, const int& end_);
 	void sizeChanged();
 	bool isReleasedArea(float x, float y, float w, float h);
 	bool isInsideDragingArea(float x, float y, float w, float h);

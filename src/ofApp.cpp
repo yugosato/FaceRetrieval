@@ -14,12 +14,6 @@ void ofApp::initparam()
 	canForward_ = false;
 
 	//-----------------------------------------
-	//  The number of displayed images.
-	picA_ = 1;
-	picB_ = 25;
-	picnum_ = picB_ - picA_ + 1;
-
-	//-----------------------------------------
 	// Mouse & Keyboard.
 	clickx_ = -1;
 	clicky_ = -1;
@@ -106,6 +100,8 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Retrieval results.
+	active_size_ = 25;
+	search_window_size_ = 50;
 	isactive_ = true;
 	isorigin_ = false;
 	ismain_ = false;
@@ -211,8 +207,8 @@ void ofApp::setup()
 
 	// Get Database information.
 	database_ = new DataBase();
-	database_->setup(nameFile_, init_candidatefile_);
-	database_->set_searchTarget(searchTarget_);
+	database_->setup(searchTarget_, active_size_, nameFile_, init_candidatefile_);
+	database_->initialize("kmeans");
 	row_ = database_->getRow();
 	database_->getName(&name_);
 	database_->getPersonID(&person_ids_);
@@ -230,7 +226,7 @@ void ofApp::setup()
 
 	// Setup search method.
 	search_ = new Search();
-	search_->setup(indexFile_, picnum_);
+	search_->setup(indexFile_, search_window_size_);
 
 	// Load image features (multi thread).
 	loading_ = new NowLoading();
@@ -257,6 +253,7 @@ void ofApp::setup()
 	selection_ = new Selection;
 	selection_->setup(positiveIndexfile_, negativeIndexfile_, activeIndexfile_, cueflikIndexfile_, randomIndexfile_);
 	selection_->set_searchTarget(searchTarget_);
+	selection_->set_size(active_size_);
 
 	// Setup reranking method.
 	rerank_ = new ReRank;
@@ -992,7 +989,7 @@ void ofApp::mousePressed(int x, int y, int button)
 		if (canSearch_ && mouseover_ >= 0)
 		{
 			// Area A.
-			if (mouseover_ < picnum_ && isInside_areaA_)
+			if (mouseover_ < len_current_showlist_ && isInside_areaA_)
 			{
 				isHolding_areaA_ = true;
 				isHolding_areaP_ = false;
@@ -1286,16 +1283,16 @@ void ofApp::dragEvent(ofDragInfo dragInfo)
 //--------------------------------------------------------------
 void ofApp::calculate()
 {
-	database_->makeShowList_active(picA_, picB_);
+	database_->makeShowList_active();
 	showList_active_ = database_->getShowList();
 
-	database_->makeShowList_origin(picA_, picB_);
+	database_->makeShowList_origin();
 	showList_origin_ = database_->getShowList();
 
-	database_->makeShowList_main(picA_, picB_);
+	database_->makeShowList_main();
 	showList_main_ = database_->getShowList();
 
-	database_->makeShowList_visualrank(picA_, picB_);
+	database_->makeShowList_visualrank();
 	showList_visualrank_ = database_->getShowList();
 }
 
@@ -1306,6 +1303,7 @@ void ofApp::onPaint(const std::vector<int>& list)
 	loader_->setShowList(list);
 	loader_->load_images();
 	ishistory_ = false;
+	len_current_showlist_ = list.size();
 
 	drawHeight_areaA_ = d_size_ * rowShow_;
 	drawHeight_areaP_ = overview_d_size_ * overviewP_rowShow_;
@@ -1344,38 +1342,33 @@ void ofApp::writelog()
 {
 	std::vector<int> candidate_active, candidate_origin, candidate_main, candidate_visualrank;
 
-	candidate_active.resize(picnum_);
-	candidate_origin.resize(picnum_);
-	candidate_main.resize(picnum_);
-	candidate_visualrank.resize(picnum_);
+	candidate_active.resize(active_size_);
+	candidate_origin.resize(search_window_size_);
+	candidate_main.resize(search_window_size_);
+	candidate_visualrank.resize(search_window_size_);
 
-	for (int i = 0; i < picnum_; ++i)
+	for (int i = 0; i < active_size_; ++i)
 	{
 		int num_active = number_active_[i];
+		candidate_active[i] = num_active;
+		candidatehistory_.push_back(num_active);
+	}
+
+	for (int i = 0; i < search_window_size_; ++i)
+	{
 		int num_origin = number_origin_[i];
 		int num_main = number_main_[i];
 		int num_visualrank = number_visualrank_[i];
-
-		candidate_active[i] = num_active;
 		candidate_origin[i] = num_origin;
 		candidate_main[i] = num_main;
 		candidate_visualrank[i] = num_visualrank;
-
-		candidatehistory_.push_back(num_active);
 	}
+
 	database_->setHistory(candidatehistory_);
 	logger_active_->writeCandidate(candidate_active);
 	logger_origin_->writeCandidate(candidate_origin);
 	logger_main_->writeCandidate(candidate_main);
 	logger_visualrank_->writeCandidate(candidate_visualrank);
-}
-
-//--------------------------------------------------------------
-void ofApp::initRange(const int& begin, const int& end)
-{
-	picA_ = begin;
-	picB_ = end;
-	picnum_ = picB_ - picA_ + 1;
 }
 
 //--------------------------------------------------------------
@@ -1555,7 +1548,7 @@ void ofApp::showProcessingTime()
 //--------------------------------------------------------------
 void ofApp::autoselect_negative()
 {
-	for (int i = 0; i < picnum_; ++i)
+	for (int i = 0; i < active_size_; ++i)
 	{
 		int number = showList_active_[i];
 		int check_duplication_P = vector_finder(positives_, number);
