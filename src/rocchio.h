@@ -75,11 +75,10 @@ public:
 		Eigen::VectorXd term1 = alpha_ * queryvector_eigen_.array();
 		Eigen::VectorXd term2 = beta_ * relevance_ave_.array();
 		Eigen::VectorXd term3 = gamma_ * irrelevance_ave_.array();
-		float queryve = queryvector_eigen_.norm();
+
 		queryvector_eigen_ = term1 + term2 - term3;
 		queryvector_ = eigen2stlvector(queryvector_eigen_);
-		float que = queryvector_eigen_.norm();
-		std::cout << que - queryve << std::endl;
+
 		process_time_ = ofGetElapsedTimef() - start;
 		std::cout << "[Rocchio] Finished calculating query vector by rocchio algorithm." << std::endl;
 	}
