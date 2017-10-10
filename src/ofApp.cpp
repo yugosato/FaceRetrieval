@@ -427,6 +427,13 @@ void ofApp::update()
 
 		// Split main result (top/low).
 		split_ranking();
+
+		// Re-rocchio algorithm by top/low rank.
+		rocchio_new_->setInput_multi(toprank_, lowrank_);
+		rocchio_new_->run();
+		rocchio_custom_->setInput_multi(toprank_, lowrank_);
+		rocchio_custom_->run();
+
 		isSearchedAll_ = true;
 	}
 
