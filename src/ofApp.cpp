@@ -208,7 +208,7 @@ void ofApp::setup()
 	// Get Database information.
 	database_ = new DataBase();
 	database_->setup(searchTarget_, active_size_, nameFile_, init_candidatefile_);
-	database_->initialize("in");
+	database_->initialize("kmeans");
 	row_ = database_->getRow();
 	database_->getName(&name_);
 	database_->getPersonID(&person_ids_);
@@ -382,24 +382,18 @@ void ofApp::update()
 		// Original query vector (initail features).
 		rocchio_origin_->set_features(loading_->features_);
 		rocchio_origin_->setInput_multi(positives_, negatives_);
-		rocchio_origin_->set_weight(1.0, 0.8, 0.3);
 		rocchio_origin_->run();
-
-		// User settings.
-		float alpha = 1.0;
-		float beta = 1.0 - slider_value_;
-		float gamma = 0.3;
 
 		// New query vector (new features).
 		rocchio_new_->set_features(loading_->new_features_);
 		rocchio_new_->setInput_multi(positives_, negatives_);
-		rocchio_new_->set_weight(alpha, beta, gamma);
+		rocchio_new_->set_scale(slider_value_input_);
 		rocchio_new_->run();
 
 		// User-customized query vector (initail features).
 		rocchio_custom_->set_features(loading_->features_);
 		rocchio_custom_->setInput_multi(positives_, negatives_);
-		rocchio_custom_->set_weight(alpha, beta, gamma);
+		rocchio_custom_->set_scale(slider_value_input_);
 		rocchio_custom_->run();
 		// --------------------------------------------------------------
 
@@ -1175,6 +1169,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 				canSearch_ = false;
 
 				// Run Trainer.
+				slider_value_input_ = slider_value_;
 				samplewriter_->write(positives_, negatives_);
 				trainer_->startThread();
 				timer_start_ = ofGetElapsedTimef();
@@ -1538,7 +1533,7 @@ void ofApp::showProcessingTime()
 #endif
 	std::cout << "Rocchio Algorithm: " << rocchio_custom_->process_time_ << " sec." << std::endl;
 	std::cout << "Searching (NGT): " << search_->process_time_ << " sec." << std::endl;
-	std::cout << "Reranking (Main): " << rerank_->process_time_ + visualrank_->process_time_ << " sec." << std::endl;
+	std::cout << "Reranking (Main): " << rerank_->process_time_ << " sec." << std::endl;
 	std::cout << "Reranking (VisualRank): " << visualrank_->process_time_ << " sec." << std::endl;
 	std::cout << "Others: " << others << " sec." << std::endl;
 	std::cout << "Total: " << process_time_ << " sec." << std::endl;

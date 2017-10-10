@@ -24,7 +24,7 @@ public:
 	int dim_;
 	int relnum_;
 	int irrelnum_;
-	float alpha_, beta_, gamma_;
+	float alpha_, beta_, gamma_, scale_;
 	float process_time_;
 
 
@@ -37,7 +37,8 @@ public:
 		queryvector_eigen_ = Eigen::VectorXd::Zero(dim_);
 		alpha_ = 1.0f;
 		beta_ = 0.8f;
-		gamma_ = 0.3f;
+		gamma_ = 0.2f;
+		scale_ = 1.0f;
 		process_time_ = 0.0f;
 	}
 
@@ -64,23 +65,30 @@ public:
 		irrelnum_ = negatives.size();
 	}
 
-	void set_weight(const int alpha, const float beta, const float gamma)
+	void set_scale(float scale)
 	{
-		alpha_ = alpha;
-		beta_ = beta;
-		gamma_ = gamma;
+		scale_ = scale;
+		alpha_ = 1.0f * alpha_;
+		beta_ = 1.0f * beta_;
+		gamma_ = 1.0f * gamma_;
 	}
 
 	void run()
 	{
 		std::cout << "[Rocchio] Start calculating query vector by rocchio algorithm." << std::endl;
-		std::cout << "[Rocchio] Alpha: " << alpha_ << ", Beta: " << beta_ << ", Gamma: " << gamma_ << std::endl;
+		std::cout << "[Rocchio] Alpha: " << alpha_ << ", Beta: " << beta_ << ", Gamma: " << gamma_ << ", Scale: " << scale_ << std::endl;
 		float start = ofGetElapsedTimef();
 
 		calcAverage();
-		queryvector_eigen_ = (alpha_ * queryvector_eigen_.array()) + (beta_ * relevance_ave_.array()) - (gamma_ * irrelevance_ave_.array());
-		queryvector_ = eigen2stlvector(queryvector_eigen_);
 
+		Eigen::VectorXd term1 = alpha_ * queryvector_eigen_.array();
+		Eigen::VectorXd term2 = beta_ * relevance_ave_.array();
+		Eigen::VectorXd term3 = gamma_ * irrelevance_ave_.array();
+		float queryve = queryvector_eigen_.norm();
+		queryvector_eigen_ = term1 + term2 - term3;
+		queryvector_ = eigen2stlvector(queryvector_eigen_);
+		float que = queryvector_eigen_.norm();
+		std::cout << que - queryve << std::endl;
 		process_time_ = ofGetElapsedTimef() - start;
 		std::cout << "[Rocchio] Finished calculating query vector by rocchio algorithm." << std::endl;
 	}

@@ -236,6 +236,7 @@ public:
 	int slider_width_;						// Slider width.
 	const int slider_height_ = 20;			// Slider height.
 	float slider_value_;					// User evaluation parameter of proposed face.
+	float slider_value_input_;				// Input slider value.
 
 
 public:
