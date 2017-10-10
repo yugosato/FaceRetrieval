@@ -198,6 +198,7 @@ public:
 	bool isSearched_origin_;				// Flag: Finished searching original.
 	bool isSearched_main_;					// Flag: Finished searching main.
 	int len_current_showlist_;				// The number of current shown images.
+	bool isSearchAdditional_;
 
 	//-----------------------------------------
 	// Retrieval results.

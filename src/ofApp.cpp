@@ -154,6 +154,7 @@ void ofApp::initparam()
 	canSearch_ = false;
 	isSearched_origin_ = false;
 	isSearched_main_ = false;
+	isSearchAdditional_ = false;
 }
 
 //--------------------------------------------------------------
@@ -377,18 +378,27 @@ void ofApp::update()
 		search_->stopThread();
 		search_->isSearched_ = false;
 
-		if (!isSearched_origin_)
+		if (!isSearchAdditional_)
 		{
-			search_->getNumber(&number_origin_);
-			isSearched_origin_ = true;
+			if (!isSearched_origin_)
+			{
+				search_->getNumber(&number_origin_);
+				isSearched_origin_ = true;
 
-			// Search by user-customized query vector.
-			search_->set_queryvector(rocchio_custom_->queryvector_);
-			search_->startThread();
+				// Search by user-customized query vector.
+				search_->set_queryvector(rocchio_custom_->queryvector_);
+				search_->startThread();
+			}
+			else
+			{
+				search_->getNumber(&number_main_);
+				isSearched_main_ = true;
+			}
 		}
 		else
 		{
 			search_->getNumber(&number_main_);
+			isSearched_origin_ = true;
 			isSearched_main_ = true;
 		}
 	}
@@ -425,16 +435,27 @@ void ofApp::update()
 		rerank_->getNumber(&number_main_);
 		visualrank_->getNumber(&number_visualrank_);
 
-		// Split main result (top/low).
-		split_ranking();
+		if (!isSearchAdditional_)
+		{
+			// Split main result (top/low).
+			split_ranking();
 
-		// Re-rocchio algorithm by top/low rank.
-		rocchio_new_->setInput_multi(toprank_, lowrank_);
-		rocchio_new_->run();
-		rocchio_custom_->setInput_multi(toprank_, lowrank_);
-		rocchio_custom_->run();
+			// Re-rocchio algorithm by top/low rank.
+			rocchio_new_->setInput_multi(toprank_, lowrank_);
+			rocchio_new_->run();
+			rocchio_custom_->setInput_multi(toprank_, lowrank_);
+			rocchio_custom_->run();
 
-		isSearchedAll_ = true;
+			// Re-search by additional query.
+			isSearchAdditional_ = true;
+			search_->set_queryvector(rocchio_custom_->queryvector_);
+			search_->startThread();
+		}
+		else
+		{
+			isSearchAdditional_ = false;
+			isSearchedAll_ = true;
+		}
 	}
 
 	if (isSearchedAll_)
