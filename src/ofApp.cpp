@@ -137,7 +137,7 @@ void ofApp::initparam()
 	overview_areawidth_wide_ = windowWidth_ - 2 * overview_areamargin_;
 	overview_areaheight_ = perHeight_;
 	graph_width_ = overview_areawidth_wide_ - overview_areaheight_ - overview_areamargin_ - 10;
-	propose_imgsize_ = overview_areaheight_ - 2 * slider_height_;
+	propose_imgsize_ = overview_areaheight_;
 	propose_img_posx_ = windowWidth_ - overview_areamargin_ - propose_imgsize_ - 30;
 	propose_img_posy_ = overviewR_areaposy_;
 	len_positives_ = 0;
@@ -153,13 +153,6 @@ void ofApp::initparam()
 	canSearch_ = false;
 	isSearched_origin_ = false;
 	isSearched_main_ = false;
-
-	//-----------------------------------------
-	// User Evaluation.
-	slider_posx_ = propose_img_posx_ - 4;
-	slider_posy_ = propose_img_posy_ + propose_imgsize_;
-	slider_width_ = propose_imgsize_;
-	slider_value_ = 0.2f;
 }
 
 //--------------------------------------------------------------
@@ -271,36 +264,14 @@ void ofApp::setup()
 void ofApp::guiSetup()
 {
 	gui_ = new ofxUIScrollableCanvas(0, 0, windowWidth_, windowHeight_);
-	gui_->setScrollAreaHeight(guiScrollarea_height_);
-	gui_->setScrollableDirections(false, false);
-	gui_->setColorBack(ofColor(0.0f, 0.0f, 0.0f, 255.0f));
-	add_slider();
-//	ofAddListener(gui_->newGUIEvent,this,&ofApp::guiEvent);
-}
-
-//--------------------------------------------------------------
-void ofApp::add_slider()
-{
-	gui_->setFont(ttf_);
-
-	gui_->setColorOutline(ofColor(255, 255, 255, 255));
-	gui_->setColorOutlineHighlight(ofColor(255, 255, 255, 200));
-	gui_->setColorFill(ofColor(255, 255, 255, 200));
-	gui_->setColorFillHighlight(ofColor(255, 255, 255, 255));
-
-	gui_->addSlider("Set Similarity", 0.0f, 1.0f, slider_value_, slider_width_, slider_height_);
-	gui_->setPosition(slider_posx_, slider_posy_);
-	ofAddListener(gui_->newGUIEvent, this, &ofApp::guiEvent);
+	gui_->setScrollableDirections(false, true);
+	gui_->setColorBack(ofColor(0.0f, 0.0f, 0.0f, 0.0f));
 }
 
 //--------------------------------------------------------------
 void ofApp::guiEvent(ofxUIEventArgs& e)
 {
-    if(e.getName() == "Set Similarity")
-    {
-        ofxUISlider *slider = e.getSlider();
-        slider_value_ = slider->getScaledValue();
-    }
+
 }
 
 //--------------------------------------------------------------
@@ -387,13 +358,11 @@ void ofApp::update()
 		// New query vector (new features).
 		rocchio_new_->set_features(loading_->new_features_);
 		rocchio_new_->setInput_multi(positives_, negatives_);
-		rocchio_new_->set_scale(slider_value_input_);
 		rocchio_new_->run();
 
 		// User-customized query vector (initail features).
 		rocchio_custom_->set_features(loading_->features_);
 		rocchio_custom_->setInput_multi(positives_, negatives_);
-		rocchio_custom_->set_scale(slider_value_input_);
 		rocchio_custom_->run();
 		// --------------------------------------------------------------
 
@@ -1169,7 +1138,6 @@ void ofApp::mouseReleased(int x, int y, int button)
 				canSearch_ = false;
 
 				// Run Trainer.
-				slider_value_input_ = slider_value_;
 				samplewriter_->write(positives_, negatives_);
 				trainer_->startThread();
 				timer_start_ = ofGetElapsedTimef();

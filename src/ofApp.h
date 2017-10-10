@@ -229,15 +229,6 @@ public:
 	int scroll_areaP_;						// Current scroll position.
 	int scroll_areaN_;						// Current scroll position.
 
-	//-----------------------------------------
-	// User Evaluation.
-	int slider_posx_;						// Slider position.
-	int slider_posy_;						// Slider position.
-	int slider_width_;						// Slider width.
-	const int slider_height_ = 20;			// Slider height.
-	float slider_value_;					// User evaluation parameter of proposed face.
-	float slider_value_input_;				// Input slider value.
-
 
 public:
 	void setup();
@@ -285,7 +276,6 @@ public:
 	void guiSetup();
 	void guiEvent(ofxUIEventArgs& e);
 	void exit();
-	void add_slider();
 
 
 public:

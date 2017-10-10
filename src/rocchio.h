@@ -24,7 +24,7 @@ public:
 	int dim_;
 	int relnum_;
 	int irrelnum_;
-	float alpha_, beta_, gamma_, scale_;
+	float alpha_, beta_, gamma_;
 	float process_time_;
 
 
@@ -37,8 +37,7 @@ public:
 		queryvector_eigen_ = Eigen::VectorXd::Zero(dim_);
 		alpha_ = 1.0f;
 		beta_ = 0.8f;
-		gamma_ = 0.2f;
-		scale_ = 1.0f;
+		gamma_ = 0.3f;
 		process_time_ = 0.0f;
 	}
 
@@ -65,18 +64,10 @@ public:
 		irrelnum_ = negatives.size();
 	}
 
-	void set_scale(float scale)
-	{
-		scale_ = scale;
-		alpha_ = 1.0f * alpha_;
-		beta_ = 1.0f * beta_;
-		gamma_ = 1.0f * gamma_;
-	}
-
 	void run()
 	{
 		std::cout << "[Rocchio] Start calculating query vector by rocchio algorithm." << std::endl;
-		std::cout << "[Rocchio] Alpha: " << alpha_ << ", Beta: " << beta_ << ", Gamma: " << gamma_ << ", Scale: " << scale_ << std::endl;
+		std::cout << "[Rocchio] Alpha: " << alpha_ << ", Beta: " << beta_ << ", Gamma: " << gamma_ << std::endl;
 		float start = ofGetElapsedTimef();
 
 		calcAverage();
