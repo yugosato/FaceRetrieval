@@ -102,6 +102,7 @@ void ofApp::initparam()
 	// Retrieval results.
 	active_size_ = 25;
 	search_window_size_ = 50;
+	split_threshold_ = 25;
 	isactive_ = true;
 	isorigin_ = false;
 	ismain_ = false;
@@ -360,7 +361,7 @@ void ofApp::update()
 		rocchio_new_->setInput_multi(positives_, negatives_);
 		rocchio_new_->run();
 
-		// User-customized query vector (initail features).
+		// Customized query vector (initail features).
 		rocchio_custom_->set_features(loading_->features_);
 		rocchio_custom_->setInput_multi(positives_, negatives_);
 		rocchio_custom_->run();
@@ -423,6 +424,9 @@ void ofApp::update()
 		// Get reranked results.
 		rerank_->getNumber(&number_main_);
 		visualrank_->getNumber(&number_visualrank_);
+
+		// Split main result (top/low).
+		split_ranking();
 		isSearchedAll_ = true;
 	}
 
@@ -1534,4 +1538,38 @@ void ofApp::update_overview_info()
 	overviewN_rowShow_ = (negatives_.size() + overview_colShow_ - 1) / overview_colShow_;
 	drawHeight_areaP_ = overview_d_size_ * overviewP_rowShow_;
 	drawHeight_areaN_ = overview_d_size_ * overviewN_rowShow_;
+}
+
+//--------------------------------------------------------------
+void ofApp::split_ranking()
+{
+	if (split_threshold_ > search_window_size_)
+	{
+		std::cerr << "[Warning] split threshold is over search results size." << std::endl;
+		exit();
+	}
+
+	toprank_.clear();
+	lowrank_.clear();
+
+	toprank_.resize(split_threshold_);
+	lowrank_.resize(search_window_size_ - split_threshold_);
+
+	int i = 0;
+	int j = 0;
+	int loc = 0;
+	while (loc < search_window_size_)
+	{
+		if (loc < split_threshold_)
+		{
+			toprank_[i] = number_main_[loc];
+			i++;
+		}
+		else
+		{
+			lowrank_[j] = number_main_[loc];
+			j++;
+		}
+		loc++;
+	}
 }

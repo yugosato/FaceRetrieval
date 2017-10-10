@@ -211,6 +211,9 @@ public:
 	std::vector<int> showList_origin_;	 	// Retrieval results (compatison: show list).
 	std::vector<int> showList_main_;	 	// Main reranking results (show list).
 	std::vector<int> showList_visualrank_; 	// Visualrank reranking results (show list).
+	int split_threshold_;					// Threshold of split result.
+	std::vector<int> toprank_;				// Top-ranked results.
+	std::vector<int> lowrank_;				// Low-ranked results.
 	bool isactive_;							// Switch: Display active selection results.
 	bool isorigin_;							// Switch: Display comparison results.
 	bool ismain_;							// Switch: Display main results.
@@ -265,6 +268,7 @@ public:
 	void showProcessingTime();
 	void autoselect_negative();
 	void update_overview_info();
+	void split_ranking();
 
 
 public:
