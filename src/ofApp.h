@@ -66,7 +66,7 @@ public:
 	const int searchbutton_width_ = 90;				// Search button width.
 	const int buttonA_posx_ = 1095;					// The X-coordinate of button displays the active selection results.
 	const int buttonB_posx_ = 1130;					// The X-coordinate of button displays the camparison results.
-	const int buttonC_posx_ = 1165;					// The X-coordinate of button displays the main results.
+	const int buttonC_posx_ = 1165;					// The X-coordinate of button displays the reranked results.
 	const int buttonD_posx_ = 1200;					// The X-coordinate of button displays the visualrank results.
 	const int guiScrollarea_height_ = 280;			// ScrollableCanvas's height (ofxUI).
 
@@ -126,7 +126,7 @@ public:
 	std::string logdir_;					// Log output directory.
 	std::string candidatefile_active_;		// Candidate list (active selection).
 	std::string candidatefile_origin_;		// Candidate list (comparison).
-	std::string candidatefile_main_;		// Candidate list (main).
+	std::string candidatefile_rerank_;		// Candidate list (rerank).
 	std::string candidatefile_visualrank_;	// Candidate list (visualrank).
 	std::string init_candidatefile_;		// Initial candidates list.
 	std::string evaluationfile_;			// Evaluation result file.
@@ -189,16 +189,11 @@ public:
 	// Others.
 	int epoch_;								// The number of current search iteration.
 	bool isSearchedAll_;					// Flag: Finished searching.
-	bool isReady_;							// Flag: Finished all background processes.
 	bool isFinishedInitSet_;				// Flag: Finished initial settings.
-	bool isActiveSelected_;					// Flag: Finished active selection.
 	bool canSearch_;						// Flag: Ready to search.
 	float process_time_;					// Total processing time.
 	float timer_start_;						// Timer (start).
-	bool isSearched_origin_;				// Flag: Finished searching original.
-	bool isSearched_main_;					// Flag: Finished searching main.
 	int len_current_showlist_;				// The number of current shown images.
-	bool isSearchAdditional_;
 
 	//-----------------------------------------
 	// Retrieval results.
@@ -206,18 +201,18 @@ public:
 	int search_window_size_;				// Search window size
 	std::vector<int> number_active_;		// Active selection results.
 	std::vector<int> number_origin_;		// Retrieval results (comparison: images' ids).
-	std::vector<int> number_main_;			// Main reranking results.
+	std::vector<int> number_rerank_;		// Reranked results.
 	std::vector<int> number_visualrank_;	// Visualrank reranking results.
 	std::vector<int> showList_active_;		// Selection image (active selection: show list).
 	std::vector<int> showList_origin_;	 	// Retrieval results (compatison: show list).
-	std::vector<int> showList_main_;	 	// Main reranking results (show list).
+	std::vector<int> showList_rerank_;	 	// Reranked results (show list).
 	std::vector<int> showList_visualrank_; 	// Visualrank reranking results (show list).
 	int split_threshold_;					// Threshold of split result.
 	std::vector<int> toprank_;				// Top-ranked results.
 	std::vector<int> lowrank_;				// Low-ranked results.
 	bool isactive_;							// Switch: Display active selection results.
-	bool isorigin_;							// Switch: Display comparison results.
-	bool ismain_;							// Switch: Display main results.
+	bool isorigin_;							// Switch: Display initial results.
+	bool isrerank_;							// Switch: Display reranked results.
 	bool isvisualrank_;						// Switch: Display visualrank results.
 
 	//-----------------------------------------
@@ -299,7 +294,7 @@ public:
 
 public:
 	ofImage graph_;
-	ofImage topface_main_;
+	ofImage topface_rerank_;
 
 
 public:
@@ -310,16 +305,15 @@ public:
 	SampleWriter* samplewriter_;				// Training sample writer
 	Logger* logger_active_;						// Logger (active selection).
 	Logger* logger_origin_;						// Logger (original).
-	Logger* logger_main_;						// Logger (main).
+	Logger* logger_rerank_;						// Logger (rerank).
 	Logger* logger_visualrank_;					// Logger (visualrank).
 	Trainer* trainer_;							// Online Trainer.
 	Selection* selection_;						// Active Selection.
 	ReRank* rerank_;							// Reranking method.
 	VisualRank* visualrank_;					// VisualRank method.
 	SingleSearchEvaluater* single_evaluater_;	// Evaluater.
-	Rocchio* rocchio_origin_;					// Rocchio algorithm (original).
+	Rocchio* rocchio_init_;						// Rocchio algorithm (original).
 	Rocchio* rocchio_new_;						// Rocchio algorithm (new feature).
-	Rocchio* rocchio_custom_;					// Rocchio algorithm (user custom)..
 };
 
 inline int toInt(std::string s)

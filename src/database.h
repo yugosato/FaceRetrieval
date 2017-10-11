@@ -21,7 +21,7 @@ public:
 	std::vector<std::string> name_;
 	std::vector<int> number_active_;
 	std::vector<int> number_origin_;
-	std::vector<int> number_main_;
+	std::vector<int> number_rerank_;
 	std::vector<int> number_visualrank_;
 	std::vector<int> showList_;
 	std::vector<int> history_;
@@ -50,7 +50,7 @@ public:
 			init();
 
 		number_active_ = number_origin_;
-		number_main_ = number_origin_;
+		number_rerank_ = number_origin_;
 		number_visualrank_ = number_origin_;
 	}
 
@@ -165,14 +165,14 @@ public:
 			showList_[i] = number_origin_[i];
 	}
 
-	inline void makeShowList_main()
+	inline void makeShowList_rerank()
 	{
-		const int size = number_main_.size();
+		const int size = number_rerank_.size();
 		showList_.clear();
 		showList_.resize(size);
 
 		for (int i = 0; i < size; ++i)
-			showList_[i] = number_main_[i];
+			showList_[i] = number_rerank_[i];
 	}
 
 	inline void makeShowList_visualrank()
@@ -212,15 +212,15 @@ public:
 			number_origin_[i] = number[i];
 	}
 
-	inline void setNumber_main(const std::vector<int>& number)
+	inline void setNumber_rerank(const std::vector<int>& number)
 	{
 		const int size = number.size();
 
-		number_main_.clear();
-		number_main_.resize(size);
+		number_rerank_.clear();
+		number_rerank_.resize(size);
 
 		for (int i = 0; i < size; ++i)
-			number_main_[i] = number[i];
+			number_rerank_[i] = number[i];
 	}
 
 	inline void setNumber_visualrank(const std::vector<int>& number)

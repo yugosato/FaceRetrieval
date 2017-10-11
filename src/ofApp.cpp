@@ -81,7 +81,7 @@ void ofApp::initparam()
 	logdir_ = "/home/yugo/workspace/Interface/bin/log/" + time + "/";
 	candidatefile_active_ = logdir_ + "candidate_active.txt";
 	candidatefile_origin_ = logdir_ + "candidate_origin.txt";
-	candidatefile_main_ = logdir_ + "candidate_main.txt";
+	candidatefile_rerank_ = logdir_ + "candidate_rerank.txt";
 	candidatefile_visualrank_ = logdir_ + "candidate_visualrank.txt";
 	init_candidatefile_ = binData_ + "cfd/initialize.txt";
 	evaluationfile_ = logdir_ + "evaluation.csv";
@@ -105,7 +105,7 @@ void ofApp::initparam()
 	split_threshold_ = 10;
 	isactive_ = true;
 	isorigin_ = false;
-	ismain_ = false;
+	isrerank_ = false;
 	isvisualrank_ = false;
 
 	//-----------------------------------------
@@ -148,13 +148,8 @@ void ofApp::initparam()
 	// Others.
 	epoch_ = 0;
 	isSearchedAll_ = false;
-	isReady_ = false;
 	isFinishedInitSet_ = false;
-	isActiveSelected_ = false;
 	canSearch_ = false;
-	isSearched_origin_ = false;
-	isSearched_main_ = false;
-	isSearchAdditional_ = false;
 }
 
 //--------------------------------------------------------------
@@ -236,9 +231,8 @@ void ofApp::setup()
 	samplewriter_->init_write();
 
 	// Setup rocchio algorithm.
-	rocchio_origin_ = new Rocchio;
+	rocchio_init_ = new Rocchio;
 	rocchio_new_ = new Rocchio;
-	rocchio_custom_ = new Rocchio;
 
 	// Setup online trainer.
 	trainer_ = new Trainer;
@@ -291,16 +285,15 @@ void ofApp::exit()
 	delete samplewriter_;
 	delete logger_active_;
 	delete logger_origin_;
-	delete logger_main_;
+	delete logger_rerank_;
 	delete logger_visualrank_;
 	delete trainer_;
 	delete selection_;
 	delete rerank_;
 	delete visualrank_;
 	delete single_evaluater_;
-	delete rocchio_origin_;
+	delete rocchio_init_;
 	delete rocchio_new_;
-	delete rocchio_custom_;
 }
 
 //--------------------------------------------------------------
@@ -319,21 +312,20 @@ void ofApp::update()
 
 		logger_active_ = new Logger;
 		logger_origin_ = new Logger;
-		logger_main_ = new Logger;
+		logger_rerank_ = new Logger;
 		logger_visualrank_ = new Logger;
 
 		logger_active_->setup(samplefile_, candidatefile_active_, pysettingfile_, npyFile_, loading_->col_);
 		logger_origin_->setup(samplefile_, candidatefile_origin_, pysettingfile_, npyFile_, loading_->col_);
-		logger_main_->setup(samplefile_, candidatefile_main_, pysettingfile_, npyFile_, loading_->col_);
+		logger_rerank_->setup(samplefile_, candidatefile_rerank_, pysettingfile_, npyFile_, loading_->col_);
 		logger_visualrank_->setup(samplefile_, candidatefile_visualrank_, pysettingfile_, npyFile_, loading_->col_);
-
-		logger_main_->writePySetting();
+		logger_active_->writePySetting();
 
 		single_evaluater_->set_features(loading_->features_);
 
-		number_active_ = database_->number_main_;
+		number_active_ = database_->number_active_;
 		number_origin_ = database_->number_origin_;
-		number_main_ = database_->number_main_;
+		number_rerank_ = database_->number_rerank_;
 		number_visualrank_ = database_->number_visualrank_;
 
 		writelog();
@@ -353,69 +345,43 @@ void ofApp::update()
 		loading_->stopThread();
 		loading_->isLoaded_new_ = false;
 
+		selection_->load();
+	}
+
+	if (selection_->isLoaded_)
+	{
+		// Get active selection results.
+		selection_->getNumber(&number_active_);
+		selection_->isLoaded_ = false;
+
 		// -------- Calculdate query vector by rocchio algorithm --------
 		// Original query vector (initail features).
-		rocchio_origin_->set_features(loading_->features_);
-		rocchio_origin_->setInput_multi(positives_, negatives_);
-		rocchio_origin_->set_weight(1.0, 0.8, 0.3);
-		rocchio_origin_->run();
+		rocchio_init_->set_features(loading_->features_);
+		rocchio_init_->setInput_multi(positives_, negatives_);
+		rocchio_init_->set_weight(1.0, 0.8, 0.3);
+		rocchio_init_->run();
 
 		// New query vector (new features).
 		rocchio_new_->set_features(loading_->new_features_);
 		rocchio_new_->setInput_multi(positives_, negatives_);
 		rocchio_new_->set_weight(1.0, 0.8, 0.3);
 		rocchio_new_->run();
-
-		// Customized query vector (initail features).
-		rocchio_custom_->set_features(loading_->features_);
-		rocchio_custom_->setInput_multi(positives_, negatives_);
-		rocchio_custom_->set_weight(1.0, 0.8, 0.3);
-		rocchio_custom_->run();
 		// --------------------------------------------------------------
 
 		// Search by original query vector.
-		search_->set_queryvector(rocchio_origin_->queryvector_);
+		search_->set_queryvector(rocchio_init_->queryvector_);
 		search_->startThread();
 	}
 
 	if (search_->isSearched_)
 	{
 		search_->stopThread();
+		search_->getNumber(&number_origin_);
 		search_->isSearched_ = false;
-
-		if (!isSearchAdditional_)
-		{
-			if (!isSearched_origin_)
-			{
-				search_->getNumber(&number_origin_);
-				isSearched_origin_ = true;
-
-				// Search by user-customized query vector.
-				search_->set_queryvector(rocchio_custom_->queryvector_);
-				search_->startThread();
-			}
-			else
-			{
-				search_->getNumber(&number_main_);
-				isSearched_main_ = true;
-			}
-		}
-		else
-		{
-			search_->getNumber(&number_main_);
-			isSearched_origin_ = true;
-			isSearched_main_ = true;
-		}
-	}
-
-	if (isSearched_origin_ && isSearched_main_)
-	{
-		isSearched_origin_ = false;
-		isSearched_main_ = false;
 
 		// Reranking by new features query vector.
 		rerank_->set_features(loading_->new_features_);
-		rerank_->set_init_result(number_main_);
+		rerank_->set_init_result(number_origin_);
 		rerank_->set_queryvector(rocchio_new_->queryvector_);
 		rerank_->startThread();
 	}
@@ -423,11 +389,12 @@ void ofApp::update()
 	if (rerank_->isReranked_)
 	{
 		rerank_->stopThread();
+		rerank_->getNumber(&number_rerank_);
 		rerank_->isReranked_ = false;
 
 		// VisualRank Reranking.
-		visualrank_->set_features(loading_->new_features_);
-		visualrank_->set_init_result(number_main_);
+		visualrank_->set_features(loading_->features_);
+		visualrank_->set_init_result(number_origin_);
 		visualrank_->startThread();
 	}
 
@@ -435,62 +402,30 @@ void ofApp::update()
 	{
 		visualrank_->stopThread();
 		visualrank_->isReranked_ = false;
-
-		// Get reranked results.
-		rerank_->getNumber(&number_main_);
 		visualrank_->getNumber(&number_visualrank_);
-
-		if (!isSearchAdditional_)
-		{
-			// Split main result (top/low).
-			split_ranking();
-
-			// Re-rocchio algorithm by top/low rank.
-			rocchio_new_->setInput_multi(toprank_, lowrank_);
-			rocchio_new_->set_weight(1.0, 0.8, 0.0);
-			rocchio_new_->run();
-
-			rocchio_custom_->setInput_multi(toprank_, lowrank_);
-			rocchio_custom_->set_weight(1.0, 0.8, 0.0);
-			rocchio_custom_->run();
-
-			// Re-search by additional query.
-			isSearchAdditional_ = true;
-			search_->set_queryvector(rocchio_custom_->queryvector_);
-			search_->startThread();
-		}
-		else
-		{
-			isSearchAdditional_ = false;
-			isSearchedAll_ = true;
-		}
+		isSearchedAll_ = true;
 	}
 
 	if (isSearchedAll_)
 	{
 		isSearchedAll_ = false;
-		selection_->load();
-	}
-
-	if (selection_->isLoaded_)
-	{
-		selection_->isLoaded_ = false;
-		selection_->getNumber(&number_active_);
-		isReady_ = true;
-	}
-
-	if (isReady_)
-	{
-		isReady_ = false;
 
 		// Single Search Evaluation.
-		single_evaluater_->set_inputpoint(rocchio_origin_->queryvector_, rocchio_custom_->queryvector_);
-		single_evaluater_->set_results(number_origin_, number_main_);
+		single_evaluater_->set_inputpoint(rocchio_init_->queryvector_);
+		single_evaluater_->set_results(number_origin_);
 		single_evaluater_->run();
+
+		if (!single_evaluater_->target_isInside_)
+		{
+			topface_rerank_.load(loader_->name_[number_rerank_[0]]);
+			std::cout << "[ofApp] Search target was found!" << std::endl;
+		}
+		else
+			topface_rerank_.load(loader_->name_[searchTarget_]);
 
 		database_->setNumber_active(number_active_);
 		database_->setNumber_origin(number_origin_);
-		database_->setNumber_main(number_main_);
+		database_->setNumber_rerank(number_rerank_);
 		database_->setNumber_visualrank(number_visualrank_);
 
 #ifdef RELIABILITY
@@ -498,21 +433,9 @@ void ofApp::update()
 		graph_.update();
 #endif
 
-		if (!single_evaluater_->target_isInside_main_)
-			topface_main_.load(loader_->name_[number_main_[0]]);
-		else
-			topface_main_.load(loader_->name_[searchTarget_]);
-
-		// If search target is inside search window.
-		if (single_evaluater_->target_isInside_origin_)
-			std::cout << "[ofApp] Search target was found!" << std::endl;
-		if (single_evaluater_->target_isInside_main_)
-			std::cout << "[ofApp] Search target was found!" << std::endl;
-
-
 		isactive_ = true;
 		isorigin_ = false;
-		ismain_ = false;
+		isrerank_ = false;
 		isvisualrank_ = false;
 
 		calculate();
@@ -713,7 +636,7 @@ void ofApp::draw()
 		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 		text = "Original";
 	}
-	else if (ismain_)
+	else if (isrerank_)
 	{
 		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
@@ -731,15 +654,11 @@ void ofApp::draw()
 	}
 
 	// Finding search target sign.
-	if (single_evaluater_->target_isInside_origin_)
+	if (single_evaluater_->target_isInside_)
 	{
 		ofSetColor(ofColor(255.0f, 255.0f, 0.0f, 130.0f));
+		ofDrawRectangle(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
 		ofDrawRectangle(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
-	}
-
-	if (single_evaluater_->target_isInside_main_)
-	{
-		ofSetColor(ofColor(255.0f, 255.0f, 0.0f, 130.0f));
 		ofDrawRectangle(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
 		ofDrawRectangle(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 	}
@@ -776,10 +695,10 @@ void ofApp::draw()
 	ofSetColor(ofColor(128.0f, 128.0f, 128.0f, 255.0f));
 	ofDrawRectangle(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
 
-	if (epoch_ > 0 && topface_main_.isAllocated())
+	if (epoch_ > 0 && topface_rerank_.isAllocated())
 	{
 		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-		topface_main_.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+		topface_rerank_.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
 	}
 
 	// Holding image.
@@ -1158,7 +1077,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			isactive_ = true;
 			isorigin_ = false;
-			ismain_ = false;
+			isrerank_ = false;
 			isvisualrank_ = false;
 			onPaint(showList_active_);
 		}
@@ -1166,7 +1085,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			isactive_ = false;
 			isorigin_ = true;
-			ismain_ = false;
+			isrerank_ = false;
 			isvisualrank_ = false;
 			onPaint(showList_origin_);
 		}
@@ -1174,15 +1093,15 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			isactive_ = false;
 			isorigin_ = false;
-			ismain_ = true;
+			isrerank_ = true;
 			isvisualrank_ = false;
-			onPaint(showList_main_);
+			onPaint(showList_rerank_);
 		}
 		else if (isReleasedArea(buttonD_posx_, buttonposy_line1_, button_width_, button_height_))
 		{
 			isactive_ = false;
 			isorigin_ = false;
-			ismain_ = false;
+			isrerank_ = false;
 			isvisualrank_ = true;
 			onPaint(showList_visualrank_);
 		}
@@ -1317,8 +1236,8 @@ void ofApp::calculate()
 	database_->makeShowList_origin();
 	showList_origin_ = database_->getShowList();
 
-	database_->makeShowList_main();
-	showList_main_ = database_->getShowList();
+	database_->makeShowList_rerank();
+	showList_rerank_ = database_->getShowList();
 
 	database_->makeShowList_visualrank();
 	showList_visualrank_ = database_->getShowList();
@@ -1354,7 +1273,7 @@ void ofApp::inputHistory()
 		}
 	}
 
-	numberhistory_.push_back(number_main_);
+	numberhistory_.push_back(number_rerank_);
 	historysize_ = numberhistory_.size();
 
 	if (historysize_ > 1)
@@ -1368,11 +1287,11 @@ void ofApp::inputHistory()
 //--------------------------------------------------------------
 void ofApp::writelog()
 {
-	std::vector<int> candidate_active, candidate_origin, candidate_main, candidate_visualrank;
+	std::vector<int> candidate_active, candidate_origin, candidate_rerank, candidate_visualrank;
 
 	candidate_active.resize(active_size_);
 	candidate_origin.resize(search_window_size_);
-	candidate_main.resize(search_window_size_);
+	candidate_rerank.resize(search_window_size_);
 	candidate_visualrank.resize(search_window_size_);
 
 	for (int i = 0; i < active_size_; ++i)
@@ -1385,17 +1304,17 @@ void ofApp::writelog()
 	for (int i = 0; i < search_window_size_; ++i)
 	{
 		int num_origin = number_origin_[i];
-		int num_main = number_main_[i];
+		int num_rerank = number_rerank_[i];
 		int num_visualrank = number_visualrank_[i];
 		candidate_origin[i] = num_origin;
-		candidate_main[i] = num_main;
+		candidate_rerank[i] = num_rerank;
 		candidate_visualrank[i] = num_visualrank;
 	}
 
 	database_->setHistory(candidatehistory_);
 	logger_active_->writeCandidate(candidate_active);
 	logger_origin_->writeCandidate(candidate_origin);
-	logger_main_->writeCandidate(candidate_main);
+	logger_rerank_->writeCandidate(candidate_rerank);
 	logger_visualrank_->writeCandidate(candidate_visualrank);
 }
 
@@ -1405,12 +1324,12 @@ void ofApp::sizeChanged()
 	std::vector<int>* sList;
 	if (isactive_)
 		sList = &showList_active_;
-	else if (ismain_)
-		sList = &showList_main_;
-	else if (isvisualrank_)
-		sList = &showList_visualrank_;
 	else if (isorigin_)
 		sList = &showList_origin_;
+	else if (isrerank_)
+		sList = &showList_rerank_;
+	else if (isvisualrank_)
+		sList = &showList_visualrank_;
 
 	rowShow_ = (sList->size() + colShow_ - 1) / colShow_;
 	if (rowShow_ < 1)
@@ -1555,7 +1474,7 @@ void ofApp::put_time(std::string& time_str)
 //--------------------------------------------------------------
 void ofApp::showProcessingTime()
 {
-	float others = process_time_ - trainer_->process_time_ - rocchio_custom_->process_time_
+	float others = process_time_ - trainer_->process_time_ - rocchio_init_->process_time_
 			- search_->process_time_ - rerank_->process_time_ - visualrank_->process_time_;
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
@@ -1564,7 +1483,7 @@ void ofApp::showProcessingTime()
 #else
 	std::cout << "Online Training (Main + Selection): " << trainer_->process_time_ << " sec." << std::endl;
 #endif
-	std::cout << "Rocchio Algorithm: " << rocchio_custom_->process_time_ << " sec." << std::endl;
+	std::cout << "Rocchio Algorithm: " << rocchio_init_->process_time_ << " sec." << std::endl;
 	std::cout << "Searching (NGT): " << search_->process_time_ << " sec." << std::endl;
 	std::cout << "Reranking (Main): " << rerank_->process_time_ << " sec." << std::endl;
 	std::cout << "Reranking (VisualRank): " << visualrank_->process_time_ << " sec." << std::endl;
@@ -1623,12 +1542,12 @@ void ofApp::split_ranking()
 	{
 		if (loc < split_threshold_)
 		{
-			toprank_[i] = number_main_[loc];
+			toprank_[i] = number_rerank_[loc];
 			i++;
 		}
 		else
 		{
-			lowrank_[j] = number_main_[loc];
+			lowrank_[j] = number_rerank_[loc];
 			j++;
 		}
 		loc++;

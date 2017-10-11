@@ -13,28 +13,21 @@ class SingleSearchEvaluater
 {
 public:
 	int searchTarget_;
-	float distance_origin_;
-	float distance_main_;
+	float distance_;
 	int count_;
 	std::string filename_;
 	std::vector<std::vector<double>> features_;
-	std::vector<double> inputpoint_origin_;
-	std::vector<double> inputpoint_main_;
-	std::vector<int> number_origin_;
-	std::vector<int> number_main_;
-	bool target_isInside_origin_;
-	bool target_isInside_main_;
-
+	std::vector<double> inputpoint_;
+	std::vector<int> results_;
+	bool target_isInside_;
 
 public:
 	SingleSearchEvaluater()
 	{
-		distance_origin_ = 9999.9f;
-		distance_main_ = 9999.9f;
+		distance_ = 9999.9f;
 		searchTarget_ = -1;
 		count_ = 0;
-		target_isInside_origin_ = false;
-		target_isInside_main_ = false;
+		target_isInside_ = false;
 	}
 
 	void setup(const int searchTarget, const std::string filename)
@@ -48,16 +41,14 @@ public:
 		features_ = features;
 	}
 
-	void set_inputpoint(const std::vector<double>& inputpoint_origin, const std::vector<double>& inputpoint_main)
+	void set_inputpoint(const std::vector<double>& inputpoint)
 	{
-		inputpoint_origin_ = inputpoint_origin;
-		inputpoint_main_ = inputpoint_main;
+		inputpoint_ = inputpoint;
 	}
 
-	void set_results(const std::vector<int>& number_origin, const std::vector<int>& number_main)
+	void set_results(const std::vector<int>& results)
 	{
-		number_origin_ = number_origin;
-		number_main_ = number_main;
+		results_ = results;
 	}
 
 	void run()
@@ -70,17 +61,13 @@ public:
 	// Calculate distance between the target and input point.
 	void calculate_distance()
 	{
-		distance_origin_ = cosine(features_[searchTarget_], inputpoint_origin_, "distance");
-		distance_main_ = cosine(features_[searchTarget_], inputpoint_main_, "distance");
+		distance_ = cosine(features_[searchTarget_], inputpoint_, "distance");
 	}
 
 	void find_searchTarget()
 	{
-		if (vector_finder(number_origin_, searchTarget_))
-			target_isInside_origin_ = true;
-
-		if (vector_finder(number_main_, searchTarget_))
-			target_isInside_main_ = true;
+		if (vector_finder(results_, searchTarget_))
+			target_isInside_ = true;
 	}
 
 	void write()
@@ -92,17 +79,11 @@ public:
 		if (count_ == 0)
 		{
 			writer << "Target: " << searchTarget_ << std::endl;
-			writer << "original" << "," << "main" << std::endl;
 		}
 
-		writer << distance_origin_ << "," << distance_main_;
-
-		if (target_isInside_origin_)
-			writer << "," << "target is in origin";
-
-		if (target_isInside_main_)
-			writer << "," << "target is in main";
-
+		writer << distance_;
+		if (target_isInside_)
+			writer << "," << "Target";
 		writer << std::endl;
 
 		writer.close();
