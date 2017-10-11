@@ -117,7 +117,7 @@ class ActiveSelection(object):
         # Random Sampling
         random_index = self.getRandomIndex()
 
-        self.write(os.path.join(home_dir, "result/active_index.txt"), uncertain_index)
+        self.write(os.path.join(home_dir, "result/uncertain_index.txt"), uncertain_index)
         self.write(os.path.join(home_dir, "result/cueflik_index.txt"), cueflik_index)
         self.write(os.path.join(home_dir, "result/random_index.txt"), random_index)
 

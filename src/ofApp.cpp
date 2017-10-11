@@ -92,7 +92,7 @@ void ofApp::initparam()
 	scriptfile_ = "/home/yugo/workspace/Interface/trainer/main_process.py";
 	positiveIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/positive_index.txt";
 	negativeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/negative_index.txt";
-	activeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/active_index.txt";
+	activeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/uncertain_index.txt";
 	cueflikIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/cueflik_index.txt";
 	randomIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/random_index.txt";
 	resultGraphfile_ = "/home/yugo/workspace/Interface/trainer/result/acc_val.png";
@@ -239,7 +239,7 @@ void ofApp::setup()
 
 	// Setup active selection.
 	selection_ = new Selection;
-	selection_->setup(positiveIndexfile_, negativeIndexfile_, activeIndexfile_, cueflikIndexfile_, randomIndexfile_);
+	selection_->setup(activeIndexfile_, cueflikIndexfile_, randomIndexfile_);
 	selection_->set_searchTarget(searchTarget_);
 	selection_->set_size(active_size_);
 

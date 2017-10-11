@@ -14,29 +14,19 @@ class Selection
 {
 public:
 	int searchTarget_;
-
-	std::string positive_indexfile_;
-	std::string negative_indexfile_;
-
 	std::string uncertain_indexfile_;
 	std::string cueflik_indexfile_;
 	std::string random_indexfile_;
-
-	std::vector<int> number_estPositive_;
-	std::vector<int> number_estNegative_;
 	std::vector<int> number_selection_;
-
+	std::vector<int> full_number_selection_;
 	bool isLoaded_;
 	int size_;
 
 
 public:
-	void setup(const std::string& positive_indexfile, const std::string& negative_indexfile,
-			const std::string& uncertain_indexfile, const std::string& cueflik_indexfile,
+	void setup(	const std::string& uncertain_indexfile, const std::string& cueflik_indexfile,
 			const std::string& random_indexfile)
 	{
-		positive_indexfile_ = positive_indexfile;
-		negative_indexfile_ = negative_indexfile;
 		uncertain_indexfile_ = uncertain_indexfile;
 		cueflik_indexfile_ = cueflik_indexfile;
 		random_indexfile_ = random_indexfile;
@@ -51,27 +41,28 @@ public:
 	void set_size(const int size)
 	{
 		size_ = size;
+		number_selection_.resize(size_);
 	}
 
 	void load(const std::string method)
 	{
 		isLoaded_ = false;
-		if (method == "estimate")
-		{
-			read_index(positive_indexfile_, number_estPositive_);
-			read_index(negative_indexfile_, number_estNegative_);
-		}
-		else if (method == "uncertain")
-			read_index(uncertain_indexfile_, number_selection_);
+		std::vector<int> index;
+		if (method == "uncertain")
+			read_index(uncertain_indexfile_);
 		else if (method == "cueflik")
-			read_index(cueflik_indexfile_, number_selection_);
+			read_index(cueflik_indexfile_);
 		else if (method == "random")
-			read_index(random_indexfile_, number_selection_);
+			read_index(random_indexfile_);
 		else
 		{
 			std::cerr << "[Warning] Cannot open specified selection: " << method << std::endl;
 			std::abort();
 		}
+
+		for (int i = 0; i < size_; i++)
+			number_selection_[i] = full_number_selection_[i];
+
 		isLoaded_ = true;
 	}
 
@@ -89,22 +80,22 @@ public:
 
 		while (loc < size_)
 		{
-			if (loc < active_num)
+			if (loc < active_num)// loc:0-14
 			{
-				if (!vector_finder(result, number_selection_[i]))
+				if (!vector_finder(result, full_number_selection_[i]))
 				{
-					mixed_selection[loc] = number_selection_[i];
+					mixed_selection[loc] = full_number_selection_[i];
 					loc++;
 				}
 				i++;
 			}
-			else if (active_num <= loc && loc < active_num + top_result_num)
+			else if (active_num <= loc && loc < active_num + top_result_num)// loc:15-19
 			{
 				mixed_selection[loc] = result[j];
 				loc++;
 				j++;
 			}
-			else if (active_num + top_result_num <= loc)
+			else if (active_num + top_result_num <= loc)// loc:20-24
 			{
 				mixed_selection[loc] = result[k];
 				loc++;
@@ -136,24 +127,21 @@ public:
 
 
 private:
-	void read_index(const std::string fname, std::vector<int>& vec)
+	void read_index(const std::string fname)
 	{
 		std::ifstream ifs(fname);
 		if (!ifs)
 			std::cerr << "[Warning] Cannot open the specified file. " << fname << std::endl;
 
-		vec.clear();
-		std::vector<int>().swap(vec);
+		full_number_selection_.clear();
 		std::string buf;
 
-		int i = 0;
-		while (ifs && std::getline(ifs, buf) && i < size_)
+		while (ifs && std::getline(ifs, buf))
 		{
-			int index = std::atoi(buf.c_str());
-			if (index == searchTarget_)
+			int num = std::atoi(buf.c_str());
+			if (num == searchTarget_)
 				continue;
-			vec.push_back(index);
-			i++;
+			full_number_selection_.push_back(num);
 		}
 	}
 
