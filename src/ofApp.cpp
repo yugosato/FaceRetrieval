@@ -254,6 +254,10 @@ void ofApp::setup()
 	rerank_ = new ReRank;
 	visualrank_ = new VisualRank;
 
+	// Setup evaluater.
+	single_evaluater_ = new SingleSearchEvaluater;
+	single_evaluater_->setup(searchTarget_, evaluationfile_);
+
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Matrix file: \"" << featuresfile_ << "\"" << std::endl;
 	std::cout << "[Setting] Npy file: \"" << npyFile_ << "\"" << std::endl;
@@ -325,8 +329,6 @@ void ofApp::update()
 
 		logger_main_->writePySetting();
 
-		single_evaluater_ = new SingleSearchEvaluater;
-		single_evaluater_->setup(searchTarget_, evaluationfile_);
 		single_evaluater_->set_features(loading_->features_);
 
 		number_active_ = database_->number_main_;
@@ -483,6 +485,7 @@ void ofApp::update()
 
 		// Single Search Evaluation.
 		single_evaluater_->set_inputpoint(rocchio_origin_->queryvector_, rocchio_custom_->queryvector_);
+		single_evaluater_->set_results(number_origin_, number_main_);
 		single_evaluater_->run();
 
 		database_->setNumber_active(number_active_);
@@ -494,7 +497,18 @@ void ofApp::update()
 		graph_.load(resultGraphfile_);
 		graph_.update();
 #endif
-		topface_main_.load(loader_->name_[number_main_[0]]);
+
+		if (!single_evaluater_->target_isInside_main_)
+			topface_main_.load(loader_->name_[number_main_[0]]);
+		else
+			topface_main_.load(loader_->name_[searchTarget_]);
+
+		// If search target is inside search window.
+		if (single_evaluater_->target_isInside_origin_)
+			std::cout << "[ofApp] Search target was found!" << std::endl;
+		if (single_evaluater_->target_isInside_main_)
+			std::cout << "[ofApp] Search target was found!" << std::endl;
+
 
 		isactive_ = true;
 		isorigin_ = false;
@@ -553,18 +567,16 @@ void ofApp::draw()
 		img = loader_->picture_[i];
 
 		if (!img.isAllocated())
-		{
 			break;
-		}
 		else if (isactive_)
 		{
 			int imgId = loader_->showList_[i];
-			int exist_positive = vector_finder(positives_, imgId);
-			int exist_negative = vector_finder(negatives_, imgId);
+			bool exist_positive = vector_finder(positives_, imgId);
+			bool exist_negative = vector_finder(negatives_, imgId);
 
-			if ((isHolding_areaA_ && i == holdImgNum_) || exist_positive >= 0 || exist_negative >= 0)
+			if ((isHolding_areaA_ && i == holdImgNum_) || exist_positive || exist_negative)
 			{
-				if (exist_positive >= 0)
+				if (exist_positive)
 				{
 					int margin = 5;
 					ofNoFill();
@@ -573,7 +585,7 @@ void ofApp::draw()
 					ofDrawRectangle(drawx + margin, drawy + margin, d_size_ - 2*margin, d_size_ - 2*margin);
 
 				}
-				else if (exist_negative >=0)
+				else if (exist_negative)
 				{
 					int margin = 5;
 					ofNoFill();
@@ -718,10 +730,25 @@ void ofApp::draw()
 		text = "VisualRank";
 	}
 
+	// Finding search target sign.
+	if (single_evaluater_->target_isInside_origin_)
+	{
+		ofSetColor(ofColor(255.0f, 255.0f, 0.0f, 130.0f));
+		ofDrawRectangle(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
+	}
+
+	if (single_evaluater_->target_isInside_main_)
+	{
+		ofSetColor(ofColor(255.0f, 255.0f, 0.0f, 130.0f));
+		ofDrawRectangle(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+		ofDrawRectangle(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
+	}
+
 	if (isFinishedInitSet_ && !canSearch_)
 		text = "Searching...";
 
 	float w = font_.stringWidth(text);
+	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	font_.drawString(text, windowWidth_ - w - ScrollBarWidth_ - 10, fontposy_top_);
 
 	std::string positive = "Positive Sample: ";
@@ -885,10 +912,10 @@ void ofApp::mouseDragged(int x, int y, int button)
 			if (isHolding_areaA_)
 			{
 				int imgId = showList_active_[mouseover_];
-				int exist_positive = vector_finder(positives_, imgId);
-				int exist_negative = vector_finder(negatives_, imgId);
+				bool exist_positive = vector_finder(positives_, imgId);
+				bool exist_negative = vector_finder(negatives_, imgId);
 
-				if (exist_positive < 0 && exist_negative < 0)
+				if (!exist_positive && !exist_negative)
 				{
 					holdImgNum_ = mouseover_;
 					isHoldAndDrag_ = true;
@@ -898,9 +925,9 @@ void ofApp::mouseDragged(int x, int y, int button)
 			else if (isHolding_areaP_)
 			{
 				int imgId = positives_[mouseover_];
-				int exist_negative = vector_finder(negatives_, imgId);
+				bool exist_negative = vector_finder(negatives_, imgId);
 
-				if (exist_negative < 0)
+				if (!exist_negative)
 				{
 					holdImgNum_ = mouseover_;
 					isHoldAndDrag_ = true;
@@ -910,9 +937,9 @@ void ofApp::mouseDragged(int x, int y, int button)
 			else if (isHolding_areaN_)
 			{
 				int imgId = negatives_[mouseover_];
-				int exist_positive = vector_finder(positives_, imgId);
+				bool exist_positive = vector_finder(positives_, imgId);
 
-				if (exist_positive < 0)
+				if (!exist_positive)
 				{
 					holdImgNum_ = mouseover_;
 					isHoldAndDrag_ = true;
@@ -1042,10 +1069,10 @@ void ofApp::mouseReleased(int x, int y, int button)
 				std::vector<int> *list = &showList_active_;
 				const int dragImgId = (*list)[holdImgNum_];
 				ofImage dragImg = loader_->picture_[holdImgNum_];
-				int check_duplication_P = vector_finder(positives_, dragImgId);
-				int check_duplication_N = vector_finder(negatives_, dragImgId);
+				bool check_duplication_P = vector_finder(positives_, dragImgId);
+				bool check_duplication_N = vector_finder(negatives_, dragImgId);
 
-				if (check_duplication_P < 0 && check_duplication_N < 0)
+				if (!check_duplication_P && !check_duplication_N)
 				{
 					// A -> P.
 					if (isInside_areaP_)
@@ -1080,8 +1107,8 @@ void ofApp::mouseReleased(int x, int y, int button)
 				}	// P -> N.
 				else if (isInside_areaN_)
 				{
-					int check_duplication = vector_finder(negatives_, dragImgId);
-					if (check_duplication < 0)
+					bool check_duplication = vector_finder(negatives_, dragImgId);
+					if (!check_duplication)
 					{
 						std::cout << "[ofApp] Positive No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Negative." << std::endl;
 						negatives_.push_back(dragImgId);
@@ -1109,8 +1136,8 @@ void ofApp::mouseReleased(int x, int y, int button)
 				}	// N -> P.
 				else if (isInside_areaP_)
 				{
-					int check_duplication = vector_finder(positives_, dragImgId);
-					if (check_duplication < 0)
+					bool check_duplication = vector_finder(positives_, dragImgId);
+					if (!check_duplication)
 					{
 						std::cout << "[ofApp] Negative No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Positive." << std::endl;
 						positives_.push_back(dragImgId);
@@ -1490,19 +1517,19 @@ void ofApp::calculateHoldingOriginPoint()
 }
 
 //--------------------------------------------------------------
-int ofApp::vector_finder(std::vector<int>& vec, int number)
+bool ofApp::vector_finder(const std::vector<int>& vector, const int number)
 {
-	if (vec.size() > 0)
+	if (vector.size() > 0)
 	{
-		auto itr = std::find(vec.begin(), vec.end(), number);
-		size_t index = std::distance(vec.begin(), itr);
-		if (index != vec.size())
-			return index;	// If the number exists in the vector.
+		auto itr = std::find(vector.begin(), vector.end(), number);
+		size_t index = std::distance(vector.begin(), itr);
+		if (index != vector.size())
+			return true;	// If the number exists in the vector.
 		else
-			return -1;		// If the number does not exist in the vector.
+			return false;	// If the number does not exist in the vector.
 	}
 	else
-		return -1;
+		return false;
 }
 
 //--------------------------------------------------------------
@@ -1552,10 +1579,10 @@ void ofApp::autoselect_negative()
 	for (int i = 0; i < active_size_; ++i)
 	{
 		int number = showList_active_[i];
-		int check_duplication_P = vector_finder(positives_, number);
-		int check_duplication_N = vector_finder(negatives_, number);
+		bool check_duplication_P = vector_finder(positives_, number);
+		bool check_duplication_N = vector_finder(negatives_, number);
 
-		if (check_duplication_P < 0 && check_duplication_N < 0)
+		if (!check_duplication_P && !check_duplication_N)
 		{
 			negatives_.push_back(number);
 			negative_images_.push_back(loader_->picture_[i]);

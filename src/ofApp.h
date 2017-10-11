@@ -273,7 +273,7 @@ public:
 
 
 public:
-	int vector_finder(std::vector<int>& vec, int number);
+	bool vector_finder(const std::vector<int>& vector, const int number);
 	void put_time(std::string& time_str);
 
 public:

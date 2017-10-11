@@ -20,6 +20,10 @@ public:
 	std::vector<std::vector<double>> features_;
 	std::vector<double> inputpoint_origin_;
 	std::vector<double> inputpoint_main_;
+	std::vector<int> number_origin_;
+	std::vector<int> number_main_;
+	bool target_isInside_origin_;
+	bool target_isInside_main_;
 
 
 public:
@@ -29,6 +33,8 @@ public:
 		distance_main_ = 9999.9f;
 		searchTarget_ = -1;
 		count_ = 0;
+		target_isInside_origin_ = false;
+		target_isInside_main_ = false;
 	}
 
 	void setup(const int searchTarget, const std::string filename)
@@ -48,9 +54,16 @@ public:
 		inputpoint_main_ = inputpoint_main;
 	}
 
+	void set_results(const std::vector<int>& number_origin, const std::vector<int>& number_main)
+	{
+		number_origin_ = number_origin;
+		number_main_ = number_main;
+	}
+
 	void run()
 	{
 		calculate_distance();
+		find_searchTarget();
 		write();
 	}
 
@@ -59,6 +72,15 @@ public:
 	{
 		distance_origin_ = cosine(features_[searchTarget_], inputpoint_origin_, "distance");
 		distance_main_ = cosine(features_[searchTarget_], inputpoint_main_, "distance");
+	}
+
+	void find_searchTarget()
+	{
+		if (vector_finder(number_origin_, searchTarget_))
+			target_isInside_origin_ = true;
+
+		if (vector_finder(number_main_, searchTarget_))
+			target_isInside_main_ = true;
 	}
 
 	void write()
@@ -73,9 +95,33 @@ public:
 			writer << "original" << "," << "main" << std::endl;
 		}
 
-		writer << distance_origin_ << "," << distance_main_ << std::endl;
+		writer << distance_origin_ << "," << distance_main_;
+
+		if (target_isInside_origin_)
+			writer << "," << "target is in origin";
+
+		if (target_isInside_main_)
+			writer << "," << "target is in main";
+
+		writer << std::endl;
+
 		writer.close();
 		count_++;
+	}
+
+	bool vector_finder(const std::vector<int>& vector, const int number)
+	{
+		if (vector.size() > 0)
+		{
+			auto itr = std::find(vector.begin(), vector.end(), number);
+			size_t index = std::distance(vector.begin(), itr);
+			if (index != vector.size())
+				return true;	// If the number exists in the vector.
+			else
+				return false;	// If the number does not exist in the vector.
+		}
+		else
+			return false;
 	}
 };
 
