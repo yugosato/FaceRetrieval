@@ -102,7 +102,7 @@ void ofApp::initparam()
 	// Retrieval results.
 	active_size_ = 25;
 	search_window_size_ = 50;
-	split_threshold_ = 25;
+	split_threshold_ = 10;
 	isactive_ = true;
 	isorigin_ = false;
 	ismain_ = false;
@@ -355,16 +355,19 @@ void ofApp::update()
 		// Original query vector (initail features).
 		rocchio_origin_->set_features(loading_->features_);
 		rocchio_origin_->setInput_multi(positives_, negatives_);
+		rocchio_origin_->set_weight(1.0, 0.8, 0.3);
 		rocchio_origin_->run();
 
 		// New query vector (new features).
 		rocchio_new_->set_features(loading_->new_features_);
 		rocchio_new_->setInput_multi(positives_, negatives_);
+		rocchio_new_->set_weight(1.0, 0.8, 0.3);
 		rocchio_new_->run();
 
 		// Customized query vector (initail features).
 		rocchio_custom_->set_features(loading_->features_);
 		rocchio_custom_->setInput_multi(positives_, negatives_);
+		rocchio_custom_->set_weight(1.0, 0.8, 0.3);
 		rocchio_custom_->run();
 		// --------------------------------------------------------------
 
@@ -442,8 +445,11 @@ void ofApp::update()
 
 			// Re-rocchio algorithm by top/low rank.
 			rocchio_new_->setInput_multi(toprank_, lowrank_);
+			rocchio_new_->set_weight(1.0, 0.8, 0.0);
 			rocchio_new_->run();
+
 			rocchio_custom_->setInput_multi(toprank_, lowrank_);
+			rocchio_custom_->set_weight(1.0, 0.8, 0.0);
 			rocchio_custom_->run();
 
 			// Re-search by additional query.
