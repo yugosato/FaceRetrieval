@@ -24,7 +24,7 @@ class OnlineProcessing(TrainModel, ActiveSelection):
 
     def run_activeSelection(self):
         self.run_selection()
-        self.run_estimate_class()
+        # self.run_estimate_class()
 
 
 # Main

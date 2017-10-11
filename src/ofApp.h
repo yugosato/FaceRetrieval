@@ -36,6 +36,12 @@ const int searchTarget_ = 0;	// Single Search Target.
 const int initWidth_ = 1600;	// Initial window size: Width.
 const int initHeight_ = 920;	// Initial window size: Height.
 
+template<class T> inline std::string toString(T x)
+{
+	std::ostringstream sout;
+	sout << x;
+	return sout.str();
+}
 
 // openFrameworks base class.
 class ofApp: public ofBaseApp
@@ -207,9 +213,6 @@ public:
 	std::vector<int> showList_origin_;	 	// Retrieval results (compatison: show list).
 	std::vector<int> showList_rerank_;	 	// Reranked results (show list).
 	std::vector<int> showList_visualrank_; 	// Visualrank reranking results (show list).
-	int split_threshold_;					// Threshold of split result.
-	std::vector<int> toprank_;				// Top-ranked results.
-	std::vector<int> lowrank_;				// Low-ranked results.
 	bool isactive_;							// Switch: Display active selection results.
 	bool isorigin_;							// Switch: Display initial results.
 	bool isrerank_;							// Switch: Display reranked results.
@@ -264,12 +267,12 @@ public:
 	void showProcessingTime();
 	void autoselect_negative();
 	void update_overview_info();
-	void split_ranking();
 
 
 public:
 	bool vector_finder(const std::vector<int>& vector, const int number);
 	void put_time(std::string& time_str);
+
 
 public:
 	ofxUIScrollableCanvas* gui_;
@@ -316,18 +319,4 @@ public:
 	Rocchio* rocchio_new_;						// Rocchio algorithm (new feature).
 };
 
-inline int toInt(std::string s)
-{
-	int v;
-	std::istringstream sin(s);
-	sin >> v;
-	return v;
-}
-
-template<class T> inline std::string toString(T x)
-{
-	std::ostringstream sout;
-	sout << x;
-	return sout.str();
-}
 

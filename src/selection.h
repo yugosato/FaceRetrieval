@@ -24,10 +24,7 @@ public:
 
 	std::vector<int> number_estPositive_;
 	std::vector<int> number_estNegative_;
-
-	std::vector<int> number_uncertain_;
-	std::vector<int> number_cueflik_;
-	std::vector<int> number_random_;
+	std::vector<int> number_selection_;
 
 	bool isLoaded_;
 	int size_;
@@ -56,17 +53,39 @@ public:
 		size_ = size;
 	}
 
-	void load()
+	void load(const std::string method)
 	{
 		isLoaded_ = false;
-		//read_index(positive_indexfile_, number_estPositive_);
-		//read_index(negative_indexfile_, number_estNegative_);
-		read_index(uncertain_indexfile_, number_uncertain_);
-		//read_index(cueflik_indexfile_, number_cueflik_);
-		//read_index(random_indexfile_, number_random_);
+		if (method == "estimate")
+		{
+			read_index(positive_indexfile_, number_estPositive_);
+			read_index(negative_indexfile_, number_estNegative_);
+		}
+		else if (method == "uncertain")
+			read_index(uncertain_indexfile_, number_selection_);
+		else if (method == "cueflik")
+			read_index(cueflik_indexfile_, number_selection_);
+		else if (method == "random")
+			read_index(random_indexfile_, number_selection_);
+		else
+		{
+			std::cerr << "[Warning] Cannot open specified selection: " << method << std::endl;
+			std::abort();
+		}
 		isLoaded_ = true;
 	}
 
+	inline void getNumber(std::vector<int>* number) const
+	{
+		number->clear();
+		int size = (int) number_selection_.size();
+		number->resize(size);
+		for (int i = 0; i < size; ++i)
+			(*number)[i] = number_selection_[i];
+	}
+
+
+public:
 	inline void read_index(const std::string fname, std::vector<int>& vec)
 	{
 		std::ifstream ifs(fname);
@@ -86,15 +105,6 @@ public:
 			vec.push_back(index);
 			i++;
 		}
-	}
-
-	inline void getNumber(std::vector<int>* number) const
-	{
-		number->clear();
-		int size = (int) number_uncertain_.size();
-		number->resize(size);
-		for (int i = 0; i < size; ++i)
-			(*number)[i] = number_uncertain_[i];
 	}
 
 };

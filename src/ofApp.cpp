@@ -102,7 +102,6 @@ void ofApp::initparam()
 	// Retrieval results.
 	active_size_ = 25;
 	search_window_size_ = 50;
-	split_threshold_ = 10;
 	isactive_ = true;
 	isorigin_ = false;
 	isrerank_ = false;
@@ -345,7 +344,7 @@ void ofApp::update()
 		loading_->stopThread();
 		loading_->isLoaded_new_ = false;
 
-		selection_->load();
+		selection_->load("uncertain");
 	}
 
 	if (selection_->isLoaded_)
@@ -1523,36 +1522,3 @@ void ofApp::update_overview_info()
 	drawHeight_areaN_ = overview_d_size_ * overviewN_rowShow_;
 }
 
-//--------------------------------------------------------------
-void ofApp::split_ranking()
-{
-	if (split_threshold_ > search_window_size_)
-	{
-		std::cerr << "[Warning] split threshold is over search results size." << std::endl;
-		exit();
-	}
-
-	toprank_.clear();
-	lowrank_.clear();
-
-	toprank_.resize(split_threshold_);
-	lowrank_.resize(search_window_size_ - split_threshold_);
-
-	int i = 0;
-	int j = 0;
-	int loc = 0;
-	while (loc < search_window_size_)
-	{
-		if (loc < split_threshold_)
-		{
-			toprank_[i] = number_rerank_[loc];
-			i++;
-		}
-		else
-		{
-			lowrank_[j] = number_rerank_[loc];
-			j++;
-		}
-		loc++;
-	}
-}
