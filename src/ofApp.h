@@ -7,6 +7,7 @@
 //#define HISTOGRAM_GABOR
 
 //#define RELIABILITY
+#define MIX_SELECTION
 
 #include <iostream>
 #include <vector>

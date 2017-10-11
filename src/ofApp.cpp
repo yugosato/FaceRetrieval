@@ -420,7 +420,9 @@ void ofApp::update()
 			topface_rerank_.load(loader_->name_[searchTarget_]);
 		}
 
+#ifdef MIX_SELECTION
 		selection_->mix_selection(number_rerank_);
+#endif
 		selection_->getNumber(&number_active_);
 
 		database_->setNumber_active(number_active_);
