@@ -349,8 +349,6 @@ void ofApp::update()
 
 	if (selection_->isLoaded_)
 	{
-		// Get active selection results.
-		selection_->getNumber(&number_active_);
 		selection_->isLoaded_ = false;
 
 		// -------- Calculdate query vector by rocchio algorithm --------
@@ -415,12 +413,15 @@ void ofApp::update()
 		single_evaluater_->run();
 
 		if (!single_evaluater_->target_isInside_)
-		{
 			topface_rerank_.load(loader_->name_[number_rerank_[0]]);
-			std::cout << "[ofApp] Search target was found!" << std::endl;
-		}
 		else
+		{
+			std::cout << "[ofApp] Search target was found!" << std::endl;
 			topface_rerank_.load(loader_->name_[searchTarget_]);
+		}
+
+		selection_->mix_selection(number_rerank_);
+		selection_->getNumber(&number_active_);
 
 		database_->setNumber_active(number_active_);
 		database_->setNumber_origin(number_origin_);

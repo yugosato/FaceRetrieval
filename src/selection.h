@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
-#include <streambuf>
+#include <random>
 
 
 class Selection
@@ -75,6 +75,56 @@ public:
 		isLoaded_ = true;
 	}
 
+	// Mix active selection & reranked results.
+	void mix_selection(const std::vector<int>& result)
+	{
+		// Store each value.
+		int active_num = 15;
+		int top_result_num = 5;
+		//int low_result_num = 5;
+
+		int i = 0, j = 0, k = result.size() - 1;
+		int loc = 0;
+		std::vector<int> mixed_selection(size_);
+
+		while (loc < size_)
+		{
+			if (loc < active_num)
+			{
+				if (!vector_finder(result, number_selection_[i]))
+				{
+					mixed_selection[loc] = number_selection_[i];
+					loc++;
+				}
+				i++;
+			}
+			else if (active_num <= loc && loc < active_num + top_result_num)
+			{
+				mixed_selection[loc] = result[j];
+				loc++;
+				j++;
+			}
+			else if (active_num + top_result_num <= loc)
+			{
+				mixed_selection[loc] = result[k];
+				loc++;
+				k--;
+			}
+		}
+
+		// Randomize
+		for (int m = 0; m < size_; ++m)
+		{
+			const int n = rand() % size_;
+			const int tempNo = mixed_selection[m];
+			mixed_selection[m] = mixed_selection[n];
+			mixed_selection[n] = tempNo;
+		}
+
+		number_selection_.clear();
+		number_selection_ = mixed_selection;
+	}
+
 	inline void getNumber(std::vector<int>* number) const
 	{
 		number->clear();
@@ -85,8 +135,8 @@ public:
 	}
 
 
-public:
-	inline void read_index(const std::string fname, std::vector<int>& vec)
+private:
+	void read_index(const std::string fname, std::vector<int>& vec)
 	{
 		std::ifstream ifs(fname);
 		if (!ifs)
@@ -105,6 +155,21 @@ public:
 			vec.push_back(index);
 			i++;
 		}
+	}
+
+	bool vector_finder(const std::vector<int>& vector, const int number)
+	{
+		if (vector.size() > 0)
+		{
+			auto itr = std::find(vector.begin(), vector.end(), number);
+			size_t index = std::distance(vector.begin(), itr);
+			if (index != vector.size())
+				return true;	// If the number exists in the vector.
+			else
+				return false;	// If the number does not exist in the vector.
+		}
+		else
+			return false;
 	}
 
 };
