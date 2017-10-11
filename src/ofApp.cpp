@@ -487,13 +487,14 @@ void ofApp::draw()
 		else if (0 > d_size_ * (k + 1) + scroll_areaA_)
 			continue;
 
+		int margin = 5;
+		int imgId = loader_->showList_[i];
 		img = loader_->picture_[i];
 
 		if (!img.isAllocated())
 			break;
 		else if (isactive_)
 		{
-			int imgId = loader_->showList_[i];
 			bool exist_positive = vector_finder(positives_, imgId);
 			bool exist_negative = vector_finder(negatives_, imgId);
 
@@ -501,31 +502,24 @@ void ofApp::draw()
 			{
 				if (exist_positive)
 				{
-					int margin = 5;
 					ofNoFill();
 					ofSetLineWidth(5);
 					ofSetColor(ofColor(255.0f, 0.0f, 0.0f, 255.0f));
 					ofDrawRectangle(drawx + margin, drawy + margin, d_size_ - 2*margin, d_size_ - 2*margin);
-
 				}
 				else if (exist_negative)
 				{
-					int margin = 5;
 					ofNoFill();
 					ofSetLineWidth(5);
 					ofSetColor(ofColor(0.0f, 0.0f, 255.0f, 255.0f));
 					ofDrawRectangle(drawx + margin, drawy + margin, d_size_ - 2 * margin, d_size_ - 2 * margin);
 				}
 
-				ofFill();
-				ofSetLineWidth(1);
 				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
 				img.draw(drawx, drawy, d_size_, d_size_);
 			}
 			else
 			{
-				ofFill();
-				ofSetLineWidth(1);
 				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 				img.draw(drawx, drawy, d_size_, d_size_);
 			}
@@ -534,6 +528,14 @@ void ofApp::draw()
 		{
 			ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 			img.draw(drawx, drawy, d_size_, d_size_);
+
+			if (imgId == searchTarget_)
+			{
+				ofNoFill();
+				ofSetLineWidth(5);
+				ofSetColor(ofColor(255.0f, 0.0f, 0.0f, 255.0f));
+				ofDrawRectangle(drawx + margin, drawy + margin, d_size_ - 2*margin, d_size_ - 2*margin);
+			}
 		}
 	}
 
@@ -541,6 +543,7 @@ void ofApp::draw()
 	const int len_negative_images = negative_images_.size();
 
 	// Positive sample viewer.
+	ofFill();
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
 	ofDrawRectangle(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_);
 
