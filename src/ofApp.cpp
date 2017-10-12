@@ -37,10 +37,10 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Display Settings.
-	colShow_ = 5;
+	colShow_ = 6;
 	d_size_ = (initWidth_ - leftsize_ - 2 * ScrollBarWidth_) / colShow_;
 	area_width_ = d_size_ * colShow_;
-	area_height_ = d_size_ * 5;
+	area_height_ = d_size_ * colShow_;
 
 	//-----------------------------------------
 	// Input Query.
@@ -89,7 +89,7 @@ void ofApp::initparam()
 	candidatefile_visualrank_ = logdir_ + "/candidate_visualrank.txt";
 	init_candidatefile_ = binData_ + "/cfd/initialize.txt";
 	evaluationfile_ = logdir_ + "/evaluation.csv";
-	testsettingfile_ = logdir_ + "/test_setting.txt";
+	testsettingfile_ = logdir_ + "/test.txt";
 
 	// Python Settings.
 	pysettingfile_ = binData_ + "/cfd/py_setting.txt";
@@ -109,7 +109,7 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Retrieval results.
-	active_size_ = 25;
+	active_size_ = 36;
 	search_window_size_ = 50;
 	isactive_ = true;
 	isorigin_ = false;

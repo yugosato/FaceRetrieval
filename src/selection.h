@@ -112,10 +112,10 @@ private:
 		selection_.clear();
 		selection_.resize(size_);
 
-		int active_num = 15;
-		int result_num = (size_ - active_num) / 2;
+		int active_num = 18;
+		int result_num = 18;
 
-		int i = 0, j = 0, k = result_rerank_.size() - 1;
+		int i = 0, j = 0;
 		int loc = 0;
 
 		while (loc < active_num + result_num)
@@ -132,10 +132,8 @@ private:
 			else
 			{
 				selection_[loc] = result_rerank_[j];
-				selection_[result_num + loc] = result_rerank_[k];
-				j++;
-				k--;
 				loc++;
+				j++;
 			}
 		}
 
