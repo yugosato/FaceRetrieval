@@ -336,6 +336,7 @@ void ofApp::update()
 		number_visualrank_ = database_->number_visualrank_;
 
 		writelog();
+		total_search_time_start_ = ofGetElapsedTimef();
 	}
 
 	if (trainer_->isTrained_)
@@ -419,6 +420,8 @@ void ofApp::update()
 		{
 			std::cout << "[ofApp] Search target was found!" << std::endl;
 			topface_rerank_.load(loader_->name_[searchTarget_]);
+			total_search_time_ = ofGetElapsedTimef() - total_search_time_start_;
+			test_writer_->target_found(epoch_, total_search_time_);
 		}
 
 		// Active selection.

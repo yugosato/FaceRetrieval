@@ -172,6 +172,16 @@ public:
 		writer << "Mixed result: " << which_mix << std::endl;
 	}
 
+	void target_found(const int epoch, const float time)
+	{
+		std::ofstream writer(filename_, std::ios::app);
+		if (!writer)
+			std::cerr << "[Warning] Cannot open the specified file. " << filename_ << std::endl;
+
+		writer << "Total Search: " << epoch << std::endl;
+		writer << "Total Search Time: " << time << std::endl;
+	}
+
 };
 
 #endif /* SRC_WRITER_H_ */
