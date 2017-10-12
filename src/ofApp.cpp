@@ -1,6 +1,14 @@
 #include "ofApp.h"
 
+//--------------------------------------------------------------
+ofApp::ofApp(const char* arg1, const char* arg2, const char* arg3)
+{
+	subjectname_ = ofToString(arg1);
+	searchTarget_ = ofToInt(arg2);
+	selection_method_ = ofToString(arg3);
+}
 
+//--------------------------------------------------------------
 void ofApp::initparam()
 {
 	//-----------------------------------------
@@ -44,52 +52,48 @@ void ofApp::initparam()
 	windowHeight_ = initHeight_;
 
 	//-----------------------------------------
-	// Font.
-	ttf_ = binData_ + "fonts/RictyDiminished-Bold.ttf";
-
-	//-----------------------------------------
 	// Path Settings.
-	binData_ = "/home/yugo/workspace/Interface/bin/data/";
-	datasetdir_ = "/home/yugo/Desktop/dataset/";
-	dataset_ = "cfd-cropped/";
-	nameFile_ = datasetdir_ + dataset_ + "images_selected.txt";
+	binData_ = "/home/yugo/workspace/Interface/bin/data";
+	datasetdir_ = "/home/yugo/Desktop/dataset";
+	dataset_ = "/cfd-cropped";
+	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
 
 #ifdef VGG
-	featuresfile_ = binData_ + "cfd/cfd-vgg.tsv";
-	npyFile_ = binData_ + "cfd/cfd-vgg.npy";
-	indexFile_ = binData_ + "cfd/cfd-vgg_index-angle";
+	featuresfile_ = binData_ + "/cfd/cfd-vgg.tsv";
+	npyFile_ = binData_ + "/cfd/cfd-vgg.npy";
+	indexFile_ = binData_ + "/cfd/cfd-vgg_index-angle";
 #endif
 #ifdef HISTOGRAM
-	indexFile_ = binData_ + "cfd/cfd-histogram_index-angle";
-	matrixFile_ = binData_ + "cfd/cfd-histogram.tsv";
-	npyFile_ = binData_ + "cfd/cfd-histogram.npy";
+	indexFile_ = binData_ + "/cfd/cfd-histogram_index-angle";
+	matrixFile_ = binData_ + "/cfd/cfd-histogram.tsv";
+	npyFile_ = binData_ + "/cfd/cfd-histogram.npy";
 #endif
 #ifdef GABOR
-	indexFile_ = binData_ + "cfd/cfd-gabor_index-angle";
-	matrixFile_ = binData_ + "cfd/cfd-gabor.tsv";
-	npyFile_ = binData_ + "cfd/cfd-gabor.npy";
+	indexFile_ = binData_ + "/cfd/cfd-gabor_index-angle";
+	matrixFile_ = binData_ + "/cfd/cfd-gabor.tsv";
+	npyFile_ = binData_ + "/cfd/cfd-gabor.npy";
 #endif
 #ifdef HISTOGRAM_GABOR
-	indexFile_ = binData_ + "cfd/cfd-histogram-gabor_index-angle";
-	matrixFile_ = binData_ + "cfd/cfd-histogram-gabor.tsv";
-	npyFile_ = binData_ + "cfd/cfd-histogra"
+	indexFile_ = binData_ + "/cfd/cfd-histogram-gabor_index-angle";
+	matrixFile_ = binData_ + "/cfd/cfd-histogram-gabor.tsv";
+	npyFile_ = binData_ + "/cfd/cfd-histogra"
 #endif
 
 	// Log Settings.
-	std::string time;
-	put_time(time);
-	logdir_ = "/home/yugo/workspace/Interface/bin/log/" + time + "/";
-	candidatefile_active_ = logdir_ + "candidate_active.txt";
-	candidatefile_origin_ = logdir_ + "candidate_origin.txt";
-	candidatefile_rerank_ = logdir_ + "candidate_rerank.txt";
-	candidatefile_visualrank_ = logdir_ + "candidate_visualrank.txt";
-	init_candidatefile_ = binData_ + "cfd/initialize.txt";
-	evaluationfile_ = logdir_ + "evaluation.csv";
-	testsettingfile_ = logdir_ + "test_setting.txt";
+	logdir_ = "/home/yugo/workspace/Interface/bin/log/" + subjectname_;
+	logdir_name();
+
+	candidatefile_active_ = logdir_ + "/candidate_active.txt";
+	candidatefile_origin_ = logdir_ + "/candidate_origin.txt";
+	candidatefile_rerank_ = logdir_ + "/candidate_rerank.txt";
+	candidatefile_visualrank_ = logdir_ + "/candidate_visualrank.txt";
+	init_candidatefile_ = binData_ + "/cfd/initialize.txt";
+	evaluationfile_ = logdir_ + "/evaluation.csv";
+	testsettingfile_ = logdir_ + "/test_setting.txt";
 
 	// Python Settings.
-	pysettingfile_ = binData_ + "cfd/py_setting.txt";
-	samplefile_ = logdir_ + "feedback.txt";
+	pysettingfile_ = binData_ + "/cfd/py_setting.txt";
+	samplefile_ = logdir_ + "/feedback.txt";
 	scriptfile_ = "/home/yugo/workspace/Interface/trainer/main_process.py";
 	positiveIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/positive_index.txt";
 	negativeIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/negative_index.txt";
@@ -98,6 +102,10 @@ void ofApp::initparam()
 	randomIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/random_index.txt";
 	resultGraphfile_ = "/home/yugo/workspace/Interface/trainer/result/acc_val.png";
 	new_featuresfile_ = "/home/yugo/workspace/Interface/trainer/result/features.tsv";
+
+	//-----------------------------------------
+	// Font.
+	ttf_ = binData_ + "/fonts/RictyDiminished-Bold.ttf";
 
 	//-----------------------------------------
 	// Retrieval results.
@@ -157,22 +165,22 @@ void ofApp::loadImageandFont()
 {
 	font_.load(ttf_, fontsize_);
 
-	searchbutton1_.load(binData_ + "items/search1.png");
-	searchbutton2_.load(binData_ + "items/search2.png");
+	searchbutton1_.load(binData_ + "/items/search1.png");
+	searchbutton2_.load(binData_ + "/items/search2.png");
 
-	buttonA1_.load(binData_ + "items/A1.png");
-	buttonA2_.load(binData_ + "items/A2.png");
+	buttonA1_.load(binData_ + "/items/A1.png");
+	buttonA2_.load(binData_ + "/items/A2.png");
 
-	buttonB1_.load(binData_ + "items/B1.png");
-	buttonB2_.load(binData_ + "items/B2.png");
+	buttonB1_.load(binData_ + "/items/B1.png");
+	buttonB2_.load(binData_ + "/items/B2.png");
 
-	buttonC1_.load(binData_ + "items/C1.png");
-	buttonC2_.load(binData_ + "items/C2.png");
+	buttonC1_.load(binData_ + "/items/C1.png");
+	buttonC2_.load(binData_ + "/items/C2.png");
 
-	buttonD1_.load(binData_ + "items/D1.png");
-	buttonD2_.load(binData_ + "items/D2.png");
+	buttonD1_.load(binData_ + "/items/D1.png");
+	buttonD2_.load(binData_ + "/items/D2.png");
 
-	graph_.load(binData_ + "items/init_graph.png");
+	graph_.load(binData_ + "/items/init_graph.png");
 }
 
 //--------------------------------------------------------------
@@ -195,6 +203,8 @@ void ofApp::setup()
 	guiSetup();
 	loadImageandFont();
 
+	mkdir(logdir_.c_str(), 0777);
+
 	// Get Database information.
 	database_ = new DataBase();
 	database_->setup(searchTarget_, active_size_, nameFile_, init_candidatefile_);
@@ -202,6 +212,12 @@ void ofApp::setup()
 	row_ = database_->getRow();
 	database_->getName(&name_);
 	database_->getPersonID(&person_ids_);
+
+	if (searchTarget_ > database_->row_ - 1)
+	{
+		std::cerr << "[Warning] Specified search target is over database range." << std::endl;
+		abort();
+	}
 
 	// Initialize scroll bar.
 	initializeBars();
@@ -225,8 +241,6 @@ void ofApp::setup()
 	loading_->startThread();
 
 	// Setup writer.
-	if (!isFileexists(logdir_))
-		mkdir(logdir_.c_str(), 0777);
 	samplewriter_ = new SampleWriter(samplefile_);
 	samplewriter_->init_write();
 
@@ -243,7 +257,7 @@ void ofApp::setup()
 	selection_->setup(activeIndexfile_, cueflikIndexfile_, randomIndexfile_);
 	selection_->set_searchTarget(searchTarget_);
 	selection_->set_size(active_size_);
-	selection_->set_method(selection_method_, selection_mix_);
+	selection_->set_method(selection_method_);
 
 	// Setup reranking method.
 	rerank_ = new ReRank;
@@ -256,7 +270,7 @@ void ofApp::setup()
 	// Setup test writer.
 	test_writer_ = new TestWriter;
 	test_writer_->setup(testsettingfile_);
-	test_writer_->settings(selection_->searchTarget_, selection_->method_, selection_->mix_);
+	test_writer_->settings(selection_->searchTarget_, selection_->method_);
 
 
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
@@ -273,6 +287,9 @@ void ofApp::guiSetup()
 	gui_ = new ofxUIScrollableCanvas(0, 0, windowWidth_, windowHeight_);
 	gui_->setScrollableDirections(false, true);
 	gui_->setColorBack(ofColor(0.0f, 0.0f, 0.0f, 0.0f));
+	std::string title = "Subject: " + subjectname_ + "   Target: " + ofToString(searchTarget_)
+			+ "   Method: " + selection_method_ + "   Log: " + logdir_;
+	ofSetWindowTitle(title);
 }
 
 //--------------------------------------------------------------
@@ -739,7 +756,7 @@ void ofApp::keyPressed(int key)
 			img.grabScreen(0, 0, ofGetWidth(), ofGetHeight());
 			std::string time;
 			put_time(time);
-			std::string savepath = logdir_ + time + ".jpeg";
+			std::string savepath = logdir_ + "/" + time + ".jpeg";
 			img.save(savepath);
 			std::cout << "[ofApp] Saved snapshot image." << std::endl;
 			std::cout << "[ofApp] --> \"" << savepath << "\"" << std::endl;
@@ -1470,12 +1487,12 @@ void ofApp::put_time(std::string& time_str)
     time(&current);
     local = localtime(&current);
 
-    std::string year = toString<int>(local->tm_year + 1900);
-    std::string month = toString<int>(local->tm_mon);
-    std::string day = toString<int>(local->tm_mday);
-    std::string hour = toString<int>(local->tm_hour);
-    std::string min = toString<int>(local->tm_min);
-    std::string sec = toString<int>(local->tm_sec);
+    std::string year = ofToString(local->tm_year + 1900);
+    std::string month = ofToString(local->tm_mon);
+    std::string day = ofToString(local->tm_mday);
+    std::string hour = ofToString(local->tm_hour);
+    std::string min = ofToString(local->tm_min);
+    std::string sec = ofToString(local->tm_sec);
     std::string delim = "-";
 
     time_str = year + delim + month + delim + day + delim + hour + delim + min + delim + sec;
@@ -1528,5 +1545,23 @@ void ofApp::update_overview_info()
 	overviewN_rowShow_ = (negatives_.size() + overview_colShow_ - 1) / overview_colShow_;
 	drawHeight_areaP_ = overview_d_size_ * overviewP_rowShow_;
 	drawHeight_areaN_ = overview_d_size_ * overviewN_rowShow_;
+}
+
+//--------------------------------------------------------------
+void ofApp::logdir_name()
+{
+	int i = 2;
+	std::string name = subjectname_;
+	while (1)
+	{
+		logdir_ = "/home/yugo/workspace/Interface/bin/log/" + name;
+		if (!isFileexists(logdir_))
+			break;
+		else
+		{
+			name = subjectname_ + ofToString(i);
+		}
+		i++;
+	}
 }
 

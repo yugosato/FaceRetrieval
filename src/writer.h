@@ -160,7 +160,7 @@ public:
 		filename_ = filename;
 	}
 
-	void settings(const int searchTarget, const std::string selection_method, const bool selection_mix)
+	void settings(const int searchTarget, const std::string selection_method)
 	{
 		std::ofstream writer(filename_, std::ios::trunc);
 		if (!writer)
@@ -168,7 +168,6 @@ public:
 
 		writer << "Search target: " << searchTarget << std::endl;
 		writer << "Selection method: " << selection_method << std::endl;
-		writer << "Mix: " << selection_mix << std::endl;
 	}
 
 	void target_found(const int epoch, const float time)

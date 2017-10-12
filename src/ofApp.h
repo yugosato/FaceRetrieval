@@ -31,27 +31,16 @@
 #include "rocchio.h"
 
 
-// ----------------------------- Test Settings ---------------------------- //
-const int searchTarget_ = 0;
-const std::string selection_method_ = "uncertain"; // "uncertain"/"random"/"traditional"
-const bool selection_mix_ = true;
-// ------------------------------------------------------------------------ //
-
-
-const int initWidth_ = 1600;	// Initial window size: Width.
-const int initHeight_ = 920;	// Initial window size: Height.
-
-template<class T> inline std::string toString(T x)
-{
-	std::ostringstream sout;
-	sout << x;
-	return sout.str();
-}
-
 // openFrameworks base class.
 class ofApp: public ofBaseApp
 {
 public:
+	//-----------------------------------------
+	// Startup arguments.
+	std::string subjectname_;						// Subject name.
+	int searchTarget_;								// Search target.
+	std::string selection_method_;                  // "uncertain"/"random"/"traditional"
+
 	//-----------------------------------------
 	// History.
 	int historysize_;								// The number of saved history.
@@ -69,7 +58,7 @@ public:
 	// GUI settings' parameters.
 	const int leftsize_ = 1000;						// Left region.
 	const int uppermargin_ = 20;					// Upper margin.
-	const int uppersize_ = uppermargin_ + 40;				// Upper region.
+	const int uppersize_ = uppermargin_ + 40;		// Upper region.
 	const int button_height_ = 30;					// Button height.
 	const int button_width_ = button_height_;		// Show active selection results button width.
 	const int buttonposy_line1_ = uppermargin_ + 5;	// The Y-coordinate of buttons on the 1st line.
@@ -114,14 +103,10 @@ public:
 
 	//-----------------------------------------
 	// Window Information.
+	const int initWidth_ = 1600;		// Initial window size: Width.
+	const int initHeight_ = 920;		// Initial window size: Height.
 	int windowWidth_;					// Current window width.
 	int windowHeight_;					// Current window height.
-
-	//-----------------------------------------
-	// Font.
-	std::string ttf_;								// Font data.
-	const int fontsize_ = 16;						// Font size.
-	const int fontposy_top_ = + uppermargin_ + 27;	// The Y-coordinate of top line text.
 
 	//-----------------------------------------
 	// Path Settings.
@@ -154,6 +139,12 @@ public:
 	std::string randomIndexfile_;			// Random Selection index file.
 	std::string resultGraphfile_;			// For update graph.
 	std::string new_featuresfile_;			// For rerank method.
+
+	//-----------------------------------------
+	// Font.
+	std::string ttf_;								// Font data.
+	const int fontsize_ = 16;						// Font size.
+	const int fontposy_top_ = + uppermargin_ + 27;	// The Y-coordinate of top line text.
 
 	//-----------------------------------------
 	// Overview Settings.
@@ -211,7 +202,7 @@ public:
 
 	//-----------------------------------------
 	// Retrieval results.
-	int active_size_;							// The number of displayed images (active selection).
+	int active_size_;						// The number of displayed images (active selection).
 	int search_window_size_;				// Search window size
 	std::vector<int> number_active_;		// Active selection results.
 	std::vector<int> number_origin_;		// Retrieval results (comparison: images' ids).
@@ -238,6 +229,10 @@ public:
 	int scroll_areaA_;						// Current scroll position.
 	int scroll_areaP_;						// Current scroll position.
 	int scroll_areaN_;						// Current scroll position.
+
+
+public:
+	ofApp(const char* arg1, const char* arg2, const char* arg3);
 
 
 public:
@@ -275,6 +270,7 @@ public:
 	void showProcessingTime();
 	void autoselect_negative();
 	void update_overview_info();
+	void logdir_name();
 
 
 public:

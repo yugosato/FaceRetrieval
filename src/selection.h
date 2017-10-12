@@ -46,14 +46,19 @@ public:
 		size_ = size;
 	}
 
-	void set_method(const std::string method, bool mix)
+	void set_method(const std::string method)
 	{
 		method_ = method;
 
 		if(method_ == "random" || method_ == "traditional")
 			mix_ = false;
+		else if (method_ == "uncertain" || method_ == "cueflik")
+			mix_ = true;
 		else
-			mix_ = mix;
+		{
+			std::cerr << "[Warning] Cannot select specified method: " << method_ << std::endl;
+			std::abort();
+		}
 	}
 
 	void set_result(const std::vector<int>& result_origin, const std::vector<int>& result_rerank)
@@ -73,11 +78,6 @@ public:
 			read_index(random_indexfile_);
 		else if (method_ == "traditional")
 			traditional();
-		else
-		{
-			std::cerr << "[Warning] Cannot open specified selection: " << method_ << std::endl;
-			std::abort();
-		}
 
 		if (!mix_)
 			default_selection();
