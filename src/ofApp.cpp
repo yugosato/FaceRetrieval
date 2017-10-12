@@ -175,8 +175,10 @@ void ofApp::loadImageandFont()
 	buttonC1_.load(binData_ + "/items/C1.png");
 	buttonC2_.load(binData_ + "/items/C2.png");
 
+#ifdef VISUALRANK
 	buttonD1_.load(binData_ + "/items/D1.png");
 	buttonD2_.load(binData_ + "/items/D2.png");
+#endif
 }
 
 //--------------------------------------------------------------
@@ -257,7 +259,9 @@ void ofApp::setup()
 
 	// Setup reranking method.
 	rerank_ = new ReRank;
+#ifdef VISUALRANK
 	visualrank_ = new VisualRank;
+#endif
 
 	// Setup evaluater.
 	single_evaluater_ = new SingleSearchEvaluater;
@@ -306,15 +310,17 @@ void ofApp::exit()
 	delete logger_active_;
 	delete logger_origin_;
 	delete logger_rerank_;
-	delete logger_visualrank_;
 	delete trainer_;
 	delete selection_;
 	delete rerank_;
-	delete visualrank_;
 	delete single_evaluater_;
 	delete rocchio_init_;
 	delete rocchio_new_;
 	delete test_writer_;
+#ifdef VISUALRANK
+	delete logger_visualrank_;
+	delete visualrank_;
+#endif
 }
 
 //--------------------------------------------------------------
@@ -334,12 +340,15 @@ void ofApp::update()
 		logger_active_ = new Logger;
 		logger_origin_ = new Logger;
 		logger_rerank_ = new Logger;
+#ifdef VISUALRANK
 		logger_visualrank_ = new Logger;
-
+#endif
 		logger_active_->setup(samplefile_, candidatefile_active_, pysettingfile_, npyFile_, loading_->col_);
 		logger_origin_->setup(samplefile_, candidatefile_origin_, pysettingfile_, npyFile_, loading_->col_);
 		logger_rerank_->setup(samplefile_, candidatefile_rerank_, pysettingfile_, npyFile_, loading_->col_);
+#ifdef VISUALRANK
 		logger_visualrank_->setup(samplefile_, candidatefile_visualrank_, pysettingfile_, npyFile_, loading_->col_);
+#endif
 		logger_active_->writePySetting();
 
 		single_evaluater_->set_features(loading_->features_);
@@ -347,8 +356,9 @@ void ofApp::update()
 		number_active_ = database_->number_active_;
 		number_origin_ = database_->number_origin_;
 		number_rerank_ = database_->number_rerank_;
+#ifdef VISUALRANK
 		number_visualrank_ = database_->number_visualrank_;
-
+#endif
 		writelog();
 		total_search_time_start_ = ofGetElapsedTimef();
 	}
@@ -405,6 +415,7 @@ void ofApp::update()
 		rerank_->getNumber(&number_rerank_);
 		rerank_->isReranked_ = false;
 
+#ifdef VISUALRANK
 		// VisualRank Reranking.
 		visualrank_->set_features(loading_->features_);
 		visualrank_->set_init_result(number_origin_);
@@ -416,6 +427,7 @@ void ofApp::update()
 		visualrank_->stopThread();
 		visualrank_->isReranked_ = false;
 		visualrank_->getNumber(&number_visualrank_);
+#endif
 		isSearchedAll_ = true;
 	}
 
@@ -446,13 +458,15 @@ void ofApp::update()
 		database_->setNumber_active(number_active_);
 		database_->setNumber_origin(number_origin_);
 		database_->setNumber_rerank(number_rerank_);
+#ifdef VISUALRANK
 		database_->setNumber_visualrank(number_visualrank_);
-
+#endif
 		isactive_ = true;
 		isorigin_ = false;
 		isrerank_ = false;
+#ifdef VISUALRANK
 		isvisualrank_ = false;
-
+#endif
 		calculate();
 		onPaint(showList_active_);
 
@@ -644,7 +658,9 @@ void ofApp::draw()
 		buttonA2_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+#ifdef VISUALRANK
 		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
+#endif
 		text = "Selection";
 	}
 	else if (isorigin_)
@@ -652,7 +668,9 @@ void ofApp::draw()
 		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonB2_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+#ifdef VISUALRANK
 		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
+#endif
 		text = "Original";
 	}
 	else if (isrerank_)
@@ -660,9 +678,12 @@ void ofApp::draw()
 		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonC2_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+#ifdef VISUALRANK
 		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
+#endif
 		text = "Rerank";
 	}
+#ifdef VISUALRANK
 	else if (isvisualrank_)
 	{
 		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
@@ -671,6 +692,7 @@ void ofApp::draw()
 		buttonD2_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 		text = "VisualRank";
 	}
+#endif
 
 	// Finding search target sign.
 	if (single_evaluater_->target_isInside_)
@@ -679,7 +701,9 @@ void ofApp::draw()
 		ofDrawRectangle(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
 		ofDrawRectangle(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
 		ofDrawRectangle(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+#ifdef VISUALRANK
 		ofDrawRectangle(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
+#endif
 	}
 
 	if (isFinishedInitSet_ && !canSearch_)
@@ -1098,7 +1122,9 @@ void ofApp::mouseReleased(int x, int y, int button)
 			isactive_ = true;
 			isorigin_ = false;
 			isrerank_ = false;
+#ifdef VISUALRANK
 			isvisualrank_ = false;
+#endif
 			onPaint(showList_active_);
 		}
 		else if (isReleasedArea(buttonB_posx_, buttonposy_line1_, button_width_, button_height_))
@@ -1106,7 +1132,9 @@ void ofApp::mouseReleased(int x, int y, int button)
 			isactive_ = false;
 			isorigin_ = true;
 			isrerank_ = false;
+#ifdef VISUALRANK
 			isvisualrank_ = false;
+#endif
 			onPaint(showList_origin_);
 		}
 		else if (isReleasedArea(buttonC_posx_, buttonposy_line1_, button_width_, button_height_))
@@ -1114,9 +1142,12 @@ void ofApp::mouseReleased(int x, int y, int button)
 			isactive_ = false;
 			isorigin_ = false;
 			isrerank_ = true;
+#ifdef VISUALRANK
 			isvisualrank_ = false;
+#endif
 			onPaint(showList_rerank_);
 		}
+#ifdef VISUALRANK
 		else if (isReleasedArea(buttonD_posx_, buttonposy_line1_, button_width_, button_height_))
 		{
 			isactive_ = false;
@@ -1125,6 +1156,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 			isvisualrank_ = true;
 			onPaint(showList_visualrank_);
 		}
+#endif
 
 		if (canSearch_ && isReleasedArea(searchbutton_posx_, buttonposy_line1_, searchbutton_width_, button_height_))
 		{
@@ -1259,8 +1291,10 @@ void ofApp::calculate()
 	database_->makeShowList_rerank();
 	showList_rerank_ = database_->getShowList();
 
+#ifdef VISUALRANK
 	database_->makeShowList_visualrank();
 	showList_visualrank_ = database_->getShowList();
+#endif
 }
 
 //--------------------------------------------------------------
@@ -1307,12 +1341,17 @@ void ofApp::inputHistory()
 //--------------------------------------------------------------
 void ofApp::writelog()
 {
-	std::vector<int> candidate_active, candidate_origin, candidate_rerank, candidate_visualrank;
+	std::vector<int> candidate_active, candidate_origin, candidate_rerank;
+#ifdef VISUALRANK
+	std::vector<int> candidate_visualrank;
+#endif
 
 	candidate_active.resize(active_size_);
 	candidate_origin.resize(search_window_size_);
 	candidate_rerank.resize(search_window_size_);
+#ifdef VISUALRANK
 	candidate_visualrank.resize(search_window_size_);
+#endif
 
 	for (int i = 0; i < active_size_; ++i)
 	{
@@ -1325,17 +1364,23 @@ void ofApp::writelog()
 	{
 		int num_origin = number_origin_[i];
 		int num_rerank = number_rerank_[i];
+#ifdef VISUALRANK
 		int num_visualrank = number_visualrank_[i];
+#endif
 		candidate_origin[i] = num_origin;
 		candidate_rerank[i] = num_rerank;
+#ifdef VISUALRANK
 		candidate_visualrank[i] = num_visualrank;
+#endif
 	}
 
 	database_->setHistory(candidatehistory_);
 	logger_active_->writeCandidate(candidate_active);
 	logger_origin_->writeCandidate(candidate_origin);
 	logger_rerank_->writeCandidate(candidate_rerank);
+#ifdef VISUALRANK
 	logger_visualrank_->writeCandidate(candidate_visualrank);
+#endif
 }
 
 //--------------------------------------------------------------
@@ -1348,8 +1393,10 @@ void ofApp::sizeChanged()
 		sList = &showList_origin_;
 	else if (isrerank_)
 		sList = &showList_rerank_;
+#ifdef VISUALRANK
 	else if (isvisualrank_)
 		sList = &showList_visualrank_;
+#endif
 
 	rowShow_ = (sList->size() + colShow_ - 1) / colShow_;
 	if (rowShow_ < 1)
@@ -1398,7 +1445,7 @@ void ofApp::updateScrollBars()
 	{
 		vscroll_areaN_.max(0);
 		vscroll_areaN_.change_by_bar(0);
-		vscroll_areaP_.current(0);
+		vscroll_areaN_.current(0);
 	}
 	else
 	{
@@ -1494,19 +1541,22 @@ void ofApp::put_time(std::string& time_str)
 //--------------------------------------------------------------
 void ofApp::showProcessingTime()
 {
+
 	float others = process_time_ - trainer_->process_time_ - rocchio_init_->process_time_
-			- search_->process_time_ - rerank_->process_time_ - visualrank_->process_time_;
+			- search_->process_time_ - rerank_->process_time_;
+
+#ifdef VISUALRANK
+	others = others - visualrank_->process_time_;
+#endif
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
-#ifdef RELIABILITY
-	std::cout << "Online Training (Main + LOOCV + Selection): " << trainer_->process_time_ << " sec." << std::endl;
-#else
 	std::cout << "Online Training (Main + Selection): " << trainer_->process_time_ << " sec." << std::endl;
-#endif
 	std::cout << "Rocchio Algorithm: " << rocchio_init_->process_time_ << " sec." << std::endl;
 	std::cout << "Searching (NGT): " << search_->process_time_ << " sec." << std::endl;
 	std::cout << "Reranking (Main): " << rerank_->process_time_ << " sec." << std::endl;
+#ifdef VISUALRANK
 	std::cout << "Reranking (VisualRank): " << visualrank_->process_time_ << " sec." << std::endl;
+#endif
 	std::cout << "Others: " << others << " sec." << std::endl;
 	std::cout << "Total: " << process_time_ << " sec." << std::endl;
 	std::cout << "---------------------------------------------------------------------" << std::endl;

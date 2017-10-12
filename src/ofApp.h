@@ -6,6 +6,8 @@
 //#define GABOR
 //#define HISTOGRAM_GABOR
 
+//#define VISUALRANK
+
 
 #include <iostream>
 #include <vector>
