@@ -71,6 +71,8 @@ public:
 		return col_;
 	}
 
+
+private:
 	inline void load_features()
 	{
 		std::ifstream ifs(featuresfile_);

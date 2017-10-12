@@ -75,6 +75,20 @@ public:
 		std::cout << "[ReRank] Finished reranking results by rocchio query vector." << std::endl;
 	}
 
+	inline void getNumber(std::vector<int>* number) const
+	{
+		number->clear();
+		number->resize(size_);
+		int i = 0;
+		while (i < size_)
+		{
+			(*number)[i] = reranked_result_[i];
+			++i;
+		}
+	}
+
+
+private:
 	void sort_result_by_index(const std::vector<int>& index)
 	{
 		reranked_result_.clear();
@@ -84,18 +98,6 @@ public:
 		while (i < size_)
 		{
 			reranked_result_[i] = init_result_[index[i]];
-			++i;
-		}
-	}
-
-	inline void getNumber(std::vector<int>* number) const
-	{
-		number->clear();
-		number->resize(size_);
-		int i = 0;
-		while (i < size_)
-		{
-			(*number)[i] = reranked_result_[i];
 			++i;
 		}
 	}

@@ -5,9 +5,8 @@
 //#define HISTOGRAM
 //#define GABOR
 //#define HISTOGRAM_GABOR
-
 //#define RELIABILITY
-#define MIX_SELECTION
+
 
 #include <iostream>
 #include <vector>
@@ -32,7 +31,13 @@
 #include "rocchio.h"
 
 
-const int searchTarget_ = 0;	// Single Search Target.
+// ----------------------------- Test Settings ---------------------------- //
+const int searchTarget_ = 0;
+const std::string selection_method_ = "uncertain"; // or "random" (--> mix=false)
+const bool selection_mix_ = true;
+const std::string which_mix_ = "rerank"; // or "origin"
+// ------------------------------------------------------------------------ //
+
 
 const int initWidth_ = 1600;	// Initial window size: Width.
 const int initHeight_ = 920;	// Initial window size: Height.

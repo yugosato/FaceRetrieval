@@ -58,6 +58,8 @@ public:
 		write();
 	}
 
+
+private:
 	// Calculate distance between the target and input point.
 	void calculate_distance()
 	{

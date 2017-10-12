@@ -17,9 +17,9 @@ public:
 	std::string uncertain_indexfile_;
 	std::string cueflik_indexfile_;
 	std::string random_indexfile_;
-	std::vector<int> number_selection_;
-	std::vector<int> full_number_selection_;
-	bool isLoaded_;
+	std::vector<int> selection_;
+	std::vector<int> full_selection_;
+	std::vector<int> result_;
 	int size_;
 
 
@@ -30,7 +30,6 @@ public:
 		uncertain_indexfile_ = uncertain_indexfile;
 		cueflik_indexfile_ = cueflik_indexfile;
 		random_indexfile_ = random_indexfile;
-		isLoaded_ = false;
 	}
 
 	void set_searchTarget(const int searchTarget)
@@ -41,12 +40,15 @@ public:
 	void set_size(const int size)
 	{
 		size_ = size;
-		number_selection_.resize(size_);
 	}
 
-	void load(const std::string method)
+	void set_result(std::vector<int>& result)
 	{
-		isLoaded_ = false;
+		result_ = result;
+	}
+
+	void load(const std::string method, const bool mix = false)
+	{
 		std::vector<int> index;
 		if (method == "uncertain")
 			read_index(uncertain_indexfile_);
@@ -60,80 +62,87 @@ public:
 			std::abort();
 		}
 
-		for (int i = 0; i < size_; i++)
-			number_selection_[i] = full_number_selection_[i];
-
-		isLoaded_ = true;
-	}
-
-	// Mix active selection & reranked results.
-	void mix_selection(const std::vector<int>& result)
-	{
-		// Store each value.
-		int active_num = 15;
-		int top_result_num = 5;
-		//int low_result_num = 5;
-
-		int i = 0, j = 0, k = result.size() - 1;
-		int loc = 0;
-		std::vector<int> mixed_selection(size_);
-
-		while (loc < size_)
-		{
-			if (loc < active_num)// loc:0-14
-			{
-				if (!vector_finder(result, full_number_selection_[i]))
-				{
-					mixed_selection[loc] = full_number_selection_[i];
-					loc++;
-				}
-				i++;
-			}
-			else if (active_num <= loc && loc < active_num + top_result_num)// loc:15-19
-			{
-				mixed_selection[loc] = result[j];
-				loc++;
-				j++;
-			}
-			else if (active_num + top_result_num <= loc)// loc:20-24
-			{
-				mixed_selection[loc] = result[k];
-				loc++;
-				k--;
-			}
-		}
-
-		// Randomize
-		for (int m = 0; m < size_; ++m)
-		{
-			const int n = rand() % size_;
-			const int tempNo = mixed_selection[m];
-			mixed_selection[m] = mixed_selection[n];
-			mixed_selection[n] = tempNo;
-		}
-
-		number_selection_.clear();
-		number_selection_ = mixed_selection;
+		if (!mix)
+			init_selection();
+		else
+			mix_selection();
 	}
 
 	inline void getNumber(std::vector<int>* number) const
 	{
 		number->clear();
-		int size = (int) number_selection_.size();
+		int size = (int) selection_.size();
 		number->resize(size);
 		for (int i = 0; i < size; ++i)
-			(*number)[i] = number_selection_[i];
+			(*number)[i] = selection_[i];
 	}
 
 
 private:
+	void init_selection()
+	{
+		selection_.clear();
+		selection_.resize(size_);
+		for (int i = 0; i < size_; i++)
+			selection_[i] = full_selection_[i];
+
+		random();
+	}
+
+	// Mix active selection & reranked results.
+	void mix_selection()
+	{
+		selection_.clear();
+		selection_.resize(size_);
+
+		int active_num = 15;
+		int result_num = (size_ - active_num) / 2;
+
+		int i = 0, j = 0, k = result_.size() - 1;
+		int loc = 0;
+
+		while (loc < active_num + result_num)
+		{
+			if (loc < active_num)
+			{
+				if (!vector_finder(result_, full_selection_[i]))
+				{
+					selection_[loc] = full_selection_[i];
+					loc++;
+				}
+				i++;
+			}
+			else
+			{
+				selection_[loc] = result_[j];
+				selection_[result_num + loc] = result_[k];
+				j++;
+				k--;
+				loc++;
+			}
+		}
+
+		random();
+	}
+
+	void random()
+	{
+		for (int m = 0; m < size_; ++m)
+		{
+			const int n = rand() % size_;
+			const int tempNo = selection_[m];
+			selection_[m] = selection_[n];
+			selection_[n] = tempNo;
+		}
+	}
+
 	void read_index(const std::string fname)
 	{
 		std::ifstream ifs(fname);
 		if (!ifs)
 			std::cerr << "[Warning] Cannot open the specified file. " << fname << std::endl;
 
-		full_number_selection_.clear();
+		full_selection_.clear();
 		std::string buf;
 
 		while (ifs && std::getline(ifs, buf))
@@ -141,7 +150,7 @@ private:
 			int num = std::atoi(buf.c_str());
 			if (num == searchTarget_)
 				continue;
-			full_number_selection_.push_back(num);
+			full_selection_.push_back(num);
 		}
 	}
 

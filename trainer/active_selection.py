@@ -112,13 +112,13 @@ class ActiveSelection(object):
 
         # Uncertainty Sampling (Margin Sampling)
         uncertain_index = self.getUncertaintyIndex(trn_ds, "sm", self.clf_)
-        # CueFlik Sampling
-        cueflik_index = self.getCueFlikIndex()
+        # # CueFlik Sampling
+        # cueflik_index = self.getCueFlikIndex()
         # Random Sampling
         random_index = self.getRandomIndex()
 
         self.write(os.path.join(home_dir, "result/uncertain_index.txt"), uncertain_index)
-        self.write(os.path.join(home_dir, "result/cueflik_index.txt"), cueflik_index)
+        # self.write(os.path.join(home_dir, "result/cueflik_index.txt"), cueflik_index)
         self.write(os.path.join(home_dir, "result/random_index.txt"), random_index)
 
 

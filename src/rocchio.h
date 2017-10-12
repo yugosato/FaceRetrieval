@@ -90,6 +90,8 @@ public:
 		std::cout << "[Rocchio] Finished calculating query vector by rocchio algorithm." << std::endl;
 	}
 
+
+private:
 	void calcAverage()
 	{
 		if (relnum_ > 0)

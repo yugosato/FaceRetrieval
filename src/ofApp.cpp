@@ -344,13 +344,6 @@ void ofApp::update()
 		loading_->stopThread();
 		loading_->isLoaded_new_ = false;
 
-		selection_->load("uncertain");
-	}
-
-	if (selection_->isLoaded_)
-	{
-		selection_->isLoaded_ = false;
-
 		// -------- Calculdate query vector by rocchio algorithm --------
 		// Original query vector (initail features).
 		rocchio_init_->set_features(loading_->features_);
@@ -420,9 +413,13 @@ void ofApp::update()
 			topface_rerank_.load(loader_->name_[searchTarget_]);
 		}
 
-#ifdef MIX_SELECTION
-		selection_->mix_selection(number_rerank_);
-#endif
+		// Active selection.
+		if (which_mix_ == "rerank")
+			selection_->set_result(number_rerank_);
+		else if (which_mix_ == "origin")
+			selection_->set_result(number_origin_);
+
+		selection_->load(selection_method_, selection_mix_);
 		selection_->getNumber(&number_active_);
 
 		database_->setNumber_active(number_active_);

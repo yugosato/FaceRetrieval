@@ -22,6 +22,7 @@ public:
 	std::vector<int> reranked_result_;
 	Eigen::MatrixXf similarity_matrix_;
 	int size_;
+	std::string init_method_;
 	bool isReranked_;
 	float process_time_;
 
@@ -39,12 +40,63 @@ public:
 		features_ = features;
 	}
 
-	void set_init_result(const std::vector<int>& result)
+	void set_init_result(const std::vector<int>& result, const std::string init_method = "constant")
 	{
 		init_result_ = result;
+		init_method_ = init_method;
 		size_ = (int) init_result_.size();
 	}
 
+	inline void threadedFunction()
+	{
+		std::cout << "[ReRank] Start reranking results by VisualRank." << std::endl;
+		isReranked_ = false;
+		lock();
+		float start = ofGetElapsedTimef();
+
+		make_similarityMatrix();
+
+		Eigen::VectorXf init_visualrank = init_visualrank_score();
+		Eigen::VectorXf bias = Eigen::VectorXf::Constant(size_, 1.0f / (float) size_);
+		Eigen::VectorXf visualrank = init_visualrank;
+
+		const int alpha = 1.0;
+		Eigen::VectorXf previousrank = Eigen::VectorXf::Random(size_);
+		while (1)
+		{
+			visualrank = alpha * (similarity_matrix_ * visualrank).array(); // + (1 - alpha) * bias.array();
+
+			if (previousrank == visualrank)
+				break;
+			else if (ofGetElapsedTimef() - start > 10.0f)
+				break;
+
+			previousrank = visualrank;
+		}
+
+		std::vector<float> score = eigen2stlvector(visualrank);
+		std::vector<int> reranked_idx = ArgSort(score, std::greater<float>());
+		sort_result_by_index(reranked_idx);
+
+		process_time_ = ofGetElapsedTimef() - start;
+		unlock();
+		isReranked_ = true;
+		std::cout << "[ReRank] Finished reranking results by VisuralRank." << std::endl;
+	}
+
+	inline void getNumber(std::vector<int>* number) const
+	{
+		number->resize(size_);
+		int i = 0;
+		while (i < size_)
+		{
+			(*number)[i] = reranked_result_[i];
+			++i;
+		}
+	}
+
+
+private:
 	inline void make_similarityMatrix()
 	{
 		similarity_matrix_ = Eigen::MatrixXf(size_, size_);
@@ -82,48 +134,11 @@ public:
 		}
 	}
 
-	inline void threadedFunction()
-	{
-		std::cout << "[ReRank] Start reranking results by VisualRank." << std::endl;
-		isReranked_ = false;
-		lock();
-		float start = ofGetElapsedTimef();
-
-		make_similarityMatrix();
-
-		Eigen::VectorXf init_visualrank = init_visualrank_score("nonlinear");
-		Eigen::VectorXf bias = Eigen::VectorXf::Constant(size_, 1.0f / (float) size_);
-		Eigen::VectorXf visualrank = init_visualrank;
-
-		const int alpha = 1.0;
-		Eigen::VectorXf previousrank = Eigen::VectorXf::Random(size_);
-		while (1)
-		{
-			visualrank = alpha * (similarity_matrix_ * visualrank).array(); // + (1 - alpha) * bias.array();
-
-			if (previousrank == visualrank)
-				break;
-			else if (ofGetElapsedTimef() - start > 10.0f)
-				break;
-
-			previousrank = visualrank;
-		}
-
-		std::vector<float> score = eigen2stlvector(visualrank);
-		std::vector<int> reranked_idx = ArgSort(score, std::greater<float>());
-		sort_result_by_index(reranked_idx);
-
-		process_time_ = ofGetElapsedTimef() - start;
-		unlock();
-		isReranked_ = true;
-		std::cout << "[ReRank] Finished reranking results by VisuralRank." << std::endl;
-	}
-
-	Eigen::VectorXf init_visualrank_score(const std::string& method)
+	Eigen::VectorXf init_visualrank_score()
 	{
 		Eigen::VectorXf rankscore(size_);
 
-		if (method == "lenear")
+		if (init_method_ == "lenear")
 		{
 			float score = (float) size_;
 			int i = 0;
@@ -135,11 +150,11 @@ public:
 			}
 			rankscore /= rankscore.sum();
 		}
-		else if (method == "constant")
+		else if (init_method_ == "constant")
 		{
 			rankscore = Eigen::VectorXf::Constant(size_, 1.0f / (float) size_);
 		}
-		else if (method == "nonlenear")
+		else if (init_method_ == "nonlenear")
 		{
 			float score = (float) size_;
 			float a = 2.0;
@@ -182,17 +197,6 @@ public:
 		}
 
 		return stlvector;
-	}
-
-	inline void getNumber(std::vector<int>* number) const
-	{
-		number->resize(size_);
-		int i = 0;
-		while (i < size_)
-		{
-			(*number)[i] = reranked_result_[i];
-			++i;
-		}
 	}
 
 };
