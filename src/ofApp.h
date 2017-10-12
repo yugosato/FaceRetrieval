@@ -33,9 +33,8 @@
 
 // ----------------------------- Test Settings ---------------------------- //
 const int searchTarget_ = 0;
-const std::string selection_method_ = "uncertain"; // or "random" (--> mix=false)
+const std::string selection_method_ = "uncertain"; // "uncertain"/"random"/"traditional"
 const bool selection_mix_ = true;
-const std::string which_mix_ = "rerank"; // or "origin"
 // ------------------------------------------------------------------------ //
 
 

@@ -19,8 +19,12 @@ public:
 	std::string random_indexfile_;
 	std::vector<int> selection_;
 	std::vector<int> full_selection_;
-	std::vector<int> result_;
+	std::vector<int> result_origin_;
+	std::vector<int> result_rerank_;
+	std::string method_;
+	bool mix_;
 	int size_;
+
 
 
 public:
@@ -42,28 +46,41 @@ public:
 		size_ = size;
 	}
 
-	void set_result(std::vector<int>& result)
+	void set_method(const std::string method, bool mix)
 	{
-		result_ = result;
+		method_ = method;
+
+		if(method_ == "random" || method_ == "traditional")
+			mix_ = false;
+		else
+			mix_ = mix;
 	}
 
-	void load(const std::string method, const bool mix = false)
+	void set_result(const std::vector<int>& result_origin, const std::vector<int>& result_rerank)
+	{
+		result_origin_ = result_origin;
+		result_rerank_ = result_rerank;
+	}
+
+	void load()
 	{
 		std::vector<int> index;
-		if (method == "uncertain")
+		if (method_ == "uncertain")
 			read_index(uncertain_indexfile_);
-		else if (method == "cueflik")
+		else if (method_ == "cueflik")
 			read_index(cueflik_indexfile_);
-		else if (method == "random")
+		else if (method_ == "random")
 			read_index(random_indexfile_);
+		else if (method_ == "traditional")
+			traditional();
 		else
 		{
-			std::cerr << "[Warning] Cannot open specified selection: " << method << std::endl;
+			std::cerr << "[Warning] Cannot open specified selection: " << method_ << std::endl;
 			std::abort();
 		}
 
-		if (!mix)
-			init_selection();
+		if (!mix_)
+			default_selection();
 		else
 			mix_selection();
 	}
@@ -79,7 +96,7 @@ public:
 
 
 private:
-	void init_selection()
+	void default_selection()
 	{
 		selection_.clear();
 		selection_.resize(size_);
@@ -98,14 +115,14 @@ private:
 		int active_num = 15;
 		int result_num = (size_ - active_num) / 2;
 
-		int i = 0, j = 0, k = result_.size() - 1;
+		int i = 0, j = 0, k = result_rerank_.size() - 1;
 		int loc = 0;
 
 		while (loc < active_num + result_num)
 		{
 			if (loc < active_num)
 			{
-				if (!vector_finder(result_, full_selection_[i]))
+				if (!vector_finder(result_rerank_, full_selection_[i]))
 				{
 					selection_[loc] = full_selection_[i];
 					loc++;
@@ -114,8 +131,8 @@ private:
 			}
 			else
 			{
-				selection_[loc] = result_[j];
-				selection_[result_num + loc] = result_[k];
+				selection_[loc] = result_rerank_[j];
+				selection_[result_num + loc] = result_rerank_[k];
 				j++;
 				k--;
 				loc++;
@@ -133,6 +150,25 @@ private:
 			const int tempNo = selection_[m];
 			selection_[m] = selection_[n];
 			selection_[n] = tempNo;
+		}
+	}
+
+	void traditional()
+	{
+		full_selection_.clear();
+
+		int size = result_origin_.size();
+		int i = 0;
+		while (i < size)
+		{
+			int num = result_origin_[i];
+
+			if (num != searchTarget_)
+			{
+				full_selection_.push_back(num);
+			}
+
+			i++;
 		}
 	}
 

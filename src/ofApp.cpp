@@ -243,6 +243,7 @@ void ofApp::setup()
 	selection_->setup(activeIndexfile_, cueflikIndexfile_, randomIndexfile_);
 	selection_->set_searchTarget(searchTarget_);
 	selection_->set_size(active_size_);
+	selection_->set_method(selection_method_, selection_mix_);
 
 	// Setup reranking method.
 	rerank_ = new ReRank;
@@ -255,7 +256,7 @@ void ofApp::setup()
 	// Setup test writer.
 	test_writer_ = new TestWriter;
 	test_writer_->setup(testsettingfile_);
-	test_writer_->settings(searchTarget_, selection_method_, selection_mix_, which_mix_);
+	test_writer_->settings(selection_->searchTarget_, selection_->method_, selection_->mix_);
 
 
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
@@ -425,12 +426,8 @@ void ofApp::update()
 		}
 
 		// Active selection.
-		if (which_mix_ == "rerank")
-			selection_->set_result(number_rerank_);
-		else if (which_mix_ == "origin")
-			selection_->set_result(number_origin_);
-
-		selection_->load(selection_method_, selection_mix_);
+		selection_->set_result(number_origin_, number_rerank_);
+		selection_->load();
 		selection_->getNumber(&number_active_);
 
 		database_->setNumber_active(number_active_);
