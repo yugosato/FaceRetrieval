@@ -5,7 +5,6 @@
 //#define HISTOGRAM
 //#define GABOR
 //#define HISTOGRAM_GABOR
-//#define RELIABILITY
 
 
 #include <iostream>
@@ -168,16 +167,13 @@ public:
 	int perHeight_;							// Split window into parts.
 	int positive_txt_posy_;					// "Positive" text position.
 	int negative_txt_posy_;					// "Negative" text position.
-	int reliability_txt_posy_;				// "Reliability" text position.
 	int propose_txt_posx_;					// "Is this person?" text position.
 	int propose_txt_posy_;					// "Is this person?" text position.
 	int overviewP_areaposy_;				// The Y-coordinate of positive overview.
 	int overviewN_areaposy_;				// The Y-coordinate of negative overview.
-	int overviewR_areaposy_;				// The Y-coordinate of reliability overview.
 	int overview_areawidth_;				// Every overview width.
 	int overview_areawidth_wide_;			// Every overview width (wide).
 	int overview_areaheight_;				// Every overview height.
-	int graph_width_;						// Graph width.
 	int propose_imgsize_;					// Proposed image size
 	int propose_img_posx_;					// Proposed image position.
 	int propose_img_posy_;					// Proposed image position.
@@ -301,7 +297,6 @@ public:
 
 
 public:
-	ofImage graph_;
 	ofImage topface_rerank_;
 
 

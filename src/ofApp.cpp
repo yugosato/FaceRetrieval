@@ -134,21 +134,18 @@ void ofApp::initparam()
 	holding_y_ = -1;
 	overview_areamargin_ = ScrollBarWidth_;
 	overview_d_size_ = (leftsize_ - 3 * overview_areamargin_) / overview_colShow_;
-	perHeight_ = ((uppersize_ + area_height_) - 2 * uppersize_) / 2;
+	perHeight_ = (windowHeight_ - 2 * uppersize_) / 2 - 20;
 	positive_txt_posy_ = fontposy_top_;
 	negative_txt_posy_ = positive_txt_posy_ + perHeight_ + uppersize_;
-	reliability_txt_posy_ = negative_txt_posy_ + perHeight_ + uppersize_;
-	propose_txt_posy_ = reliability_txt_posy_;
+	propose_txt_posy_ = 2 * uppersize_ + area_height_ - 15;
 	overviewP_areaposy_ = positive_txt_posy_ + 10;
 	overviewN_areaposy_ = negative_txt_posy_ + 10;
-	overviewR_areaposy_ = reliability_txt_posy_ + 10;
 	overview_areawidth_ = overview_d_size_ * overview_colShow_;
 	overview_areawidth_wide_ = windowWidth_ - 2 * overview_areamargin_;
 	overview_areaheight_ = perHeight_;
-	graph_width_ = overview_areawidth_wide_ - overview_areaheight_ - overview_areamargin_ - 10;
-	propose_imgsize_ = overview_areaheight_;
-	propose_img_posx_ = windowWidth_ - overview_areamargin_ - propose_imgsize_ - 30;
-	propose_img_posy_ = overviewR_areaposy_;
+	propose_imgsize_ = (overviewN_areaposy_ + overview_areaheight_) - (2 * uppersize_ + area_height_);
+	propose_img_posx_ = leftsize_ + (area_width_ - propose_imgsize_) / 2;
+	propose_img_posy_ = propose_txt_posy_ + 10;
 	len_positives_ = 0;
 	len_negatives_ = 0;
 
@@ -180,8 +177,6 @@ void ofApp::loadImageandFont()
 
 	buttonD1_.load(binData_ + "/items/D1.png");
 	buttonD2_.load(binData_ + "/items/D2.png");
-
-	graph_.load(binData_ + "/items/init_graph.png");
 }
 
 //--------------------------------------------------------------
@@ -453,11 +448,6 @@ void ofApp::update()
 		database_->setNumber_rerank(number_rerank_);
 		database_->setNumber_visualrank(number_visualrank_);
 
-#ifdef RELIABILITY
-		graph_.load(resultGraphfile_);
-		graph_.update();
-#endif
-
 		isactive_ = true;
 		isorigin_ = false;
 		isrerank_ = false;
@@ -633,7 +623,8 @@ void ofApp::draw()
 	ofSetColor(ofColor(0.0f, 0.0f, 0.0f, 255.0f));
     ofDrawRectangle(0, 0, windowWidth_, uppersize_);
     ofDrawRectangle(0, overviewP_areaposy_ + overview_areaheight_, overview_areamargin_ + overview_areawidth_, overviewN_areaposy_ - (overviewP_areaposy_ + overview_areaheight_));
-    ofDrawRectangle(0, overviewN_areaposy_ + overview_areaheight_, windowWidth_, windowHeight_ - (overviewN_areaposy_ + overview_areaheight_));
+    ofDrawRectangle(0, overviewN_areaposy_ + overview_areaheight_, overview_areamargin_ + overview_areawidth_, windowHeight_ - (overviewN_areaposy_ + overview_areaheight_));
+    ofDrawRectangle(leftsize_, uppersize_ + area_height_, windowWidth_ - leftsize_, windowHeight_ - (uppersize_ + area_height_));
 
 	// Scroll Bar.
 	vscroll_areaA_.draw();
@@ -654,7 +645,7 @@ void ofApp::draw()
 		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
-		text = "ActiveSelection";
+		text = "Selection";
 	}
 	else if (isorigin_)
 	{
@@ -700,21 +691,16 @@ void ofApp::draw()
 
 	std::string positive = "Positive Sample: ";
 	std::string negative = "Negative Sample: ";
-	std::string reliability = "Reliability Graph";
 
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
     font_.drawString(positive + ofToString(len_positives_), overview_areamargin_, positive_txt_posy_);
 	font_.drawString(negative + ofToString(len_negatives_), overview_areamargin_, negative_txt_posy_);
-	font_.drawString(reliability, overview_areamargin_, reliability_txt_posy_);
 	//------------------------------------------------------------------------------
-
-	// Reliability graph viewer.
-	graph_.draw(overview_areamargin_, overviewR_areaposy_, graph_width_, overview_areaheight_);
 
 	// Proposed image.
 	std::string propose = "Is this photograph?";
 	int propose_txt_width = font_.stringWidth(propose);
-	propose_txt_posx_ = propose_img_posx_ + (propose_imgsize_ - propose_txt_width) / 2;
+	propose_txt_posx_ = leftsize_ + (area_width_ - propose_txt_width) / 2;
 	font_.drawString(propose, propose_txt_posx_, propose_txt_posy_);
 
 	int margin = 10;
