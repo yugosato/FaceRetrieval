@@ -1,8 +1,5 @@
 #include "ofMain.h"
 #include "ofApp.h"
-#include "NGT/ObjectSpace.h"
-#include "boost/python.hpp"
-#include "boost/python/numpy.hpp"
 
 
 // argv[1] subject name
