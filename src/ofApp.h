@@ -199,6 +199,7 @@ public:
 	int len_current_showlist_;				// The number of current shown images.
 	float total_search_time_;				// Total search time until search target is found.
 	float total_search_time_start_;			// Timer (start).
+	int selection_count_;					// Count user selections.
 
 	//-----------------------------------------
 	// Retrieval results.

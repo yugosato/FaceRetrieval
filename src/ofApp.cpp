@@ -158,6 +158,7 @@ void ofApp::initparam()
 	isSearchedAll_ = false;
 	isFinishedInitSet_ = false;
 	canSearch_ = false;
+	selection_count_ = 0;
 }
 
 //--------------------------------------------------------------
@@ -439,7 +440,7 @@ void ofApp::update()
 			std::cout << "[ofApp] Search target was found!" << std::endl;
 			topface_rerank_.load(loader_->name_[searchTarget_]);
 			total_search_time_ = ofGetElapsedTimef() - total_search_time_start_;
-			test_writer_->target_found(epoch_, total_search_time_);
+			test_writer_->target_found(epoch_, total_search_time_, selection_count_);
 		}
 
 		// Active selection.
@@ -711,7 +712,7 @@ void ofApp::draw()
 	graph_.draw(overview_areamargin_, overviewR_areaposy_, graph_width_, overview_areaheight_);
 
 	// Proposed image.
-	std::string propose = "Is this person?";
+	std::string propose = "Is this photograph?";
 	int propose_txt_width = font_.stringWidth(propose);
 	propose_txt_posx_ = propose_img_posx_ + (propose_imgsize_ - propose_txt_width) / 2;
 	font_.drawString(propose, propose_txt_posx_, propose_txt_posy_);
@@ -1027,6 +1028,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 						positives_.push_back(dragImgId);
 						positive_images_.push_back(dragImg);
 						len_positives_ = positives_.size();
+						selection_count_++;
 					}	// A -> N.
 					else if (isInside_areaN_)
 					{
@@ -1034,6 +1036,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 						negatives_.push_back(dragImgId);
 						negative_images_.push_back(dragImg);
 						len_negatives_ = negatives_.size();
+						selection_count_++;
 					}
 				}
 			}
@@ -1050,6 +1053,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 					positives_.erase(positives_.begin() + holdImgNum_);
 					positive_images_.erase(positive_images_.begin() + holdImgNum_);
 					len_positives_ = positives_.size();
+					selection_count_++;
 				}	// P -> N.
 				else if (isInside_areaN_)
 				{
@@ -1063,6 +1067,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 						positive_images_.erase(positive_images_.begin() + holdImgNum_);
 						len_positives_ = positives_.size();
 						len_negatives_ = negatives_.size();
+						selection_count_++;
 					}
 				}
 			}
@@ -1079,6 +1084,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 					negatives_.erase(negatives_.begin() + holdImgNum_);
 					negative_images_.erase(negative_images_.begin() + holdImgNum_);
 					len_negatives_ = negatives_.size();
+					selection_count_++;
 				}	// N -> P.
 				else if (isInside_areaP_)
 				{
@@ -1092,6 +1098,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 						negative_images_.erase(negative_images_.begin() + holdImgNum_);
 						len_positives_ = positives_.size();
 						len_negatives_ = negatives_.size();
+						selection_count_++;
 					}
 				}
 			}

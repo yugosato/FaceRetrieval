@@ -170,7 +170,7 @@ public:
 		writer << "Selection method: " << selection_method << std::endl;
 	}
 
-	void target_found(const int epoch, const float time)
+	void target_found(const int epoch, const float time, const int selection_count)
 	{
 		std::ofstream writer(filename_, std::ios::app);
 		if (!writer)
@@ -178,6 +178,7 @@ public:
 
 		writer << "Total Search: " << epoch << std::endl;
 		writer << "Total Search Time: " << time << std::endl;
+		writer << "Total Selection Counte: " << selection_count << std::endl;
 	}
 
 };
