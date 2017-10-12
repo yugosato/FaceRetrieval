@@ -85,6 +85,7 @@ void ofApp::initparam()
 	candidatefile_visualrank_ = logdir_ + "candidate_visualrank.txt";
 	init_candidatefile_ = binData_ + "cfd/initialize.txt";
 	evaluationfile_ = logdir_ + "evaluation.csv";
+	testsettingfile_ = logdir_ + "test_setting.txt";
 
 	// Python Settings.
 	pysettingfile_ = binData_ + "cfd/py_setting.txt";
@@ -251,6 +252,12 @@ void ofApp::setup()
 	single_evaluater_ = new SingleSearchEvaluater;
 	single_evaluater_->setup(searchTarget_, evaluationfile_);
 
+	// Setup test writer.
+	test_writer_ = new TestWriter;
+	test_writer_->setup(testsettingfile_);
+	test_writer_->settings(searchTarget_, selection_method_, selection_mix_, which_mix_);
+
+
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Matrix file: \"" << featuresfile_ << "\"" << std::endl;
 	std::cout << "[Setting] Npy file: \"" << npyFile_ << "\"" << std::endl;
@@ -293,6 +300,7 @@ void ofApp::exit()
 	delete single_evaluater_;
 	delete rocchio_init_;
 	delete rocchio_new_;
+	delete test_writer_;
 }
 
 //--------------------------------------------------------------

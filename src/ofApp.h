@@ -142,6 +142,7 @@ public:
 	std::string candidatefile_visualrank_;	// Candidate list (visualrank).
 	std::string init_candidatefile_;		// Initial candidates list.
 	std::string evaluationfile_;			// Evaluation result file.
+	std::string testsettingfile_;			// Test setting file.
 
 	// Python Settings.
 	std::string pysettingfile_;				// Python settings.
@@ -323,6 +324,7 @@ public:
 	SingleSearchEvaluater* single_evaluater_;	// Evaluater.
 	Rocchio* rocchio_init_;						// Rocchio algorithm (original).
 	Rocchio* rocchio_new_;						// Rocchio algorithm (new feature).
+	TestWriter* test_writer_;					// Writeout test log.
 };
 
 
