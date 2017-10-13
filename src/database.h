@@ -145,9 +145,8 @@ public:
 	}
 
 
-	inline void makeShowList_active()
+	inline void makeShowList_active(const int size)
 	{
-		const int size = number_active_.size();
 		showList_.clear();
 		showList_.resize(size);
 
@@ -155,9 +154,8 @@ public:
 			showList_[i] = number_active_[i];
 	}
 
-	inline void makeShowList_origin()
+	inline void makeShowList_origin(const int size)
 	{
-		const int size = number_origin_.size();
 		showList_.clear();
 		showList_.resize(size);
 
@@ -165,9 +163,8 @@ public:
 			showList_[i] = number_origin_[i];
 	}
 
-	inline void makeShowList_rerank()
+	inline void makeShowList_rerank(const int size)
 	{
-		const int size = number_rerank_.size();
 		showList_.clear();
 		showList_.resize(size);
 
@@ -175,9 +172,8 @@ public:
 			showList_[i] = number_rerank_[i];
 	}
 
-	inline void makeShowList_visualrank()
+	inline void makeShowList_visualrank(const int size)
 	{
-		const int size = number_visualrank_.size();
 		showList_.clear();
 		showList_.resize(size);
 

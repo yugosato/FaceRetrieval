@@ -10,7 +10,7 @@ def main():
     # in/out settings
     inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy"
     outputfile = "/home/yugo/workspace/Interface/bin/data/cfd/initialize.txt"
-    clustersize = 36
+    clustersize = 25
 
     # kmeans clustering
     X = np.load(inputfile)

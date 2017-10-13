@@ -85,7 +85,7 @@ private:
 
 		writer << distance_;
 		if (target_isInside_)
-			writer << "," << "Target";
+			writer << "," << "Target is inside search window";
 		writer << std::endl;
 
 		writer.close();

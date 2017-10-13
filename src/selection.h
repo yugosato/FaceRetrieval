@@ -112,8 +112,8 @@ private:
 		selection_.clear();
 		selection_.resize(size_);
 
-		int active_num = 18;
-		int result_num = 18;
+		int active_num = 13;
+		int result_num = size_ - active_num;
 
 		int i = 0, j = 0;
 		int loc = 0;

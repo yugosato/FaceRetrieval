@@ -37,7 +37,7 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Display Settings.
-	colShow_ = 6;
+	colShow_ = 5;
 	d_size_ = (initWidth_ - leftsize_ - 2 * ScrollBarWidth_) / colShow_;
 	area_width_ = d_size_ * colShow_;
 	area_height_ = d_size_ * colShow_;
@@ -109,8 +109,9 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Retrieval results.
-	active_size_ = 36;
+	active_size_ = 25;
 	search_window_size_ = 50;
+	show_size_ = 25;
 	isactive_ = true;
 	isorigin_ = false;
 	isrerank_ = false;
@@ -126,6 +127,9 @@ void ofApp::initparam()
 	isInside_areaA_ = false;
 	isInside_areaP_ = false;
 	isInside_areaN_ = false;
+	isInside_propose_ = false;
+	isJudgeTrue_ = false;
+	isJudgeFalse_ = false;
 	overview_colShow_ = 15;
 	overviewP_rowShow_ = 0;
 	overviewP_rowShow_ = 0;
@@ -224,6 +228,8 @@ void ofApp::setup()
 	loader_ = new ImageLoader();
 	loader_->setRow(row_);
 	loader_->setName(name_);
+	loader_->set_searchTarget(searchTarget_);
+
 	calculate();
 	onPaint(showList_active_);
 	firstshowlist_ = showList_active_;
@@ -271,7 +277,6 @@ void ofApp::setup()
 	test_writer_ = new TestWriter;
 	test_writer_->setup(testsettingfile_);
 	test_writer_->settings(selection_->searchTarget_, selection_->method_);
-
 
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Matrix file: \"" << featuresfile_ << "\"" << std::endl;
@@ -440,12 +445,9 @@ void ofApp::update()
 		single_evaluater_->set_results(number_origin_);
 		single_evaluater_->run();
 
-		if (!single_evaluater_->target_isInside_)
-			topface_rerank_.load(loader_->name_[number_rerank_[0]]);
-		else
+		if (isJudgeTrue_)
 		{
 			std::cout << "[ofApp] Search target was found!" << std::endl;
-			topface_rerank_.load(loader_->name_[searchTarget_]);
 			total_search_time_ = ofGetElapsedTimef() - total_search_time_start_;
 			test_writer_->target_found(epoch_, total_search_time_, selection_count_);
 		}
@@ -481,8 +483,17 @@ void ofApp::update()
 		vscroll_areaA_.current(0);
 	}
 
+	// Pause timer.
+	if (isJudgeFalse_)
+	{
+		float pause_timer = ofGetElapsedTimef() - pause_timer_start_;
+		if (pause_time_ < pause_timer)
+			isJudgeFalse_ = false;
+	}
+
 	// Scroll Bar.
-	vscroll_areaA_.update();
+	if (drawHeight_areaA_ > area_height_)
+		vscroll_areaA_.update();
 	vscroll_areaP_.update();
 	vscroll_areaN_.update();
 
@@ -555,10 +566,13 @@ void ofApp::draw()
 		}
 		else if (!isactive_)
 		{
-			ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+			if (isHolding_areaA_ && i == holdImgNum_)
+				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
+			else
+				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 			img.draw(drawx, drawy, d_size_, d_size_);
 
-			if (imgId == searchTarget_)
+			if (isJudgeTrue_ && imgId == searchTarget_)
 			{
 				ofNoFill();
 				ofSetLineWidth(5);
@@ -641,7 +655,8 @@ void ofApp::draw()
     ofDrawRectangle(leftsize_, uppersize_ + area_height_, windowWidth_ - leftsize_, windowHeight_ - (uppersize_ + area_height_));
 
 	// Scroll Bar.
-	vscroll_areaA_.draw();
+    if (drawHeight_areaA_ > area_height_)
+    	vscroll_areaA_.draw();
 	vscroll_areaP_.draw();
 	vscroll_areaN_.draw();
 
@@ -694,24 +709,12 @@ void ofApp::draw()
 	}
 #endif
 
-	// Finding search target sign.
-	if (single_evaluater_->target_isInside_)
-	{
-		ofSetColor(ofColor(255.0f, 255.0f, 0.0f, 130.0f));
-		ofDrawRectangle(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
-		ofDrawRectangle(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
-		ofDrawRectangle(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
-#ifdef VISUALRANK
-		ofDrawRectangle(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
-#endif
-	}
-
 	if (isFinishedInitSet_ && !canSearch_)
 		text = "Searching...";
 
 	float w = font_.stringWidth(text);
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-	font_.drawString(text, windowWidth_ - w - ScrollBarWidth_ - 10, fontposy_top_);
+	font_.drawString(text, windowWidth_ - w - ScrollBarWidth_ - 35, fontposy_top_);
 
 	std::string positive = "Positive Sample: ";
 	std::string negative = "Negative Sample: ";
@@ -722,22 +725,44 @@ void ofApp::draw()
 	//------------------------------------------------------------------------------
 
 	// Proposed image.
-	std::string propose = "Is this photograph?";
+	int margin = 10;
+	std::string propose;
+	if (isJudgeFalse_)
+	{
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+		ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
+		ofSetColor(ofColor(128.0f, 128.0f, 128.0f, 255.0f));
+		ofDrawRectangle(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+
+		propose = "False.";
+	}
+	else if (!isJudgeTrue_)
+	{
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+		ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
+		ofSetColor(ofColor(128.0f, 128.0f, 128.0f, 255.0f));
+		ofDrawRectangle(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+
+		propose = "Is this photograph?";
+	}
+	else if (isJudgeTrue_)
+	{
+		ofSetColor(ofColor(255.0f, 255.0f, 0.0f, 255.0f));
+		ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
+
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+		loader_->searchTarget_img_.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+
+		ofSetColor(ofColor(255.0f, 255.0f, 0.0f, 255.0f));
+
+		propose = "Exactly!";
+	}
+
 	int propose_txt_width = font_.stringWidth(propose);
 	propose_txt_posx_ = leftsize_ + (area_width_ - propose_txt_width) / 2;
 	font_.drawString(propose, propose_txt_posx_, propose_txt_posy_);
-
-	int margin = 10;
-	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-	ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
-	ofSetColor(ofColor(128.0f, 128.0f, 128.0f, 255.0f));
-	ofDrawRectangle(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
-
-	if (epoch_ > 0 && topface_rerank_.isAllocated())
-	{
-		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-		topface_rerank_.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
-	}
 
 	// Holding image.
 	if (isHoldAndDrag_)
@@ -794,11 +819,12 @@ void ofApp::mouseMoved(int x, int y)
 		if (canSearch_)
 		{
 			// Area A.
-			if (isactive_ && isInsideMouseoverArea(leftsize_, uppersize_, area_width_, area_height_))
+			if (isInsideMouseoverArea(leftsize_, uppersize_, area_width_, area_height_))
 			{
 				isInside_areaA_ = true;
 				isInside_areaP_ = false;
 				isInside_areaN_ = false;
+				isInside_propose_ = false;
 				x_dash = x - leftsize_;
 				y_dash = y - scroll_areaA_ - uppersize_;
 				mouseover_ = x_dash / d_size_ + y_dash / d_size_ * colShow_;
@@ -808,6 +834,7 @@ void ofApp::mouseMoved(int x, int y)
 				isInside_areaA_ = false;
 				isInside_areaP_ = true;
 				isInside_areaN_ = false;
+				isInside_propose_ = false;
 				x_dash = x - overview_areamargin_;
 				y_dash = y - scroll_areaP_ - overviewP_areaposy_;
 				mouseover_ = x_dash / overview_d_size_ + y_dash / overview_d_size_ * overview_colShow_;
@@ -817,15 +844,25 @@ void ofApp::mouseMoved(int x, int y)
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
 				isInside_areaN_ = true;
+				isInside_propose_ = false;
 				x_dash = x - overview_areamargin_;
 				y_dash = y - scroll_areaN_ - overviewN_areaposy_;
 				mouseover_ = x_dash / overview_d_size_ + y_dash / overview_d_size_ * overview_colShow_;
+			}	// Propose area,
+			else if (isInsideMouseoverArea(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_))
+			{
+				isInside_areaA_ = false;
+				isInside_areaP_ = false;
+				isInside_areaN_ = true;
+				isInside_propose_ = true;
+				mouseover_ = -1;
 			}
 			else
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
 				isInside_areaN_ = false;
+				isInside_propose_ = false;
 				mouseover_ = -1;
 			}
 		}
@@ -872,7 +909,16 @@ void ofApp::mouseDragged(int x, int y, int button)
 				bool exist_positive = vector_finder(positives_, imgId);
 				bool exist_negative = vector_finder(negatives_, imgId);
 
-				if (!exist_positive && !exist_negative)
+				if (isactive_)
+				{
+					if (!exist_positive && !exist_negative)
+					{
+						holdImgNum_ = mouseover_;
+						isHoldAndDrag_ = true;
+						calculateHoldingOriginPoint();
+					}
+				}
+				else
 				{
 					holdImgNum_ = mouseover_;
 					isHoldAndDrag_ = true;
@@ -910,26 +956,35 @@ void ofApp::mouseDragged(int x, int y, int button)
 				isInside_areaA_ = true;
 				isInside_areaP_ = false;
 				isInside_areaN_ = false;
+				isInside_propose_ = false;
 			}	// Area P.
-			else if (isInsideDragingArea(overview_areamargin_, overviewP_areaposy_,
-					overview_areawidth_, overview_areaheight_))
+			else if (isactive_ && isInsideDragingArea(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = true;
 				isInside_areaN_ = false;
+				isInside_propose_ = false;
 			}	// Area N.
-			else if (isInsideDragingArea(overview_areamargin_, overviewN_areaposy_,
-					overview_areawidth_, overview_areaheight_))
+			else if (isactive_ && isInsideDragingArea(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
 				isInside_areaN_ = true;
+				isInside_propose_ = false;
+			}	// Propose area.
+			else if (!isactive_ && isInsideDragingArea(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_))
+			{
+				isInside_areaA_ = false;
+				isInside_areaP_ = false;
+				isInside_areaN_ = false;
+				isInside_propose_ = true;
 			}
 			else
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
 				isInside_areaN_ = false;
+				isInside_propose_ = false;
 			}
 		}
 		else
@@ -937,6 +992,7 @@ void ofApp::mouseDragged(int x, int y, int button)
 			isInside_areaA_ = false;
 			isInside_areaP_ = false;
 			isInside_areaN_ = false;
+			isInside_propose_ = false;
 		}
 	}
 	else
@@ -944,6 +1000,7 @@ void ofApp::mouseDragged(int x, int y, int button)
 		isInside_areaA_ = false;
 		isInside_areaP_ = false;
 		isInside_areaN_ = false;
+		isInside_propose_ = false;
 	}
 }
 
@@ -1023,7 +1080,18 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			if (isHolding_areaA_)
 			{
-				std::vector<int> *list = &showList_active_;
+				std::vector<int>* list;
+				if (isactive_)
+					list = &showList_active_;
+				else if (isorigin_)
+					list = &showList_origin_;
+				else if (isrerank_)
+					list = &showList_rerank_;
+#ifdef VISUALRANK
+				else if (isvisualrank_)
+					list = &showList_visualrank_;
+#endif
+
 				const int dragImgId = (*list)[holdImgNum_];
 				ofImage dragImg = loader_->picture_[holdImgNum_];
 				bool check_duplication_P = vector_finder(positives_, dragImgId);
@@ -1047,6 +1115,20 @@ void ofApp::mouseReleased(int x, int y, int button)
 						negative_images_.push_back(dragImg);
 						len_negatives_ = negatives_.size();
 						selection_count_++;
+					}	// Judging.
+					else if (isInside_propose_)
+					{
+						if (searchTarget_ == dragImgId)
+						{
+							isJudgeTrue_ = true;
+							std::cout << "[ofApp] Judge: True!" << std::endl;
+						}
+						else
+						{
+							isJudgeFalse_ = true;
+							pause_timer_start_ = ofGetElapsedTimef();
+							std::cout << "[ofApp] Judge: False!" << std::endl;
+						}
 					}
 				}
 			}
@@ -1253,6 +1335,7 @@ void ofApp::mouseExited(int x, int y)
 	isInside_areaA_ = false;
 	isInside_areaP_ = false;
 	isInside_areaN_ = false;
+	isInside_propose_ = false;
 	isHoldAndDrag_ = false;
 	isHolding_areaA_ = false;
 	isHolding_areaP_ = false;
@@ -1282,17 +1365,17 @@ void ofApp::dragEvent(ofDragInfo dragInfo)
 //--------------------------------------------------------------
 void ofApp::calculate()
 {
-	database_->makeShowList_active();
+	database_->makeShowList_active(active_size_);
 	showList_active_ = database_->getShowList();
 
-	database_->makeShowList_origin();
+	database_->makeShowList_origin(show_size_);
 	showList_origin_ = database_->getShowList();
 
-	database_->makeShowList_rerank();
+	database_->makeShowList_rerank(show_size_);
 	showList_rerank_ = database_->getShowList();
 
 #ifdef VISUALRANK
-	database_->makeShowList_visualrank();
+	database_->makeShowList_visualrank(show_size_);
 	showList_visualrank_ = database_->getShowList();
 #endif
 }

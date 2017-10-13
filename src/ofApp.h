@@ -157,6 +157,9 @@ public:
 	bool isInside_areaA_;					// Flag: Holding inside area A.
 	bool isInside_areaP_;					// Flag: Holding inside area P.
 	bool isInside_areaN_;					// Flag: Holding inside area N.
+	bool isInside_propose_;					// Flag: Holding inside proposd img.
+	bool isJudgeTrue_;							// Flag: Judge.
+	bool isJudgeFalse_;							// Flag: False to judging.
 	int overview_colShow_;					// The number of cols.
 	int overviewP_rowShow_;					// The number of rows (area P).
 	int overviewN_rowShow_;					// The number of rows (area N).
@@ -200,9 +203,15 @@ public:
 	int selection_count_;					// Count user selections.
 
 	//-----------------------------------------
+	// Pause.
+	const float pause_time_ = 1.0f;			// Pause drawing.
+	float pause_timer_start_;				// Pause timer start.
+
+	//-----------------------------------------
 	// Retrieval results.
 	int active_size_;						// The number of displayed images (active selection).
 	int search_window_size_;				// Search window size
+	int show_size_;							// Size of showing results.
 	std::vector<int> number_active_;		// Active selection results.
 	std::vector<int> number_origin_;		// Retrieval results (comparison: images' ids).
 	std::vector<int> number_rerank_;		// Reranked results.
@@ -296,10 +305,6 @@ public:
 	ofImage buttonC2_;
 	ofImage buttonD1_;
 	ofImage buttonD2_;
-
-
-public:
-	ofImage topface_rerank_;
 
 
 public:

@@ -124,6 +124,8 @@ public:
 	std::vector<std::string> name_;
 	std::vector<int> showList_;
 	int row_;
+	int searchTarget_;
+	ofImage searchTarget_img_;
 
 
 public:
@@ -154,6 +156,13 @@ public:
 	{
 		picture_.reserve(row);
 	}
+
+	void set_searchTarget(const int searchTarget)
+	{
+		searchTarget_ = searchTarget;
+		searchTarget_img_.load(name_[searchTarget_]);
+	}
+
 };
 
 #endif /* SRC_LOADER_H_ */
