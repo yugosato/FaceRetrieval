@@ -381,13 +381,13 @@ void ofApp::update()
 		// Original query vector (initail features).
 		rocchio_init_->set_features(loading_->features_);
 		rocchio_init_->setInput_multi(positives_, negatives_);
-		rocchio_init_->set_weight(1.0, 0.8, 0.3);
+		rocchio_init_->set_weight(1.0, 0.8, 0.1);
 		rocchio_init_->run();
 
 		// New query vector (new features).
 		rocchio_new_->set_features(loading_->new_features_);
 		rocchio_new_->setInput_multi(positives_, negatives_);
-		rocchio_new_->set_weight(1.0, 0.8, 0.3);
+		rocchio_new_->set_weight(1.0, 0.8, 0.1);
 		rocchio_new_->run();
 		// --------------------------------------------------------------
 
