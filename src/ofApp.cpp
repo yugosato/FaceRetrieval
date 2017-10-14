@@ -175,10 +175,10 @@ void ofApp::loadImageandFont()
 {
 	font_.load(ttf_, fontsize_);
 
+#ifndef OPENUSE
 	searchbutton1_.load(binData_ + "/items/search1.png");
 	searchbutton2_.load(binData_ + "/items/search2.png");
 
-#ifndef OPENUSE
 	buttonA1_.load(binData_ + "/items/A1.png");
 	buttonA2_.load(binData_ + "/items/A2.png");
 
@@ -192,11 +192,14 @@ void ofApp::loadImageandFont()
 	buttonD2_.load(binData_ + "/items/D2.png");
 #endif
 #else
-	result_button1_.load(binData_ + "/items/result1.png");
-	result_button2_.load(binData_ + "/items/result2.png");
+	searchbutton1_.load(binData_ + "/items/search_open1.png");
+	searchbutton2_.load(binData_ + "/items/search_open2.png");
 
-	selection_button1_.load(binData_ + "/items/selection1.png");
-	selection_button2_.load(binData_ + "/items/selection2.png");
+	result_button1_.load(binData_ + "/items/result2.png");
+	result_button2_.load(binData_ + "/items/result1.png");
+
+	selection_button1_.load(binData_ + "/items/selection2.png");
+	selection_button2_.load(binData_ + "/items/selection1.png");
 #endif
 }
 
@@ -739,6 +742,7 @@ void ofApp::draw()
 		text = "VisualRank";
 	}
 #endif
+#endif
 
 	if (isFinishedInitSet_ && !canSearch_)
 		text = "Searching...";
@@ -746,13 +750,12 @@ void ofApp::draw()
 	float w = font_.stringWidth(text);
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	font_.drawString(text, windowWidth_ - w - ScrollBarWidth_ - 35, fontposy_top_);
-#else
+
 	if (isresult_)
 	{
 		result_button2_.draw(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_);
 		selection_button1_.draw(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_);
 	}
-#endif
 
 	std::string positive = "Positive Sample: ";
 	std::string negative = "Negative Sample: ";
