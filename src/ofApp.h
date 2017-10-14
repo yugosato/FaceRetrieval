@@ -8,6 +8,7 @@
 //#define VISUALRANK
 
 #define OPENUSE
+#define LFW
 
 
 #include <iostream>

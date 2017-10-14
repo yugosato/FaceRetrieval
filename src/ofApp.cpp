@@ -55,13 +55,23 @@ void ofApp::initparam()
 	// Path Settings.
 	binData_ = "/home/yugo/workspace/Interface/bin/data";
 	datasetdir_ = "/home/yugo/Desktop/dataset";
+#ifndef LFW
 	dataset_ = "/cfd-cropped";
+#else
+	dataset_ = "/lfw-cropped";
+#endif
 	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
 
 #ifdef VGG
+#ifndef LFW
 	featuresfile_ = binData_ + "/cfd/cfd-vgg.tsv";
 	npyFile_ = binData_ + "/cfd/cfd-vgg.npy";
 	indexFile_ = binData_ + "/cfd/cfd-vgg_index-angle";
+#else
+	featuresfile_ = binData_ + "/lfw/lfw-vgg.tsv";
+	npyFile_ = binData_ + "/lfw/lfw-vgg.npy";
+	indexFile_ = binData_ + "/lfw/lfw-vgg_index-angle";
+#endif
 #endif
 #ifdef HISTOGRAM
 	indexFile_ = binData_ + "/cfd/cfd-histogram_index-angle";
@@ -87,7 +97,11 @@ void ofApp::initparam()
 	candidatefile_origin_ = logdir_ + "/candidate_origin.txt";
 	candidatefile_rerank_ = logdir_ + "/candidate_rerank.txt";
 	candidatefile_visualrank_ = logdir_ + "/candidate_visualrank.txt";
+#ifndef LFW
 	init_candidatefile_ = binData_ + "/cfd/initialize.txt";
+#else
+	init_candidatefile_ = binData_ + "/lfw/initialize.txt";
+#endif
 	evaluationfile_ = logdir_ + "/distance.csv";
 	testsettingfile_ = logdir_ + "/test.txt";
 
