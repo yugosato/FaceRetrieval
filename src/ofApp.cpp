@@ -92,7 +92,7 @@ void ofApp::initparam()
 	testsettingfile_ = logdir_ + "/test.txt";
 
 	// Python Settings.
-	pysettingfile_ = binData_ + "/cfd/py_setting.txt";
+	pysettingfile_ = binData_ + "/py_setting.txt";
 	samplefile_ = logdir_ + "/feedback.txt";
 	scriptfile_ = "/home/yugo/workspace/Interface/trainer/main_process.py";
 	positiveIndexfile_ = "/home/yugo/workspace/Interface/trainer/result/positive_index.txt";

@@ -25,7 +25,7 @@ from mymodel import Chainer2Sklearn
 class TrainModel(object):
     def __init__(self):
         # File paths
-        self.py_settingfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/py_setting.txt"
+        self.py_settingfile_ = "/home/yugo/workspace/Interface/bin/data/py_setting.txt"
         self.settings_ = json.load(open(self.py_settingfile_, "r"))
         self.listfile_ = self.settings_["feedback_file"]
         self.inputfile_ = self.settings_["input_file"]
