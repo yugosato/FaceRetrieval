@@ -781,8 +781,8 @@ void ofApp::draw()
 	{
 		ofSetColor(ofColor(79.0f, 181.0f, 221.0f, 255.0f));
 		ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
-		ofSetColor(ofColor(128.0f, 128.0f, 128.0f, 255.0f));
-		ofDrawRectangle(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+		judged_img_.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
 		ofSetColor(ofColor(79.0f, 181.0f, 221.0f, 255.0f));
 		propose = "False";
 	}
@@ -793,24 +793,22 @@ void ofApp::draw()
 		ofSetColor(ofColor(128.0f, 128.0f, 128.0f, 255.0f));
 		ofDrawRectangle(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
 
-		if (isactive_)
+		ofImage show_image;
+		if (selection_method_ == "random" || selection_method_ == "traditional")
 		{
-			ofImage show_image;
+			if (database_->toprank_img_origin_.isAllocated())
+				show_image = database_->toprank_img_origin_;
+		}
+		else
+		{
+			if (database_->toprank_img_rerank_.isAllocated())
+				show_image = database_->toprank_img_rerank_;
+		}
+
+		if (epoch_ > 0 && show_image.isAllocated())
+		{
 			ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-
-			if (selection_method_ == "random" || selection_method_ == "traditional")
-			{
-				if (database_->toprank_img_origin_.isAllocated())
-					show_image = database_->toprank_img_origin_;
-			}
-			else
-			{
-				if (database_->toprank_img_rerank_.isAllocated())
-					show_image = database_->toprank_img_rerank_;
-			}
-
-			if (show_image.isAllocated())
-				show_image.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+			show_image.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
 		}
 
 		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
@@ -919,7 +917,7 @@ void ofApp::mouseMoved(int x, int y)
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
-				isInside_areaN_ = true;
+				isInside_areaN_ = false;
 				isInside_propose_ = true;
 				mouseover_ = -1;
 			}
@@ -937,6 +935,7 @@ void ofApp::mouseMoved(int x, int y)
 			isInside_areaA_ = false;
 			isInside_areaP_ = false;
 			isInside_areaN_ = false;
+			isInside_propose_ = false;
 			mouseover_ = -1;
 		}
 	}
@@ -945,6 +944,7 @@ void ofApp::mouseMoved(int x, int y)
 		isInside_areaA_ = false;
 		isInside_areaP_ = false;
 		isInside_areaN_ = false;
+		isInside_propose_ = false;
 		mouseover_ = -1;
 	}
 }
@@ -1038,7 +1038,7 @@ void ofApp::mouseDragged(int x, int y, int button)
 				isInside_areaN_ = true;
 				isInside_propose_ = false;
 			}	// Propose area.
-			else if (!isactive_ && isInsideDragingArea(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_))
+			else if (isInsideDragingArea(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
@@ -1197,22 +1197,22 @@ void ofApp::mouseReleased(int x, int y, int button)
 						}
 					}
 				}
-				else
+
+				// Judging.
+				if (isInside_propose_)
 				{
-					// Judging.
-					if (isInside_propose_)
+					judged_img_ = dragImg;
+
+					if (searchTarget_ == dragImgId)
 					{
-						if (searchTarget_ == dragImgId)
-						{
-							isJudgeTrue_ = true;
-							std::cout << "[ofApp] Judge: True!" << std::endl;
-						}
-						else
-						{
-							isJudgeFalse_ = true;
-							pause_timer_start_ = ofGetElapsedTimef();
-							std::cout << "[ofApp] Judge: False!" << std::endl;
-						}
+						isJudgeTrue_ = true;
+						std::cout << "[ofApp] Judge: True!" << std::endl;
+					}
+					else
+					{
+						isJudgeFalse_ = true;
+						pause_timer_start_ = ofGetElapsedTimef();
+						std::cout << "[ofApp] Judge: False!" << std::endl;
 					}
 				}
 			}
@@ -1806,7 +1806,8 @@ void ofApp::update_overview_info()
 void ofApp::logdir_name()
 {
 	int i = 2;
-	std::string name = subjectname_;
+	std::string basename = selection_method_ + "_" + ofToString(searchTarget_) + "_" + subjectname_;
+	std::string name = basename;
 	while (1)
 	{
 		logdir_ = "/home/yugo/workspace/Interface/bin/log/" + name;
@@ -1814,7 +1815,7 @@ void ofApp::logdir_name()
 			break;
 		else
 		{
-			name = subjectname_ + ofToString(i);
+			name = basename + ofToString(i);
 		}
 		i++;
 	}

@@ -325,6 +325,7 @@ public:
 	ofImage buttonC2_;
 	ofImage buttonD1_;
 	ofImage buttonD2_;
+	ofImage judged_img_;
 
 
 public:

@@ -103,7 +103,7 @@ private:
 		for (int i = 0; i < size_; i++)
 			selection_[i] = full_selection_[i];
 
-		random();
+		//random();
 	}
 
 	// Mix active selection & reranked results.
@@ -112,7 +112,7 @@ private:
 		selection_.clear();
 		selection_.resize(size_);
 
-		int active_num = 13;
+		int active_num = 10;
 		int result_num = size_ - active_num;
 
 		int i = 0, j = 0;
@@ -131,11 +131,8 @@ private:
 			}
 			else
 			{
-				if (result_rerank_[j] != searchTarget_)
-				{
-					selection_[loc] = result_rerank_[j];
-					loc++;
-				}
+				selection_[loc] = result_rerank_[j];
+				loc++;
 				j++;
 			}
 		}
@@ -153,11 +150,7 @@ private:
 		{
 			int num = result_origin_[i];
 
-			if (num != searchTarget_)
-			{
-				full_selection_.push_back(num);
-			}
-
+			full_selection_.push_back(num);
 			i++;
 		}
 	}
@@ -186,8 +179,6 @@ private:
 		while (ifs && std::getline(ifs, buf))
 		{
 			int num = std::atoi(buf.c_str());
-			if (num == searchTarget_)
-				continue;
 			full_selection_.push_back(num);
 		}
 	}
