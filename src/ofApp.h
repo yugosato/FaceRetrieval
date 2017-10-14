@@ -5,10 +5,14 @@
 //#define HISTOGRAM
 //#define GABOR
 //#define HISTOGRAM_GABOR
+
 //#define VISUALRANK
 
 #define OPENUSE
-#define LFW
+
+//#define CFD
+//#define LFW
+#define CFD_LFW
 
 
 #include <iostream>
@@ -119,7 +123,6 @@ public:
 	// Path Settings.
 	std::string binData_;					// Data (ofApp) directory.
 	std::string datasetdir_;				// Dataset directory.
-	std::string dataset_;					// Dataset name.
 	std::string nameFile_;					// Image list file.
 	std::string featuresfile_;				// Image features file (tsv).
 	std::string npyFile_;					// Image features file (npy).

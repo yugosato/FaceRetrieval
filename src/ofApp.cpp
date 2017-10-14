@@ -55,38 +55,48 @@ void ofApp::initparam()
 	// Path Settings.
 	binData_ = "/home/yugo/workspace/Interface/bin/data";
 	datasetdir_ = "/home/yugo/Desktop/dataset";
-#ifndef LFW
-	dataset_ = "/cfd-cropped";
-#else
-	dataset_ = "/lfw-cropped";
+
+#ifdef LFW
+	nameFile_ = datasetdir_ + "/lfw-cropped/images_selected.txt";
 #endif
-	nameFile_ = datasetdir_ + dataset_ + "/images_selected.txt";
+#ifdef CFD
+	nameFile_ = datasetdir_ + "/cfd-cropped/images_selected.txt";
+#endif
+#ifdef CFD_LFW
+	nameFile_ = datasetdir_ + "/images_selected.txt";
+#endif
 
 #ifdef VGG
-#ifndef LFW
-	featuresfile_ = binData_ + "/cfd/cfd-vgg.tsv";
-	npyFile_ = binData_ + "/cfd/cfd-vgg.npy";
-	indexFile_ = binData_ + "/cfd/cfd-vgg_index-angle";
-#else
+#ifdef LFW
 	featuresfile_ = binData_ + "/lfw/lfw-vgg.tsv";
 	npyFile_ = binData_ + "/lfw/lfw-vgg.npy";
 	indexFile_ = binData_ + "/lfw/lfw-vgg_index-angle";
 #endif
+#ifdef CFD
+	featuresfile_ = binData_ + "/cfd/cfd-vgg.tsv";
+	npyFile_ = binData_ + "/cfd/cfd-vgg.npy";
+	indexFile_ = binData_ + "/cfd/cfd-vgg_index-angle";
+#endif
+#ifdef CFD_LFW
+	featuresfile_ = binData_ + "/cfd_lfw/cfd_lfw-vgg.tsv";
+	npyFile_ = binData_ + "/cfd_lfw/cfd_lfw-vgg.npy";
+	indexFile_ = binData_ + "/cfd_lfw/cfd_lfw-vgg_index-angle";
+#endif
 #endif
 #ifdef HISTOGRAM
-	indexFile_ = binData_ + "/cfd/cfd-histogram_index-angle";
-	matrixFile_ = binData_ + "/cfd/cfd-histogram.tsv";
+	featuresfile_ = binData_ + "/cfd/cfd-histogram.tsv";
 	npyFile_ = binData_ + "/cfd/cfd-histogram.npy";
+	indexFile_ = binData_ + "/cfd/cfd-histogram_index-angle";
 #endif
 #ifdef GABOR
-	indexFile_ = binData_ + "/cfd/cfd-gabor_index-angle";
-	matrixFile_ = binData_ + "/cfd/cfd-gabor.tsv";
+	featuresfile_ = binData_ + "/cfd/cfd-gabor.tsv";
 	npyFile_ = binData_ + "/cfd/cfd-gabor.npy";
+	indexFile_ = binData_ + "/cfd/cfd-gabor_index-angle";
 #endif
 #ifdef HISTOGRAM_GABOR
+	featuresfile_ = binData_ + "/cfd/cfd-histogram-gabor.tsv";
+	npyFile_ = binData_ + "/cfd/cfd-histogra";
 	indexFile_ = binData_ + "/cfd/cfd-histogram-gabor_index-angle";
-	matrixFile_ = binData_ + "/cfd/cfd-histogram-gabor.tsv";
-	npyFile_ = binData_ + "/cfd/cfd-histogra"
 #endif
 
 	// Log Settings.
@@ -97,11 +107,17 @@ void ofApp::initparam()
 	candidatefile_origin_ = logdir_ + "/candidate_origin.txt";
 	candidatefile_rerank_ = logdir_ + "/candidate_rerank.txt";
 	candidatefile_visualrank_ = logdir_ + "/candidate_visualrank.txt";
-#ifndef LFW
-	init_candidatefile_ = binData_ + "/cfd/initialize.txt";
-#else
+
+#ifdef LFW
 	init_candidatefile_ = binData_ + "/lfw/initialize.txt";
 #endif
+#ifdef CFD
+	init_candidatefile_ = binData_ + "/cfd/initialize.txt";
+#endif
+#ifdef CFD_LFW
+	init_candidatefile_ = binData_ + "/cfd_lfw/initialize.txt";
+#endif
+
 	evaluationfile_ = logdir_ + "/distance.csv";
 	testsettingfile_ = logdir_ + "/test.txt";
 
