@@ -201,6 +201,7 @@ public:
 	float total_search_time_;				// Total search time until search target is found.
 	float total_search_time_start_;			// Timer (start).
 	int selection_count_;					// Count user selections.
+	bool isWroteTestResult_;				// Flag: Have wrote tese results.
 
 	//-----------------------------------------
 	// Pause.

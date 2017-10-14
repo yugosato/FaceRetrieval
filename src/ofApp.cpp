@@ -88,7 +88,7 @@ void ofApp::initparam()
 	candidatefile_rerank_ = logdir_ + "/candidate_rerank.txt";
 	candidatefile_visualrank_ = logdir_ + "/candidate_visualrank.txt";
 	init_candidatefile_ = binData_ + "/cfd/initialize.txt";
-	evaluationfile_ = logdir_ + "/evaluation.csv";
+	evaluationfile_ = logdir_ + "/distance.csv";
 	testsettingfile_ = logdir_ + "/test.txt";
 
 	// Python Settings.
@@ -160,6 +160,7 @@ void ofApp::initparam()
 	isFinishedInitSet_ = false;
 	canSearch_ = false;
 	selection_count_ = 0;
+	isWroteTestResult_ = false;
 }
 
 //--------------------------------------------------------------
@@ -445,13 +446,6 @@ void ofApp::update()
 		single_evaluater_->set_results(number_origin_);
 		single_evaluater_->run();
 
-		if (isJudgeTrue_)
-		{
-			std::cout << "[ofApp] Search target was found!" << std::endl;
-			total_search_time_ = ofGetElapsedTimef() - total_search_time_start_;
-			test_writer_->target_found(epoch_, total_search_time_, selection_count_);
-		}
-
 		// Active selection.
 		selection_->set_result(number_origin_, number_rerank_);
 		selection_->load();
@@ -489,6 +483,14 @@ void ofApp::update()
 		float pause_timer = ofGetElapsedTimef() - pause_timer_start_;
 		if (pause_time_ < pause_timer)
 			isJudgeFalse_ = false;
+	}
+
+	if (!isWroteTestResult_ && isJudgeTrue_)
+	{
+		std::cout << "[ofApp] Search target was found!" << std::endl;
+		total_search_time_ = ofGetElapsedTimef() - total_search_time_start_;
+		test_writer_->target_found(epoch_, total_search_time_, selection_count_);
+		isWroteTestResult_ = true;
 	}
 
 	// Scroll Bar.

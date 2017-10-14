@@ -131,24 +131,16 @@ private:
 			}
 			else
 			{
-				selection_[loc] = result_rerank_[j];
-				loc++;
+				if (result_rerank_[j] != searchTarget_)
+				{
+					selection_[loc] = result_rerank_[j];
+					loc++;
+				}
 				j++;
 			}
 		}
 
 		random();
-	}
-
-	void random()
-	{
-		for (int m = 0; m < size_; ++m)
-		{
-			const int n = rand() % size_;
-			const int tempNo = selection_[m];
-			selection_[m] = selection_[n];
-			selection_[n] = tempNo;
-		}
 	}
 
 	void traditional()
@@ -167,6 +159,18 @@ private:
 			}
 
 			i++;
+		}
+	}
+
+
+	void random()
+	{
+		for (int m = 0; m < size_; ++m)
+		{
+			const int n = rand() % size_;
+			const int tempNo = selection_[m];
+			selection_[m] = selection_[n];
+			selection_[n] = tempNo;
 		}
 	}
 
