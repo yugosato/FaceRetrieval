@@ -125,7 +125,6 @@ public:
 	std::vector<int> showList_;
 	int row_;
 	int searchTarget_;
-	ofImage searchTarget_img_;
 
 
 public:
@@ -155,12 +154,6 @@ public:
 	void setRow(const int row)
 	{
 		picture_.reserve(row);
-	}
-
-	void set_searchTarget(const int searchTarget)
-	{
-		searchTarget_ = searchTarget;
-		searchTarget_img_.load(name_[searchTarget_]);
 	}
 
 };

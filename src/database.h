@@ -14,7 +14,6 @@ class DataBase
 {
 public:
 	int searchTarget_;
-
 	std::string nameFile_;
 	std::string initFile_;
 	int row_;
@@ -27,6 +26,11 @@ public:
 	std::vector<int> history_;
 	std::vector<int> ids_;
 	int init_size_;
+
+	ofImage target_img_;
+	ofImage toprank_img_origin_;
+	ofImage toprank_img_rerank_;
+	ofImage toprank_img_visualrank_;
 
 
 public:
@@ -52,6 +56,8 @@ public:
 		number_active_ = number_origin_;
 		number_rerank_ = number_origin_;
 		number_visualrank_ = number_origin_;
+
+		target_img_.load(name_[searchTarget_]);
 	}
 
 	// Load image list.
@@ -206,6 +212,8 @@ public:
 
 		for (int i = 0; i < size; ++i)
 			number_origin_[i] = number[i];
+
+		toprank_img_origin_.load(name_[number_origin_[0]]);
 	}
 
 	inline void setNumber_rerank(const std::vector<int>& number)
@@ -217,6 +225,8 @@ public:
 
 		for (int i = 0; i < size; ++i)
 			number_rerank_[i] = number[i];
+
+		toprank_img_rerank_.load(name_[number_rerank_[0]]);
 	}
 
 	inline void setNumber_visualrank(const std::vector<int>& number)
@@ -228,6 +238,8 @@ public:
 
 		for (int i = 0; i < size; ++i)
 			number_visualrank_[i] = number[i];
+
+		toprank_img_visualrank_.load(name_[number_visualrank_[0]]);
 	}
 
 	inline void getName(std::vector<std::string>* nameList) const

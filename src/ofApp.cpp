@@ -229,7 +229,6 @@ void ofApp::setup()
 	loader_ = new ImageLoader();
 	loader_->setRow(row_);
 	loader_->setName(name_);
-	loader_->set_searchTarget(searchTarget_);
 
 	calculate();
 	onPaint(showList_active_);
@@ -732,15 +731,15 @@ void ofApp::draw()
 	// Proposed image.
 	int margin = 10;
 	std::string propose;
+
 	if (isJudgeFalse_)
 	{
-		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+		ofSetColor(ofColor(79.0f, 181.0f, 221.0f, 255.0f));
 		ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
 		ofSetColor(ofColor(128.0f, 128.0f, 128.0f, 255.0f));
 		ofDrawRectangle(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
-		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-
-		propose = "False.";
+		ofSetColor(ofColor(79.0f, 181.0f, 221.0f, 255.0f));
+		propose = "False";
 	}
 	else if (!isJudgeTrue_)
 	{
@@ -748,20 +747,37 @@ void ofApp::draw()
 		ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
 		ofSetColor(ofColor(128.0f, 128.0f, 128.0f, 255.0f));
 		ofDrawRectangle(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
-		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 
+		if (isactive_)
+		{
+			ofImage show_image;
+			ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+
+			if (selection_method_ == "random" || selection_method_ == "traditional")
+			{
+				if (database_->toprank_img_origin_.isAllocated())
+					show_image = database_->toprank_img_origin_;
+			}
+			else
+			{
+				if (database_->toprank_img_rerank_.isAllocated())
+					show_image = database_->toprank_img_rerank_;
+			}
+
+			if (show_image.isAllocated())
+				show_image.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+		}
+
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 		propose = "Is this photograph?";
 	}
 	else if (isJudgeTrue_)
 	{
 		ofSetColor(ofColor(255.0f, 255.0f, 0.0f, 255.0f));
 		ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
-
 		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-		loader_->searchTarget_img_.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
-
+		database_->target_img_.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
 		ofSetColor(ofColor(255.0f, 255.0f, 0.0f, 255.0f));
-
 		propose = "Exactly!";
 	}
 
