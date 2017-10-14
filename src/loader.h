@@ -19,6 +19,7 @@ public:
 	bool isLoaded_init_;
 	bool isLoaded_new_;
 	bool isLoadNew_;
+	float process_time_;
 
 
 public:
@@ -47,7 +48,9 @@ public:
 		{
 			std::cout << "[NowLoading] Start loading new features." << std::endl;
 			isLoaded_new_ = false;
+			float start = ofGetElapsedTimef();
 			load_new_features();
+			process_time_ = ofGetElapsedTimef() - start;
 			isLoaded_new_ = true;
 			std::cout << "[NowLoading] Finished loading new features." << std::endl;
 		}

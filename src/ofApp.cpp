@@ -195,9 +195,13 @@ void ofApp::initparam()
 	epoch_ = 0;
 	isSearchedAll_ = false;
 	isFinishedInitSet_ = false;
+	isWroteTestResult_ = false;
 	canSearch_ = false;
 	selection_count_ = 0;
-	isWroteTestResult_ = false;
+
+	//-----------------------------------------
+	// Others.
+	total_search_time_ = 0.0f;
 }
 
 //--------------------------------------------------------------
@@ -388,6 +392,7 @@ void ofApp::update()
 
 		isFinishedInitSet_ = true;
 		canSearch_ = true;
+		search_timer_start_ = ofGetElapsedTimef();
 
 		logger_active_ = new Logger;
 		logger_origin_ = new Logger;
@@ -412,7 +417,6 @@ void ofApp::update()
 		number_visualrank_ = database_->number_visualrank_;
 #endif
 		writelog();
-		total_search_time_start_ = ofGetElapsedTimef();
 	}
 
 	if (trainer_->isTrained_)
@@ -530,13 +534,10 @@ void ofApp::update()
 			onPaint(showList_rerank_);
 #endif
 
-		inputHistory();
-
 		canSearch_ = true;
-		process_time_ = ofGetElapsedTimef() - timer_start_;
-
+		search_timer_start_ = ofGetElapsedTimef();
+		inputHistory();
 		showProcessingTime();
-
 		std::cout << "#####################################################################################################" << std::endl;
 		vscroll_areaA_.current(0);
 	}
@@ -551,10 +552,11 @@ void ofApp::update()
 
 	if (!isWroteTestResult_ && isJudgeTrue_)
 	{
-		std::cout << "[ofApp] Search target was found!" << std::endl;
-		total_search_time_ = ofGetElapsedTimef() - total_search_time_start_;
+		total_search_time_ += ofGetElapsedTimef() - search_timer_start_;
 		test_writer_->target_found(epoch_, total_search_time_, selection_count_);
 		isWroteTestResult_ = true;
+		std::cout << "[ofApp] Search target was found!" << std::endl;
+		std::cout << "[ofApp] Total search time (remove back process): " << total_search_time_ << std::endl;
 	}
 
 	// Scroll Bar.
@@ -563,6 +565,7 @@ void ofApp::update()
 	vscroll_areaP_.update();
 	vscroll_areaN_.update();
 
+	// Timer
 	update_overview_info();
 	updateScrollBars();
 }
@@ -784,6 +787,9 @@ void ofApp::draw()
 
 	if (isFinishedInitSet_ && !canSearch_)
 		text = "Searching...";
+	else if (!isFinishedInitSet_)
+		text = "Please wait.";
+
 
 	float w = font_.stringWidth(text);
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
@@ -1403,11 +1409,11 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 				clickflag_ = true;
 				canSearch_ = false;
+				total_search_time_ += ofGetElapsedTimef() - search_timer_start_;
 
 				// Run Trainer.
 				samplewriter_->write(positives_, negatives_);
 				trainer_->startThread();
-				timer_start_ = ofGetElapsedTimef();
 			}
 		}
 	}
@@ -1783,24 +1789,27 @@ void ofApp::put_time(std::string& time_str)
 //--------------------------------------------------------------
 void ofApp::showProcessingTime()
 {
-
-	float others = process_time_ - trainer_->process_time_ - rocchio_init_->process_time_
-			- search_->process_time_ - rerank_->process_time_;
+	float trainer = trainer_->process_time_;
+	float loading = loading_->process_time_;
+	float rocchio = rocchio_init_->process_time_;
+	float search = search_->process_time_;
+	float rerank = rerank_->process_time_;
+	float back_process = trainer + loading + rocchio + search + rerank;
 
 #ifdef VISUALRANK
-	others = others - visualrank_->process_time_;
+	float visualrank = visualrank_->process_time_;
 #endif
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
-	std::cout << "Online Training (Main + Selection): " << trainer_->process_time_ << " sec." << std::endl;
-	std::cout << "Rocchio Algorithm: " << rocchio_init_->process_time_ << " sec." << std::endl;
-	std::cout << "Searching (NGT): " << search_->process_time_ << " sec." << std::endl;
-	std::cout << "Reranking (Main): " << rerank_->process_time_ << " sec." << std::endl;
+	std::cout << "Online training (main + selection): " << trainer << " sec." << std::endl;
+	std::cout << "Loading new features: " << loading << " sec." << std::endl;
+	std::cout << "Rocchio algorithm: " << rocchio << " sec." << std::endl;
+	std::cout << "Searching (ngt): " << search << " sec." << std::endl;
+	std::cout << "Reranking (ours): " << rerank << " sec." << std::endl;
 #ifdef VISUALRANK
-	std::cout << "Reranking (VisualRank): " << visualrank_->process_time_ << " sec." << std::endl;
+	std::cout << "Reranking (visualrank): " << visualrank << " sec." << std::endl;
 #endif
-	std::cout << "Others: " << others << " sec." << std::endl;
-	std::cout << "Total: " << process_time_ << " sec." << std::endl;
+	std::cout << "Total back process: " << back_process << " sec." << std::endl;
 	std::cout << "---------------------------------------------------------------------" << std::endl;
 }
 
