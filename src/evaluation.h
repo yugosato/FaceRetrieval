@@ -19,7 +19,7 @@ public:
 	std::vector<std::vector<double>> features_;
 	std::vector<double> inputpoint_;
 	std::vector<int> results_;
-	bool target_isInside_;
+	int target_rank_;
 
 public:
 	SingleSearchEvaluater()
@@ -27,7 +27,7 @@ public:
 		distance_ = 9999.9f;
 		searchTarget_ = -1;
 		count_ = 0;
-		target_isInside_ = false;
+		target_rank_ = -1;
 	}
 
 	void setup(const int searchTarget, const std::string filename)
@@ -68,8 +68,7 @@ private:
 
 	void find_searchTarget()
 	{
-		if (vector_finder(results_, searchTarget_))
-			target_isInside_ = true;
+		target_rank_ = vector_finder(results_, searchTarget_);
 	}
 
 	void write()
@@ -84,27 +83,27 @@ private:
 		}
 
 		writer << distance_;
-		if (target_isInside_)
-			writer << "," << "Target is inside search window";
+		if (target_rank_ >= 0)
+			writer << "," << "Target: " << target_rank_;
 		writer << std::endl;
 
 		writer.close();
 		count_++;
 	}
 
-	bool vector_finder(const std::vector<int>& vector, const int number)
+	int vector_finder(const std::vector<int>& vector, const int number)
 	{
 		if (vector.size() > 0)
 		{
 			auto itr = std::find(vector.begin(), vector.end(), number);
 			size_t index = std::distance(vector.begin(), itr);
 			if (index != vector.size())
-				return true;	// If the number exists in the vector.
+				return index;	// If the number exists in the vector.
 			else
-				return false;	// If the number does not exist in the vector.
+				return -1;	// If the number does not exist in the vector.
 		}
 		else
-			return false;
+			return -1;
 	}
 };
 

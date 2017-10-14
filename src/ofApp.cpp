@@ -443,7 +443,10 @@ void ofApp::update()
 
 		// Single Search Evaluation.
 		single_evaluater_->set_inputpoint(rocchio_init_->queryvector_);
-		single_evaluater_->set_results(number_origin_);
+		if (selection_method_ == "random" || selection_method_ == "traditional")
+			single_evaluater_->set_results(number_origin_);
+		else
+			single_evaluater_->set_results(number_rerank_);
 		single_evaluater_->run();
 
 		// Active selection.
@@ -1082,7 +1085,8 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			if (isHolding_areaA_)
 			{
-				std::vector<int>* list;
+				std::vector<int>* list = &showList_active_;
+
 				if (isactive_)
 					list = &showList_active_;
 				else if (isorigin_)
@@ -1099,26 +1103,33 @@ void ofApp::mouseReleased(int x, int y, int button)
 				bool check_duplication_P = vector_finder(positives_, dragImgId);
 				bool check_duplication_N = vector_finder(negatives_, dragImgId);
 
-				if (!check_duplication_P && !check_duplication_N)
+				if (isactive_)
 				{
-					// A -> P.
-					if (isInside_areaP_)
+					if (!check_duplication_P && !check_duplication_N)
 					{
-						std::cout << "[ofApp] ActiveSelection No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Positive." << std::endl;
-						positives_.push_back(dragImgId);
-						positive_images_.push_back(dragImg);
-						len_positives_ = positives_.size();
-						selection_count_++;
-					}	// A -> N.
-					else if (isInside_areaN_)
-					{
-						std::cout << "[ofApp] ActiveSelection No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Negative." << std::endl;
-						negatives_.push_back(dragImgId);
-						negative_images_.push_back(dragImg);
-						len_negatives_ = negatives_.size();
-						selection_count_++;
-					}	// Judging.
-					else if (isInside_propose_)
+						// A -> P.
+						if (isInside_areaP_)
+						{
+							std::cout << "[ofApp] ActiveSelection No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Positive." << std::endl;
+							positives_.push_back(dragImgId);
+							positive_images_.push_back(dragImg);
+							len_positives_ = positives_.size();
+							selection_count_++;
+						}	// A -> N.
+						else if (isInside_areaN_)
+						{
+							std::cout << "[ofApp] ActiveSelection No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Negative." << std::endl;
+							negatives_.push_back(dragImgId);
+							negative_images_.push_back(dragImg);
+							len_negatives_ = negatives_.size();
+							selection_count_++;
+						}
+					}
+				}
+				else
+				{
+					// Judging.
+					if (isInside_propose_)
 					{
 						if (searchTarget_ == dragImgId)
 						{
