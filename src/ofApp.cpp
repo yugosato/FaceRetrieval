@@ -112,10 +112,17 @@ void ofApp::initparam()
 	active_size_ = 25;
 	search_window_size_ = 50;
 	show_size_ = 25;
+#
 	isactive_ = true;
+#ifndef OPENUSE
 	isorigin_ = false;
 	isrerank_ = false;
+#ifdef VISUALRANK
 	isvisualrank_ = false;
+#endif
+#else
+	isresult_ = false;
+#endif
 
 	//-----------------------------------------
 	// Overview Settings.
@@ -171,6 +178,7 @@ void ofApp::loadImageandFont()
 	searchbutton1_.load(binData_ + "/items/search1.png");
 	searchbutton2_.load(binData_ + "/items/search2.png");
 
+#ifndef OPENUSE
 	buttonA1_.load(binData_ + "/items/A1.png");
 	buttonA2_.load(binData_ + "/items/A2.png");
 
@@ -179,10 +187,16 @@ void ofApp::loadImageandFont()
 
 	buttonC1_.load(binData_ + "/items/C1.png");
 	buttonC2_.load(binData_ + "/items/C2.png");
-
 #ifdef VISUALRANK
 	buttonD1_.load(binData_ + "/items/D1.png");
 	buttonD2_.load(binData_ + "/items/D2.png");
+#endif
+#else
+	result_button1_.load(binData_ + "/items/result1.png");
+	result_button2_.load(binData_ + "/items/result2.png");
+
+	selection_button1_.load(binData_ + "/items/selection1.png");
+	selection_button2_.load(binData_ + "/items/selection2.png");
 #endif
 }
 
@@ -459,12 +473,19 @@ void ofApp::update()
 #ifdef VISUALRANK
 		database_->setNumber_visualrank(number_visualrank_);
 #endif
+
+		isactive_ = false;
+#ifndef OPENUSE
 		isactive_ = true;
 		isorigin_ = false;
 		isrerank_ = false;
 #ifdef VISUALRANK
 		isvisualrank_ = false;
 #endif
+#else
+		isresult_ = true;
+#endif
+
 		calculate();
 		onPaint(showList_active_);
 
@@ -674,6 +695,7 @@ void ofApp::draw()
 	std::string text;
 	if (isactive_)
 	{
+#ifndef OPENUSE
 		buttonA2_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
 		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
@@ -681,7 +703,12 @@ void ofApp::draw()
 		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 #endif
 		text = "Selection";
+#else
+		result_button1_.draw(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_);
+		selection_button2_.draw(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_);
+#endif
 	}
+#ifndef OPENUSE
 	else if (isorigin_)
 	{
 		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
@@ -719,6 +746,13 @@ void ofApp::draw()
 	float w = font_.stringWidth(text);
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	font_.drawString(text, windowWidth_ - w - ScrollBarWidth_ - 35, fontposy_top_);
+#else
+	if (isresult_)
+	{
+		result_button2_.draw(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_);
+		selection_button1_.draw(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_);
+	}
+#endif
 
 	std::string positive = "Positive Sample: ";
 	std::string negative = "Negative Sample: ";
@@ -972,21 +1006,21 @@ void ofApp::mouseDragged(int x, int y, int button)
 			}
 
 			// Area A.
-			if (isactive_ && isInsideDragingArea(leftsize_, uppersize_, area_width_, area_height_))
+			if (isInsideDragingArea(leftsize_, uppersize_, area_width_, area_height_))
 			{
 				isInside_areaA_ = true;
 				isInside_areaP_ = false;
 				isInside_areaN_ = false;
 				isInside_propose_ = false;
 			}	// Area P.
-			else if (isactive_ && isInsideDragingArea(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_))
+			else if (isInsideDragingArea(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = true;
 				isInside_areaN_ = false;
 				isInside_propose_ = false;
 			}	// Area N.
-			else if (isactive_ && isInsideDragingArea(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_))
+			else if (isInsideDragingArea(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_))
 			{
 				isInside_areaA_ = false;
 				isInside_areaP_ = false;
@@ -1105,6 +1139,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 				if (isactive_)
 					list = &showList_active_;
+#ifndef OPENUSE
 				else if (isorigin_)
 					list = &showList_origin_;
 				else if (isrerank_)
@@ -1112,6 +1147,15 @@ void ofApp::mouseReleased(int x, int y, int button)
 #ifdef VISUALRANK
 				else if (isvisualrank_)
 					list = &showList_visualrank_;
+#endif
+#else
+				else if (isresult_)
+				{
+					if (selection_method_ == "random" || selection_method_ == "traditional")
+						list = &showList_origin_;
+					else
+						list = &showList_rerank_;
+				}
 #endif
 
 				const int dragImgId = (*list)[holdImgNum_];
@@ -1228,16 +1272,27 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 	if (click_ == true)
 	{
+#ifndef OPENUSE
 		if (isReleasedArea(buttonA_posx_, buttonposy_line1_, button_width_, button_height_))
 		{
+#else
+		if (isReleasedArea(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_))
+		{
+#endif
 			isactive_ = true;
+#ifndef OPENUSE
 			isorigin_ = false;
 			isrerank_ = false;
 #ifdef VISUALRANK
 			isvisualrank_ = false;
 #endif
+#else
+			isresult_ = false;
+#endif
+
 			onPaint(showList_active_);
 		}
+#ifndef OPENUSE
 		else if (isReleasedArea(buttonB_posx_, buttonposy_line1_, button_width_, button_height_))
 		{
 			isactive_ = false;
@@ -1266,6 +1321,17 @@ void ofApp::mouseReleased(int x, int y, int button)
 			isrerank_ = false;
 			isvisualrank_ = true;
 			onPaint(showList_visualrank_);
+		}
+#endif
+#else
+		if (isReleasedArea(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_))
+		{
+			isactive_ = false;
+			isresult_ = true;
+			if (selection_method_ == "random" || selection_method_ == "traditional")
+				onPaint(showList_origin_);
+			else
+				onPaint(showList_rerank_);
 		}
 #endif
 
@@ -1501,6 +1567,7 @@ void ofApp::sizeChanged()
 	std::vector<int>* sList;
 	if (isactive_)
 		sList = &showList_active_;
+#ifndef OPENUSE
 	else if (isorigin_)
 		sList = &showList_origin_;
 	else if (isrerank_)
@@ -1508,6 +1575,15 @@ void ofApp::sizeChanged()
 #ifdef VISUALRANK
 	else if (isvisualrank_)
 		sList = &showList_visualrank_;
+#endif
+#else
+	if (isresult_)
+	{
+		if (selection_method_ == "random" || selection_method_ == "traditional")
+			sList = &showList_origin_;
+		else
+			sList = &showList_rerank_;
+	}
 #endif
 
 	rowShow_ = (sList->size() + colShow_ - 1) / colShow_;

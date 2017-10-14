@@ -5,8 +5,9 @@
 //#define HISTOGRAM
 //#define GABOR
 //#define HISTOGRAM_GABOR
-
 //#define VISUALRANK
+
+#define OPENUSE
 
 
 #include <iostream>
@@ -57,19 +58,19 @@ public:
 
 	//-----------------------------------------
 	// GUI settings' parameters.
-	const int leftsize_ = 1000;						// Left region.
-	const int uppermargin_ = 20;					// Upper margin.
-	const int uppersize_ = uppermargin_ + 40;		// Upper region.
-	const int button_height_ = 30;					// Button height.
-	const int button_width_ = button_height_;		// Show active selection results button width.
-	const int buttonposy_line1_ = uppermargin_ + 5;	// The Y-coordinate of buttons on the 1st line.
-	const int searchbutton_posx_ = 1000;			// The X-coordinate of search button.
-	const int searchbutton_width_ = 90;				// Search button width.
-	const int buttonA_posx_ = 1095;					// The X-coordinate of button displays the active selection results.
-	const int buttonB_posx_ = 1130;					// The X-coordinate of button displays the camparison results.
-	const int buttonC_posx_ = 1165;					// The X-coordinate of button displays the reranked results.
-	const int buttonD_posx_ = 1200;					// The X-coordinate of button displays the visualrank results.
-	const int guiScrollarea_height_ = 280;			// ScrollableCanvas's height (ofxUI).
+	const int leftsize_ = 1000;												// Left region.
+	const int uppermargin_ = 20;											// Upper margin.
+	const int uppersize_ = uppermargin_ + 40;								// Upper region.
+	const int button_height_ = 30;											// Button height.
+	const int button_width_ = button_height_;								// Show active selection results button width.
+	const int buttonposy_line1_ = uppermargin_ + 5;							// The Y-coordinate of buttons on the 1st line.
+	const int searchbutton_posx_ = 1000;									// The X-coordinate of search button.
+	const int searchbutton_width_ = 90;										// Search button width.
+	const int buttonA_posx_ = searchbutton_posx_ + searchbutton_width_ + 5;	// The X-coordinate of button displays the active selection results.
+	const int buttonB_posx_ = buttonA_posx_ + button_width_ + 5;			// The X-coordinate of button displays the camparison results.
+	const int buttonC_posx_ = buttonB_posx_ + button_width_ + 5;			// The X-coordinate of button displays the reranked results.
+	const int buttonD_posx_ = buttonC_posx_ + button_width_ + 5;			// The X-coordinate of button displays the visualrank results.
+	const int guiScrollarea_height_ = 280;									// ScrollableCanvas's height (ofxUI).
 
 	//-----------------------------------------
 	// Database information.
@@ -238,6 +239,20 @@ public:
 	int scroll_areaA_;						// Current scroll position.
 	int scroll_areaP_;						// Current scroll position.
 	int scroll_areaN_;						// Current scroll position.
+
+
+#ifdef OPENUSE
+public:
+	const int result_button_width_ = searchbutton_width_;
+	const int selection_button_width_ = result_button_width_;
+	const int result_button_posx_ = searchbutton_posx_ + result_button_width_ + 5;
+	const int selection_button_posx_ = result_button_posx_ + selection_button_width_ + 5;
+	ofImage result_button1_;
+	ofImage result_button2_;
+	ofImage selection_button1_;
+	ofImage selection_button2_;
+	bool isresult_;
+#endif
 
 
 public:
