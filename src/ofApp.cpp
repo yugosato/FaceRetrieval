@@ -490,7 +490,15 @@ void ofApp::update()
 #endif
 
 		calculate();
+
+#ifndef OPENUSE
 		onPaint(showList_active_);
+#else
+		if (selection_method_ == "random" || selection_method_ == "traditional")
+			onPaint(showList_origin_);
+		else
+			onPaint(showList_rerank_);
+#endif
 
 		inputHistory();
 
@@ -1343,7 +1351,20 @@ void ofApp::mouseReleased(int x, int y, int button)
 			if (len_positives_ == 0)
 				std::cerr << "[Warning] Please select positive sample (at least 1)." << std::endl;
 			else
+			{
+				isactive_ = true;
+#ifndef OPENUSE
+				isorigin_ = false;
+				ifrerank_ = false;
+#ifdef VISUALRANK
+				isvisualrank_ = false;
+#endif
+#else
+				isresult_ = false;
+#endif
+				onPaint(showList_active_);
 				autoselect_negative();
+			}
 
 			if (len_positives_ > 0 && len_negatives_ > 0)
 			{
