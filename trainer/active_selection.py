@@ -29,9 +29,9 @@ class ActiveSelection(object):
 
     def unlabeled_index(self):
         self.unlabeled_ids_ = []
-        for i in xrange(len(self.train_.features_)):
-            if not i in self.labeled_ids_:
-                self.unlabeled_ids_.append(i)
+        for index in self.train_.neighbors_:
+            if not index in self.labeled_ids_:
+                self.unlabeled_ids_.append(index)
         self.len_unlabeled_ids_ = len(self.unlabeled_ids_)
 
 
@@ -66,7 +66,8 @@ class ActiveSelection(object):
     "Random selection for compasion."
     def getRandomIndex(self):
         print "[Trainer-Selection] Get random sampling index."
-        return np.random.choice(self.unlabeled_ids_, self.len_unlabeled_ids_, replace = False)
+        database_index = [i for i in xrange(len(self.train_.features_))]
+        return np.random.choice(database_index, len(self.train_.neighbors_), replace = False)
 
 
     "Traditional active learning method."

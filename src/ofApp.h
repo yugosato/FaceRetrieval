@@ -217,7 +217,6 @@ public:
 
 	//-----------------------------------------
 	// Retrieval results.
-	int active_size_;						// The number of displayed images (active selection).
 	int search_window_size_;				// Search window size
 	int show_size_;							// Size of showing results.
 	std::vector<int> number_active_;		// Active selection results.

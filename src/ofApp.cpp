@@ -139,7 +139,6 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Retrieval results.
-	active_size_ = 25;
 	search_window_size_ = 50;
 	show_size_ = 25;
 #
@@ -261,7 +260,7 @@ void ofApp::setup()
 
 	// Get Database information.
 	database_ = new DataBase();
-	database_->setup(searchTarget_, active_size_, nameFile_, init_candidatefile_);
+	database_->setup(searchTarget_, show_size_, nameFile_, init_candidatefile_);
 	database_->initialize("kmeans");
 	row_ = database_->getRow();
 	database_->getName(&name_);
@@ -311,7 +310,8 @@ void ofApp::setup()
 	selection_ = new Selection;
 	selection_->setup(activeIndexfile_, cueflikIndexfile_, randomIndexfile_);
 	selection_->set_searchTarget(searchTarget_);
-	selection_->set_size(active_size_);
+	selection_->set_show_size(show_size_);
+	selection_->set_row(database_->row_);
 	selection_->set_method(selection_method_);
 
 	// Setup reranking method.
@@ -794,11 +794,13 @@ void ofApp::draw()
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
 	font_.drawString(text, windowWidth_ - w - ScrollBarWidth_ - 35, fontposy_top_);
 
+#ifdef OPENUSE
 	if (isresult_)
 	{
 		result_button2_.draw(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_);
 		selection_button1_.draw(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_);
 	}
+#endif
 
 	std::string positive = "Positive Sample: ";
 	std::string negative = "Negative Sample: ";
@@ -1390,7 +1392,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 				isactive_ = true;
 #ifndef OPENUSE
 				isorigin_ = false;
-				ifrerank_ = false;
+				isrerank_ = false;
 #ifdef VISUALRANK
 				isvisualrank_ = false;
 #endif
@@ -1526,7 +1528,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo)
 //--------------------------------------------------------------
 void ofApp::calculate()
 {
-	database_->makeShowList_active(active_size_);
+	database_->makeShowList_active(show_size_);
 	showList_active_ = database_->getShowList();
 
 	database_->makeShowList_origin(show_size_);
@@ -1590,14 +1592,14 @@ void ofApp::writelog()
 	std::vector<int> candidate_visualrank;
 #endif
 
-	candidate_active.resize(active_size_);
+	candidate_active.resize(show_size_);
 	candidate_origin.resize(search_window_size_);
 	candidate_rerank.resize(search_window_size_);
 #ifdef VISUALRANK
 	candidate_visualrank.resize(search_window_size_);
 #endif
 
-	for (int i = 0; i < active_size_; ++i)
+	for (int i = 0; i < show_size_; ++i)
 	{
 		int num_active = number_active_[i];
 		candidate_active[i] = num_active;
@@ -1795,10 +1797,10 @@ void ofApp::put_time(std::string& time_str)
 //--------------------------------------------------------------
 void ofApp::showProcessingTime()
 {
-	float trainer = trainer_->process_time_;
-	float loading = loading_->process_time_;
 	float rocchio = rocchio_init_->process_time_;
 	float search = search_->process_time_;
+	float trainer = trainer_->process_time_;
+	float loading = loading_->process_time_;
 	float rerank = rerank_->process_time_;
 	float back_process = trainer + loading + rocchio + search + rerank;
 
@@ -1807,10 +1809,10 @@ void ofApp::showProcessingTime()
 #endif
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
-	std::cout << "Online training (main + extraction + selection): " << trainer << " sec." << std::endl;
-	std::cout << "Loading new features: " << loading << " sec." << std::endl;
 	std::cout << "Rocchio algorithm: " << rocchio << " sec." << std::endl;
 	std::cout << "Searching (ngt): " << search << " sec." << std::endl;
+	std::cout << "Online training (main + extraction + selection): " << trainer << " sec." << std::endl;
+	std::cout << "Loading new features: " << loading << " sec." << std::endl;
 	std::cout << "Reranking (ours): " << rerank << " sec." << std::endl;
 #ifdef VISUALRANK
 	std::cout << "Reranking (visualrank): " << visualrank << " sec." << std::endl;
@@ -1822,7 +1824,7 @@ void ofApp::showProcessingTime()
 //--------------------------------------------------------------
 void ofApp::autoselect_negative()
 {
-	for (int i = 0; i < active_size_; ++i)
+	for (int i = 0; i < show_size_; ++i)
 	{
 		int number = showList_active_[i];
 		bool check_duplication_P = vector_finder(positives_, number);

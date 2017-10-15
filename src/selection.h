@@ -23,7 +23,8 @@ public:
 	std::vector<int> result_rerank_;
 	std::string method_;
 	bool mix_;
-	int size_;
+	int show_size_;
+	int row_;
 
 
 
@@ -41,9 +42,14 @@ public:
 		searchTarget_ = searchTarget;
 	}
 
-	void set_size(const int size)
+	void set_show_size(int show_size)
 	{
-		size_ = size;
+		show_size_ = show_size;
+	}
+
+	void set_row(int row)
+	{
+		row_ = row;
 	}
 
 	void set_method(const std::string method)
@@ -98,42 +104,48 @@ public:
 private:
 	void default_selection()
 	{
-		selection_.clear();
-		selection_.resize(size_);
-		for (int i = 0; i < size_; i++)
+		selection_.resize(show_size_);
+		for (int i = 0; i < show_size_; i++)
 			selection_[i] = full_selection_[i];
-
-		//random();
 	}
 
 	// Mix active selection & reranked results.
-	void mix_selection()
+	inline void mix_selection()
 	{
-		selection_.clear();
-		selection_.resize(size_);
+		selection_.resize(show_size_, -1);
 
 		int active_num = 10;
-		int result_num = size_ - active_num;
+		int result_num = show_size_ - active_num;
 
-		int i = 0, j = 0;
+		// Insert top rank result.
 		int loc = 0;
-
-		while (loc < active_num + result_num)
+		while (loc < result_num)
 		{
-			if (loc < active_num)
+			selection_[loc] = result_rerank_[loc];
+			loc++;
+		}
+
+		// Insert active selection result.
+		int j = 0;
+		while (loc < show_size_ && j < (int) full_selection_.size())
+		{
+			int num = full_selection_[j];
+			if (!vector_finder(selection_, num))
 			{
-				if (!vector_finder(result_rerank_, full_selection_[i]))
-				{
-					selection_[loc] = full_selection_[i];
-					loc++;
-				}
-				i++;
-			}
-			else
-			{
-				selection_[loc] = result_rerank_[j];
+				selection_[loc] = num;
 				loc++;
-				j++;
+			}
+			j++;
+		}
+
+		// Insert if empty.
+		while (loc < show_size_)
+		{
+			int num = rand() % row_;
+			if (!vector_finder(selection_, num))
+			{
+				selection_[loc] = num;
+				loc++;
 			}
 		}
 
@@ -158,9 +170,9 @@ private:
 
 	void random()
 	{
-		for (int m = 0; m < size_; ++m)
+		for (int m = 0; m < show_size_; ++m)
 		{
-			const int n = rand() % size_;
+			const int n = rand() % show_size_;
 			const int tempNo = selection_[m];
 			selection_[m] = selection_[n];
 			selection_[n] = tempNo;
