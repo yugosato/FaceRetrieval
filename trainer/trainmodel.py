@@ -87,13 +87,20 @@ class TrainModel(object):
         # Extract features
         print "[Trainer-Extraction] Start feature Extraction."
         if self.gpu_id_ >= 0:
-           new_features = self.model_.extract(xp.array(self.train_.features_))
+           new_features_neighbor = self.model_.extract(xp.array(self.train_.neighbor_features_))
         else:
-           new_features = self.model_.extract(np.array(self.train_.features_))
+           new_features_neighbor = self.model_.extract(np.array(self.train_.neighbor_features_))
 
-        self.new_features_ = cuda.to_cpu(new_features.data)
+        new_features_neighbor = cuda.to_cpu(new_features_neighbor.data)
         features_name = os.path.join(home_dir, "result", "features.tsv")
-        np.savetxt(features_name, self.new_features_, delimiter="\t", fmt="%.18f")
+
+        _, dim = new_features_neighbor.shape
+        database_size = len(self.train_.features_)
+        new_features = np.zeros((database_size, dim))
+        for i, index in enumerate(self.train_.neighbors_):
+            new_features[index] = new_features_neighbor[i]
+
+        np.savetxt(features_name, new_features, delimiter="\t", fmt="%.18f")
         print "[Trainer-Extraction] --> {}".format(features_name)
         self.model_.to_cpu()
 

@@ -13,6 +13,7 @@ public:
 	std::string samplefile_;
 	std::vector<std::vector<int>> positives_;
 	std::vector<std::vector<int>> negatives_;
+	std::vector<std::vector<int>> neighbors_;
 	int iter_;
 
 
@@ -31,14 +32,16 @@ public:
 
 		writer << "{" << std::endl;
 		writer << "  \"iter0\":{\"positive\":[]," << std::endl;
-		writer << "           \"negative\":[]}" << std::endl;
+		writer << "           \"negative\":[]," << std::endl;
+		writer << "           \"neighbor\":[]}" << std::endl;
 		writer << "}" << std::endl;
 	}
 
-	inline void write(const std::vector<int>& positive, const std::vector<int>& negative)
+	inline void write(const std::vector<int>& positive, const std::vector<int>& negative, const std::vector<int>& neighbor)
 	{
 		positives_.push_back(positive);
 		negatives_.push_back(negative);
+		neighbors_.push_back(neighbor);
 		iter_++;
 
 		std::ofstream writer(samplefile_, std::ios::trunc);
@@ -47,7 +50,8 @@ public:
 
 		writer << "{" << std::endl;
 		writer << "  \"iter0\":{\"positive\":[]," << std::endl;
-		writer << "           \"negative\":[]}," << std::endl;
+		writer << "           \"negative\":[]," << std::endl;
+		writer << "           \"neighbor\":[]}," << std::endl;
 		for (int i = 0; i < iter_; ++i)
 		{
 			writer << "  \"iter" << i + 1 << "\":{";
@@ -65,6 +69,15 @@ public:
 			{
 				writer << negatives_[i][j];
 				if (j < (int) negatives_[i].size() - 1)
+					writer << ", ";
+			}
+			writer << "]," << std::endl;
+
+			writer << "           \"neighbor\":[";
+			for (int j = 0; j < (int) neighbors_[i].size(); ++j)
+			{
+				writer << neighbors_[i][j];
+				if (j < (int) neighbors_[i].size() - 1)
 					writer << ", ";
 			}
 			writer << "]}";

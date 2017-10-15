@@ -25,25 +25,31 @@ class ImportDataset(chainer.dataset.DatasetMixin):
     def get_split_sample(self, i):
         self.positives_ = self.samplelists_["iter" + str(i)]["positive"]
         self.negatives_ = self.samplelists_["iter" + str(i)]["negative"]
+        self.neighbors_ = self.samplelists_["iter" + str(i)]["neighbor"]
         pos_num = len(self.positives_)
         neg_num = len(self.negatives_)
+        nei_num = len(self.neighbors_)
 
         pairs = []
+        self.neighbor_features_ = []
         if pos_num > 0:
             for pos in self.positives_:
                 pairs.append((self.features_[pos], 1))
         if neg_num > 0:
             for neg in self.negatives_:
                 pairs.append((self.features_[neg], 0))
-        return  pairs, pos_num, neg_num
+        if nei_num > 0:
+            for nei in self.neighbors_:
+                self.neighbor_features_.append(self.features_[nei])
 
+        return  pairs, pos_num, neg_num, nei_num
 
     def setsamples(self):
         self.base_ = []
-        pairs, pos_n, neg_n = self.get_split_sample(self.iter_num_ - 1)
+        pairs, pos_n, neg_n, nei_n = self.get_split_sample(self.iter_num_ - 1)
         self.base_ = pairs
         print "[Trainer-Dataset] Total sample size: {} (Positive: {}, Negative: {})".format(len(self.base_), pos_n, neg_n)
-
+        print "[Trainer-Dataset] Neighbor samples size: {}".format(nei_n)
 
     def get_example(self, i):
         vector, label = self.base_[i]

@@ -419,27 +419,21 @@ void ofApp::update()
 		writelog();
 	}
 
-	if (trainer_->isTrained_)
-	{
-		trainer_->stopThread();
-		trainer_->isTrained_ = false;
-
-		// Original query vector (initail features).
-		rocchio_init_->set_features(loading_->features_);
-		rocchio_init_->setInput_multi(positives_, negatives_);
-		rocchio_init_->set_weight(1.0, 0.8, 0.1);
-		rocchio_init_->run();
-
-		// Search by original query vector.
-		search_->set_queryvector(rocchio_init_->queryvector_);
-		search_->startThread();
-	}
-
 	if (search_->isSearched_)
 	{
 		search_->stopThread();
 		search_->getNumber(&number_origin_);
 		search_->isSearched_ = false;
+
+		// Run Trainer.
+		samplewriter_->write(positives_, negatives_, number_origin_);
+		trainer_->startThread();
+	}
+
+	if (trainer_->isTrained_)
+	{
+		trainer_->stopThread();
+		trainer_->isTrained_ = false;
 
 		// Concatenate vector
 		std::vector<int> new_index;
@@ -1416,9 +1410,16 @@ void ofApp::mouseReleased(int x, int y, int button)
 				canSearch_ = false;
 				total_search_time_ += ofGetElapsedTimef() - search_timer_start_;
 
-				// Run Trainer.
-				samplewriter_->write(positives_, negatives_);
-				trainer_->startThread();
+
+				// Original query vector (initail features).
+				rocchio_init_->set_features(loading_->features_);
+				rocchio_init_->setInput_multi(positives_, negatives_);
+				rocchio_init_->set_weight(1.0, 0.8, 0.1);
+				rocchio_init_->run();
+
+				// Search by original query vector.
+				search_->set_queryvector(rocchio_init_->queryvector_);
+				search_->startThread();
 			}
 		}
 	}
@@ -1806,7 +1807,7 @@ void ofApp::showProcessingTime()
 #endif
 
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
-	std::cout << "Online training (main + selection): " << trainer << " sec." << std::endl;
+	std::cout << "Online training (main + extraction + selection): " << trainer << " sec." << std::endl;
 	std::cout << "Loading new features: " << loading << " sec." << std::endl;
 	std::cout << "Rocchio algorithm: " << rocchio << " sec." << std::endl;
 	std::cout << "Searching (ngt): " << search << " sec." << std::endl;
