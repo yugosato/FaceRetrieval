@@ -14,6 +14,7 @@ public:
 	std::string new_featuresfile_;
 	std::vector<std::vector<double>> features_;
 	std::vector<std::vector<double>> new_features_;
+	std::vector<int> new_index_;
 	int row_;
 	int col_;
 	bool isLoaded_init_;
@@ -64,6 +65,12 @@ public:
 		new_featuresfile_ = new_featuresfile;
 	}
 
+	// Select new features to load.
+	void set_new_index(const std::vector<int>& new_index)
+	{
+		new_index_ = new_index;
+	}
+
 	void setRow(const int row)
 	{
 		row_ = row;
@@ -83,7 +90,10 @@ private:
 			std::cerr << "[Warning] Cannot open the specified file. " << featuresfile_ << std::endl;
 		else
 		{
+			features_.resize(row_);
+
 			std::string line;
+			int i = 0;
 			while (getline(ifs, line))
 			{
 				std::vector<std::string> tokens;
@@ -91,7 +101,8 @@ private:
 				std::vector<double> obj;
 				for (std::vector<std::string>::iterator ti = tokens.begin(); ti != tokens.end(); ++ti)
 					obj.push_back(NGT::Common::strtod(*ti));
-				features_.push_back(obj);
+				features_[i] = obj;
+				i++;
 			}
 			col_ = features_[0].size();
 		}
@@ -104,18 +115,42 @@ private:
 			std::cerr << "[Warning] Cannot open the specified file. " << new_featuresfile_ << std::endl;
 		else
 		{
-			new_features_.clear();
+			new_features_.resize(row_);
+
 			std::string line;
+			int i = 0;
 			while (getline(ifs, line))
 			{
+				if (!vector_finder(new_index_, i))
+				{
+					i++;
+					continue;
+				}
+
 				std::vector<std::string> tokens;
 				NGT::Common::tokenize(line, tokens, "\t");
 				std::vector<double> obj;
 				for (std::vector<std::string>::iterator ti = tokens.begin(); ti != tokens.end(); ++ti)
 					obj.push_back(NGT::Common::strtod(*ti));
-				new_features_.push_back(obj);
+				new_features_[i] = obj;
+				i++;
 			}
 		}
+	}
+
+	bool vector_finder(const std::vector<int>& vector, const int number)
+	{
+		if (vector.size() > 0)
+		{
+			auto itr = std::find(vector.begin(), vector.end(), number);
+			size_t index = std::distance(vector.begin(), itr);
+			if (index != vector.size())
+				return true;	// If the number exists in the vector.
+			else
+				return false;	// If the number does not exist in the vector.
+		}
+		else
+			return false;
 	}
 };
 
@@ -158,7 +193,6 @@ public:
 	{
 		picture_.reserve(row);
 	}
-
 };
 
 #endif /* SRC_LOADER_H_ */

@@ -424,28 +424,11 @@ void ofApp::update()
 		trainer_->stopThread();
 		trainer_->isTrained_ = false;
 
-		loading_->isLoadNew_ = true;
-		loading_->startThread();	// Load new features.
-	}
-
-	if (loading_->isLoaded_new_)
-	{
-		loading_->stopThread();
-		loading_->isLoaded_new_ = false;
-
-		// -------- Calculdate query vector by rocchio algorithm --------
 		// Original query vector (initail features).
 		rocchio_init_->set_features(loading_->features_);
 		rocchio_init_->setInput_multi(positives_, negatives_);
 		rocchio_init_->set_weight(1.0, 0.8, 0.1);
 		rocchio_init_->run();
-
-		// New query vector (new features).
-		rocchio_new_->set_features(loading_->new_features_);
-		rocchio_new_->setInput_multi(positives_, negatives_);
-		rocchio_new_->set_weight(1.0, 0.8, 0.1);
-		rocchio_new_->run();
-		// --------------------------------------------------------------
 
 		// Search by original query vector.
 		search_->set_queryvector(rocchio_init_->queryvector_);
@@ -457,6 +440,28 @@ void ofApp::update()
 		search_->stopThread();
 		search_->getNumber(&number_origin_);
 		search_->isSearched_ = false;
+
+		// Concatenate vector
+		std::vector<int> new_index;
+		std::copy(number_origin_.begin(), number_origin_.end(),std::back_inserter(new_index));
+		std::copy(positives_.begin(), positives_.end(),std::back_inserter(new_index));
+		std::copy(negatives_.begin(), negatives_.end(),std::back_inserter(new_index));
+
+		loading_->isLoadNew_ = true;
+		loading_->set_new_index(new_index);
+		loading_->startThread();	// Load new features.
+	}
+
+	if (loading_->isLoaded_new_)
+	{
+		loading_->stopThread();
+		loading_->isLoaded_new_ = false;
+
+		// New query vector (new features).
+		rocchio_new_->set_features(loading_->new_features_);
+		rocchio_new_->setInput_multi(positives_, negatives_);
+		rocchio_new_->set_weight(1.0, 0.8, 0.1);
+		rocchio_new_->run();
 
 		// Reranking by new features query vector.
 		rerank_->set_features(loading_->new_features_);
