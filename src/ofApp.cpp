@@ -12,16 +12,6 @@ ofApp::ofApp(const char* arg1, const char* arg2, const char* arg3)
 void ofApp::initparam()
 {
 	//-----------------------------------------
-	// History.
-	historysize_ = 0;
-	backcount_ = 0;
-	forwardcount_ = 0;
-	nowhistory_ = -1;
-	ishistory_ = false;
-	canBack_ = false;
-	canForward_ = false;
-
-	//-----------------------------------------
 	// Mouse & Keyboard.
 	clickx_ = -1;
 	clicky_ = -1;
@@ -282,7 +272,6 @@ void ofApp::setup()
 
 	calculate();
 	onPaint(showList_active_);
-	firstshowlist_ = showList_active_;
 
 	// Setup search method.
 	search_ = new Search();
@@ -535,7 +524,6 @@ void ofApp::update()
 
 		canSearch_ = true;
 		search_timer_start_ = ofGetElapsedTimef();
-		inputHistory();
 		showProcessingTime();
 		std::cout << "#####################################################################################################" << std::endl;
 		vscroll_areaA_.current(0);
@@ -1549,7 +1537,6 @@ void ofApp::onPaint(const std::vector<int>& list)
 	sizeChanged();
 	loader_->setShowList(list);
 	loader_->load_images();
-	ishistory_ = false;
 	len_current_showlist_ = list.size();
 
 	drawHeight_areaA_ = d_size_ * rowShow_;
@@ -1558,30 +1545,6 @@ void ofApp::onPaint(const std::vector<int>& list)
 
 	vscroll_areaA_.current(0);
 	updateScrollBars();
-}
-
-//--------------------------------------------------------------
-void ofApp::inputHistory()
-{
-	if (canForward_)
-	{
-		int iter = historysize_ - 1 - nowhistory_;
-		for (int i = 0; i < iter; ++i)
-		{
-			canForward_ = false;
-			numberhistory_.pop_back();
-		}
-	}
-
-	numberhistory_.push_back(number_rerank_);
-	historysize_ = numberhistory_.size();
-
-	if (historysize_ > 1)
-	{
-		canBack_ = true;
-		nowhistory_ = historysize_ - 1;
-	}
-	writelog();
 }
 
 //--------------------------------------------------------------
@@ -1603,7 +1566,6 @@ void ofApp::writelog()
 	{
 		int num_active = number_active_[i];
 		candidate_active[i] = num_active;
-		candidatehistory_.push_back(num_active);
 	}
 
 	for (int i = 0; i < search_window_size_; ++i)
@@ -1620,7 +1582,6 @@ void ofApp::writelog()
 #endif
 	}
 
-	database_->setHistory(candidatehistory_);
 	logger_active_->writeCandidate(candidate_active);
 	logger_origin_->writeCandidate(candidate_origin);
 	logger_rerank_->writeCandidate(candidate_rerank);

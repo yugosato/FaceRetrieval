@@ -51,19 +51,6 @@ public:
 	std::string selection_method_;                  // "uncertain"/"random"/"traditional"
 
 	//-----------------------------------------
-	// History.
-	int historysize_;								// The number of saved history.
-	int backcount_;									// Back count.
-	int forwardcount_;								// Forward count.
-	std::vector<std::vector<int>> numberhistory_;	// Histories (images' ids).
-	std::vector<int> candidatehistory_;				// Histories (images' ids; removed duplication).
-	int nowhistory_;								// Current history position.
-	std::vector<int> firstshowlist_;				// Initial showlist (images' ids).
-	bool ishistory_;								// Flag: History showed.
-	bool canBack_;									// Flag: User can step back to previous results.
-	bool canForward_;								// Flag: User can step forward to next results.
-
-	//-----------------------------------------
 	// GUI settings' parameters.
 	const int leftsize_ = 1000;												// Left region.
 	const int uppermargin_ = 20;											// Upper margin.
@@ -287,7 +274,6 @@ public:
 	void initparam();
 	void calculate();
 	void onPaint(const std::vector<int>& list);
-	void inputHistory();
 	void sizeChanged();
 	bool isReleasedArea(float x, float y, float w, float h);
 	bool isInsideDragingArea(float x, float y, float w, float h);

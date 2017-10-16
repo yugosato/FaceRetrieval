@@ -23,7 +23,6 @@ public:
 	std::vector<int> number_rerank_;
 	std::vector<int> number_visualrank_;
 	std::vector<int> showList_;
-	std::vector<int> history_;
 	std::vector<int> ids_;
 	int init_size_;
 
@@ -185,11 +184,6 @@ public:
 
 		for (int i = 0; i < size; ++i)
 			showList_[i] = number_visualrank_[i];
-	}
-
-	void setHistory(const std::vector<int>& history)
-	{
-		history_ = history;
 	}
 
 	inline void setNumber_active(const std::vector<int>& number)

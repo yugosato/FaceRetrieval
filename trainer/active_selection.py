@@ -8,6 +8,9 @@ import os
 from mymodel import Chainer2Sklearn
 
 
+home_dir = "/home/yugo/workspace/Interface/trainer"
+
+
 class ActiveSelection(object):
 
     def __init__(self):
