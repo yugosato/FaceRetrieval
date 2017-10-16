@@ -10,17 +10,16 @@ from active_selection import ActiveSelection
 
 
 class OnlineProcessing(TrainModel, ActiveSelection):
+
     def __init__(self):
         super(OnlineProcessing, self).__init__()
         super(TrainModel, self).__init__()
         super(ActiveSelection, self).__init__()
 
-
     def run_trainmodel(self):
         self.run_train()
         self.run_feature_extraction()
         # self.run_LOOCV()
-
 
     def run_activeSelection(self):
         self.run_selection()

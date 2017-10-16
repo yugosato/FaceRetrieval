@@ -1,18 +1,20 @@
 #pragma once
 
 
+// -------- DATABASE -------- //
+//#define CFD
+//#define LFW
+#define CFD_LFW
+// -------- FEATURES -------- //
 #define VGG
 //#define HISTOGRAM
 //#define GABOR
 //#define HISTOGRAM_GABOR
-
+// --------- RERANK --------- //
 //#define VISUALRANK
-
+// --------- DESIGN --------- //
 #define OPENUSE
-
-//#define CFD
-//#define LFW
-#define CFD_LFW
+// -------------------------- //
 
 
 #include <iostream>

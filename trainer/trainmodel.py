@@ -39,80 +39,14 @@ class TrainModel(object):
         # Initialize model
         self.model_ = None
 
-
-    def drawGraph(self):
-        acc = self.acc_val_[0]
-        val = self.acc_val_[1]
-        total_iter_num = 20
-        len_acc = len(acc)
-        x = [i for i in xrange(total_iter_num)]
-
-        sns.set_style("darkgrid")
-        plt.figure(figsize=(16,3))
-        plt.ylim([-0.02, 1.02])
-        plt.xlim([0, 20])
-        plt.yticks(np.arange(0.0, 1.1, 0.2))
-        plt.xticks(np.arange(0, 21, 1))
-        plt.fill_between(x[:len_acc], acc - val, acc + val, color="lightcoral", alpha=0.5, label="variance")
-        plt.plot(x[:len_acc], acc, color="red", linewidth=1.5, label="reliability")
-        plt.xlabel("Iteration", fontsize=14)
-        plt.ylabel("Reliability", fontsize=14)
-        plt.tick_params(labelsize=12)
-        plt.tight_layout(pad=1)
-        plt.legend(loc="lower right", fontsize=14)
-        plt.savefig(os.path.join(home_dir, "result", "acc_val.png"))
-
-
-    @staticmethod
-    def variance_score(acc, size):
-        return acc * (1 - acc) / size
-
-
-    @staticmethod
-    def remove(dirpath):
-        if os.path.exists(dirpath):
-            files = os.listdir(dirpath)
-            for file in files:
-                os.remove(os.path.join(dirpath, file))
-
-    @staticmethod
-    def set_random_seed(seed):
-        random.seed(seed)
-        np.random.seed(seed)
-        xp.random.seed(seed)
-        print "[Trainer] Set Random Seed: {}.".format(seed)
-
-
-    def run_feature_extraction(self):
-        # Extract features
-        print "[Trainer-Extraction] Start feature Extraction."
-        if self.gpu_id_ >= 0:
-           new_features_neighbor = self.model_.extract(xp.array(self.train_.neighbor_features_))
-        else:
-           new_features_neighbor = self.model_.extract(np.array(self.train_.neighbor_features_))
-
-        new_features_neighbor = cuda.to_cpu(new_features_neighbor.data)
-        features_name = os.path.join(home_dir, "result", "features.tsv")
-
-        _, dim = new_features_neighbor.shape
-        database_size = len(self.train_.features_)
-        new_features = np.zeros((database_size, dim))
-        for i, index in enumerate(self.train_.neighbors_):
-            new_features[index] = new_features_neighbor[i]
-
-        np.savetxt(features_name, new_features, delimiter="\t", fmt="%.18f")
-        print "[Trainer-Extraction] --> {}".format(features_name)
-        self.model_.to_cpu()
-
-
     def run_train(self):
-        print "[Trainer-Main] feedback file: \"{}\"".format(self.listfile_)
-        print "[Trainer-Main] input: \"{}\"".format(self.inputfile_)
-        print "[Trainer-Main] setting: \"{}\"".format(self.py_settingfile_)
-        print "[Trainer-Main] dim: {}".format(self.unit_)
-        print "[Trainer-Main] epoch: {}".format(self.epoch_)
-        print "[Trainer-Main] mini-batch size: {}".format(self.batch_size_)
-        print "[Trainer-Main] GPU id: {}".format(self.gpu_id_)
+        print "[Trainer-Train] feedback file: \"{}\"".format(self.listfile_)
+        print "[Trainer-Train] input: \"{}\"".format(self.inputfile_)
+        print "[Trainer-Train] setting: \"{}\"".format(self.py_settingfile_)
+        print "[Trainer-Train] dim: {}".format(self.unit_)
+        print "[Trainer-Train] epoch: {}".format(self.epoch_)
+        print "[Trainer-Train] mini-batch size: {}".format(self.batch_size_)
+        print "[Trainer-Train] GPU id: {}".format(self.gpu_id_)
 
         # Remove old files
         self.remove(os.path.join(home_dir, "result"))
@@ -136,15 +70,37 @@ class TrainModel(object):
         trainer = training.Trainer(updater, (self.epoch_, "epoch"), os.path.join(home_dir, "result"))
 
         # Run trainer
-        print "[Trainer-Main] Start main training."
+        print "[Trainer-Train] Start main training."
         trainer.run()
         self.model_ = model.copy()
-        print "[Trainer-Main] --> Finished."
+        print "[Trainer-Train] --> Finished."
 
+    def run_feature_extraction(self):
+        # Extract features
+        print "[Trainer-Extraction] Start feature Extraction."
+
+        if self.gpu_id_ >= 0:
+            new_features_neighbor = self.model_.extract(xp.array(self.train_.neighbor_features_))
+        else:
+            new_features_neighbor = self.model_.extract(np.array(self.train_.neighbor_features_))
+        new_features_neighbor = cuda.to_cpu(new_features_neighbor.data)
+
+        _, dim = new_features_neighbor.shape
+        database_size = len(self.train_.features_)
+        new_features = np.zeros((database_size, dim))
+
+        for i, index in enumerate(self.train_.neighbors_):
+            new_features[index] = new_features_neighbor[i]
+
+        filename = os.path.join(home_dir, "result", "features.tsv")
+        np.savetxt(filename, new_features, delimiter="\t", fmt="%.18f")
+        print "[Trainer-Extraction] --> {}".format(filename)
+        self.model_.to_cpu()
 
     def run_LOOCV(self):
         # Cross-validation testing.
         print "[Trainer-LOOCV] Start leave-one-out testing."
+
         loo = LeaveOneOut()
         split_samples = SplitImportDataset(self.train_.base_)
         true_labels = []
@@ -202,4 +158,47 @@ class TrainModel(object):
 
         # Draw reriability graph.
         self.drawGraph()
+
+    def drawGraph(self):
+        acc = self.acc_val_[0]
+        val = self.acc_val_[1]
+        total_iter_num = 20
+        len_acc = len(acc)
+        x = [i for i in xrange(total_iter_num)]
+
+        sns.set_style("darkgrid")
+        plt.figure(figsize=(16,3))
+        plt.ylim([-0.02, 1.02])
+        plt.xlim([0, 20])
+        plt.yticks(np.arange(0.0, 1.1, 0.2))
+        plt.xticks(np.arange(0, 21, 1))
+        plt.fill_between(x[:len_acc], acc - val, acc + val, color="lightcoral", alpha=0.5, label="variance")
+        plt.plot(x[:len_acc], acc, color="red", linewidth=1.5, label="reliability")
+        plt.xlabel("Iteration", fontsize=14)
+        plt.ylabel("Reliability", fontsize=14)
+        plt.tick_params(labelsize=12)
+        plt.tight_layout(pad=1)
+        plt.legend(loc="lower right", fontsize=14)
+        plt.savefig(os.path.join(home_dir, "result", "acc_val.png"))
+
+
+    @staticmethod
+    def variance_score(acc, size):
+        return acc * (1 - acc) / size
+
+
+    @staticmethod
+    def remove(dirpath):
+        if os.path.exists(dirpath):
+            files = os.listdir(dirpath)
+            for file in files:
+                os.remove(os.path.join(dirpath, file))
+
+    @staticmethod
+    def set_random_seed(seed):
+        random.seed(seed)
+        np.random.seed(seed)
+        xp.random.seed(seed)
+        print "[Trainer] Set Random Seed: {}.".format(seed)
+
 

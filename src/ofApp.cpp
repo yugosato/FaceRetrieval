@@ -1413,13 +1413,13 @@ void ofApp::mouseReleased(int x, int y, int button)
 				total_search_time_ += ofGetElapsedTimef() - search_timer_start_;
 
 
-				// Original query vector (initail features).
+				// Original search query vector (initail features).
 				rocchio_init_->set_features(loading_->features_);
 				rocchio_init_->setInput_multi(positives_, negatives_);
 				rocchio_init_->set_weight(1.0, 0.8, 0.1);
 				rocchio_init_->run();
 
-				// Search by original query vector.
+				// Search neibors data by query vector.
 				search_->set_queryvector(rocchio_init_->queryvector_);
 				search_->startThread();
 			}
@@ -1811,7 +1811,7 @@ void ofApp::showProcessingTime()
 	std::cout << "-------------------------- Processing Time --------------------------" << std::endl;
 	std::cout << "Rocchio algorithm: " << rocchio << " sec." << std::endl;
 	std::cout << "Searching (ngt): " << search << " sec." << std::endl;
-	std::cout << "Online training (main + extraction + selection): " << trainer << " sec." << std::endl;
+	std::cout << "Online training (train + extraction + selection): " << trainer << " sec." << std::endl;
 	std::cout << "Loading new features: " << loading << " sec." << std::endl;
 	std::cout << "Reranking (ours): " << rerank << " sec." << std::endl;
 #ifdef VISUALRANK

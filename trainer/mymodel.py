@@ -13,7 +13,9 @@ home_dir = "/home/yugo/workspace/Interface/trainer"
 initial_W = np.load(os.path.join(home_dir, "initial_W.npy"))
 initial_b = np.load(os.path.join(home_dir, "initial_b.npy"))
 
+
 class MyModel(Chain):
+
     def __init__(self, unit):
         super(MyModel, self).__init__(
             fc1=L.Linear(None, unit, initialW=initial_W, initial_bias=initial_b),
@@ -22,7 +24,6 @@ class MyModel(Chain):
         )
         self.train = True
 
-        
     def __call__(self, x, t):
         h = F.dropout(F.relu(self.fc1(x)), train=self.train, ratio=0.5)
         h = F.dropout(F.relu(self.fc2(h)), train=self.train, ratio=0.5)
@@ -31,11 +32,9 @@ class MyModel(Chain):
         chainer.report({'loss': loss, 'accuracy': F.accuracy(h, t)}, self)
         return loss
 
-
     def extract(self, x):
         h = F.dropout(F.relu(self.fc1(x)), train=False, ratio=0.5)
         return F.dropout(F.relu(self.fc2(h)), train=False, ratio=0.5)
-
 
     def forward(self, x):
         h = F.dropout(F.relu(self.fc1(x)), train=False, ratio=0.5)
@@ -45,6 +44,7 @@ class MyModel(Chain):
 
 
 class Chainer2Sklearn(ProbabilisticModel):
+
     def __init__(self, model):
         self.model_ = model
 
