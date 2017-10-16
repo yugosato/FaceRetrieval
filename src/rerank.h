@@ -18,8 +18,8 @@ public:
 	std::vector<std::vector<double>> features_;
 	std::vector<int> init_result_;
 	std::vector<int> reranked_result_;
-	int size_;
 	bool isReranked_;
+	int size_;
 	float process_time_;
 
 
@@ -61,7 +61,7 @@ public:
 		int i = 0;
 		while(i < size_)
 		{
-			cos_distance = cosine(queryvector_, features_[init_result_[i]], "distance");
+			cos_distance = mycosine(queryvector_, features_[init_result_[i]], "distance");
 			distance[i] = cos_distance;
 			++i;
 		}

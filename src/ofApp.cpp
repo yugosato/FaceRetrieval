@@ -12,40 +12,63 @@ ofApp::ofApp(const char* arg1, const char* arg2, const char* arg3)
 void ofApp::initparam()
 {
 	//-----------------------------------------
-	// Mouse & Keyboard.
-	clickx_ = -1;
-	clicky_ = -1;
-	dragx_ = -1;
-	dragy_= -1;
-	mouseover_ = -1;
-	holdImgNum_ = -1;
-	click_ = false;
-	leftsideclick_ = false;
-	isHolding_areaA_ = false;
-	isHoldAndDrag_ = false;
-	isInsideWindow_ = false;
+	// Window size.
+	windowWidth_ = initWidth_;
+	windowHeight_ = initHeight_;
 
-	//-----------------------------------------
-	// Display Settings.
+	// Display Settings (Result window).
 	colShow_ = 5;
 	d_size_ = (initWidth_ - leftsize_ - 2 * ScrollBarWidth_) / colShow_;
 	area_width_ = d_size_ * colShow_;
 	area_height_ = d_size_ * colShow_;
 
-	//-----------------------------------------
-	// Input Query.
-	clickflag_ = false;
+	// Display Settings (positives & negatives).
+	perHeight_ = (windowHeight_ - 2 * uppersize_) / 2 - 20;
+	overview_colShow_ = 15;
+	overview_areamargin_ = ScrollBarWidth_;
+	overview_d_size_ = (leftsize_ - 3 * overview_areamargin_) / overview_colShow_;
+	positive_txt_posy_ = fontposy_top_;
+	negative_txt_posy_ = positive_txt_posy_ + perHeight_ + uppersize_;
+	overviewP_areaposy_ = positive_txt_posy_ + 10;
+	overviewN_areaposy_ = negative_txt_posy_ + 10;
+	overview_areawidth_ = overview_d_size_ * overview_colShow_;
+	overview_areawidth_wide_ = windowWidth_ - 2 * overview_areamargin_;
+	overview_areaheight_ = perHeight_;
+	propose_txt_posy_ = 2 * uppersize_ + area_height_ - 15;
+	propose_imgsize_ = (overviewN_areaposy_ + overview_areaheight_) - (2 * uppersize_ + area_height_);
+	propose_img_posx_ = leftsize_ + (area_width_ - propose_imgsize_) / 2;
+	propose_img_posy_ = propose_txt_posy_ + 10;
 
 	//-----------------------------------------
-	// Window Information.
-	windowWidth_ = initWidth_;
-	windowHeight_ = initHeight_;
+	// Mouse moving & holding.
+	clickx_ = -1;
+	clicky_ = -1;
+	dragx_ = -1;
+	dragy_= -1;
+	mouseoverx_ = -1;
+	mouseovery_ = -1;
+	mouseover_ = -1;
+	holdImgNum_ = -1;
+	holding_x_ = -1;
+	holding_y_ = -1;
+
+	// Flags.
+	click_ = false;
+	leftsideclick_ = false;
+	isHolding_areaA_ = false;
+	isHolding_areaP_ = false;
+	isHolding_areaN_ = false;
+	isHoldAndDrag_ = false;
+	isInsideWindow_ = false;
+	isInside_areaA_ = false;
+	isInside_areaP_ = false;
+	isInside_areaN_ = false;
+	isInside_propose_ = false;
 
 	//-----------------------------------------
 	// Path Settings.
 	binData_ = "/home/yugo/workspace/Interface/bin/data";
 	datasetdir_ = "/home/yugo/Desktop/dataset";
-
 #ifdef LFW
 	nameFile_ = datasetdir_ + "/lfw-cropped/images_selected.txt";
 #endif
@@ -55,7 +78,6 @@ void ofApp::initparam()
 #ifdef CFD_LFW
 	nameFile_ = datasetdir_ + "/images_selected.txt";
 #endif
-
 #ifdef VGG
 #ifdef LFW
 	featuresfile_ = binData_ + "/lfw/lfw-vgg.tsv";
@@ -90,14 +112,11 @@ void ofApp::initparam()
 #endif
 
 	// Log Settings.
-	logdir_ = "/home/yugo/workspace/Interface/bin/log/" + subjectname_;
 	logdir_name();
-
 	candidatefile_active_ = logdir_ + "/candidate_active.txt";
 	candidatefile_origin_ = logdir_ + "/candidate_origin.txt";
 	candidatefile_rerank_ = logdir_ + "/candidate_rerank.txt";
 	candidatefile_visualrank_ = logdir_ + "/candidate_visualrank.txt";
-
 #ifdef LFW
 	init_candidatefile_ = binData_ + "/lfw/initialize.txt";
 #endif
@@ -107,7 +126,6 @@ void ofApp::initparam()
 #ifdef CFD_LFW
 	init_candidatefile_ = binData_ + "/cfd_lfw/initialize.txt";
 #endif
-
 	evaluationfile_ = logdir_ + "/distance.csv";
 	testsettingfile_ = logdir_ + "/test.txt";
 
@@ -128,10 +146,26 @@ void ofApp::initparam()
 	ttf_ = binData_ + "/fonts/RictyDiminished-Bold.ttf";
 
 	//-----------------------------------------
+	// Others.
+	epoch_ = 0;
+	isFinishedInitSet_ = false;
+	canSearch_ = false;
+	isWroteTestResult_ = false;
+	len_current_showlist_ = show_size_;
+	selection_count_ = 0;
+
+	//-----------------------------------------
+	// Positive & Negative.
+	len_positives_ = 0;
+	len_negatives_ = 0;
+
+	//-----------------------------------------
 	// Retrieval results.
 	search_window_size_ = 50;
 	show_size_ = 25;
-#
+
+	// Flags.
+	isSearchedAll_ = false;
 	isactive_ = true;
 #ifndef OPENUSE
 	isorigin_ = false;
@@ -144,52 +178,12 @@ void ofApp::initparam()
 #endif
 
 	//-----------------------------------------
-	// Overview Settings.
-	isHolding_areaA_ = false;
-	isHolding_areaP_ = false;
-	isHolding_areaN_ = false;
-	isHoldAndDrag_ = false;
-	isInsideWindow_ = false;
-	isInside_areaA_ = false;
-	isInside_areaP_ = false;
-	isInside_areaN_ = false;
-	isInside_propose_ = false;
+	// Search target judge.
 	isJudgeTrue_ = false;
 	isJudgeFalse_ = false;
-	overview_colShow_ = 15;
-	overviewP_rowShow_ = 0;
-	overviewP_rowShow_ = 0;
-	holdImgNum_ = -1;
-	holding_x_ = -1;
-	holding_y_ = -1;
-	overview_areamargin_ = ScrollBarWidth_;
-	overview_d_size_ = (leftsize_ - 3 * overview_areamargin_) / overview_colShow_;
-	perHeight_ = (windowHeight_ - 2 * uppersize_) / 2 - 20;
-	positive_txt_posy_ = fontposy_top_;
-	negative_txt_posy_ = positive_txt_posy_ + perHeight_ + uppersize_;
-	propose_txt_posy_ = 2 * uppersize_ + area_height_ - 15;
-	overviewP_areaposy_ = positive_txt_posy_ + 10;
-	overviewN_areaposy_ = negative_txt_posy_ + 10;
-	overview_areawidth_ = overview_d_size_ * overview_colShow_;
-	overview_areawidth_wide_ = windowWidth_ - 2 * overview_areamargin_;
-	overview_areaheight_ = perHeight_;
-	propose_imgsize_ = (overviewN_areaposy_ + overview_areaheight_) - (2 * uppersize_ + area_height_);
-	propose_img_posx_ = leftsize_ + (area_width_ - propose_imgsize_) / 2;
-	propose_img_posy_ = propose_txt_posy_ + 10;
-	len_positives_ = 0;
-	len_negatives_ = 0;
 
 	//-----------------------------------------
-	// Others.
-	epoch_ = 0;
-	isSearchedAll_ = false;
-	isFinishedInitSet_ = false;
-	isWroteTestResult_ = false;
-	canSearch_ = false;
-	selection_count_ = 0;
-
-	//-----------------------------------------
-	// Others.
+	// Timer.
 	total_search_time_ = 0.0f;
 }
 
@@ -245,16 +239,12 @@ void ofApp::setup()
 	ofSetWindowShape(windowWidth_, windowHeight_);
 	guiSetup();
 	loadImageandFont();
-
 	mkdir(logdir_.c_str(), 0777);
 
 	// Get Database information.
 	database_ = new DataBase();
 	database_->setup(searchTarget_, show_size_, nameFile_, init_candidatefile_);
 	database_->initialize("kmeans");
-	row_ = database_->getRow();
-	database_->getName(&name_);
-	database_->getPersonID(&person_ids_);
 
 	if (searchTarget_ > database_->row_ - 1)
 	{
@@ -267,8 +257,8 @@ void ofApp::setup()
 
 	// Load images.
 	loader_ = new ImageLoader();
-	loader_->setRow(row_);
-	loader_->setName(name_);
+	loader_->setRow(database_->row_);
+	loader_->setName(database_->name_);
 
 	calculate();
 	onPaint(showList_active_);
@@ -280,7 +270,7 @@ void ofApp::setup()
 	// Load image features (multi thread).
 	loading_ = new NowLoading();
 	loading_->set_featuresfile(featuresfile_, new_featuresfile_);
-	loading_->setRow(row_);
+	loading_->setRow(database_->row_);
 	loading_->startThread();
 
 	// Setup writer.
@@ -432,7 +422,7 @@ void ofApp::update()
 
 		loading_->isLoadNew_ = true;
 		loading_->set_new_index(new_index);
-		loading_->startThread();	// Load new features.
+		loading_->startThread();
 	}
 
 	if (loading_->isLoaded_new_)
@@ -638,14 +628,12 @@ void ofApp::draw()
 		}
 	}
 
-    const int len_positive_images = positive_images_.size();
-	const int len_negative_images = negative_images_.size();
-
 	// Positive sample viewer.
 	ofFill();
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
 	ofDrawRectangle(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_);
 
+	const int len_positive_images = positive_images_.size();
     if (len_positive_images > 0)
 	{
 		for (int i = 0; i < len_positive_images; ++i)
@@ -676,6 +664,7 @@ void ofApp::draw()
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 130.0f));
 	ofDrawRectangle(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_);
 
+	const int len_negative_images = negative_images_.size();
 	if (len_negative_images > 0)
 	{
 		for (int i = 0; i < len_negative_images; ++i)
@@ -770,6 +759,12 @@ void ofApp::draw()
 		text = "VisualRank";
 	}
 #endif
+#else
+	if (isresult_)
+	{
+		result_button2_.draw(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_);
+		selection_button1_.draw(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_);
+	}
 #endif
 
 	if (isFinishedInitSet_ && !canSearch_)
@@ -777,18 +772,9 @@ void ofApp::draw()
 	else if (!isFinishedInitSet_)
 		text = "Please wait.";
 
-
-	float w = font_.stringWidth(text);
+	float width = font_.stringWidth(text);
 	ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-	font_.drawString(text, windowWidth_ - w - ScrollBarWidth_ - 35, fontposy_top_);
-
-#ifdef OPENUSE
-	if (isresult_)
-	{
-		result_button2_.draw(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_);
-		selection_button1_.draw(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_);
-	}
-#endif
+	font_.drawString(text, windowWidth_ - width - ScrollBarWidth_ - 35, fontposy_top_);
 
 	std::string positive = "Positive Sample: ";
 	std::string negative = "Negative Sample: ";
@@ -1396,7 +1382,6 @@ void ofApp::mouseReleased(int x, int y, int button)
 				epoch_++;
 				std::cout << "[ofApp] " << "Feedback: " << epoch_ << std::endl;
 
-				clickflag_ = true;
 				canSearch_ = false;
 				total_search_time_ += ofGetElapsedTimef() - search_timer_start_;
 
@@ -1720,42 +1705,6 @@ void ofApp::calculateHoldingOriginPoint()
 }
 
 //--------------------------------------------------------------
-bool ofApp::vector_finder(const std::vector<int>& vector, const int number)
-{
-	if (vector.size() > 0)
-	{
-		auto itr = std::find(vector.begin(), vector.end(), number);
-		size_t index = std::distance(vector.begin(), itr);
-		if (index != vector.size())
-			return true;	// If the number exists in the vector.
-		else
-			return false;	// If the number does not exist in the vector.
-	}
-	else
-		return false;
-}
-
-//--------------------------------------------------------------
-void ofApp::put_time(std::string& time_str)
-{
-    time_t     current;
-    struct tm  *local;
-
-    time(&current);
-    local = localtime(&current);
-
-    std::string year = ofToString(local->tm_year + 1900);
-    std::string month = ofToString(local->tm_mon);
-    std::string day = ofToString(local->tm_mday);
-    std::string hour = ofToString(local->tm_hour);
-    std::string min = ofToString(local->tm_min);
-    std::string sec = ofToString(local->tm_sec);
-    std::string delim = "-";
-
-    time_str = year + delim + month + delim + day + delim + hour + delim + min + delim + sec;
-}
-
-//--------------------------------------------------------------
 void ofApp::showProcessingTime()
 {
 	float rocchio = rocchio_init_->process_time_;
@@ -1764,7 +1713,6 @@ void ofApp::showProcessingTime()
 	float loading = loading_->process_time_;
 	float rerank = rerank_->process_time_;
 	float back_process = trainer + loading + rocchio + search + rerank;
-
 #ifdef VISUALRANK
 	float visualrank = visualrank_->process_time_;
 #endif

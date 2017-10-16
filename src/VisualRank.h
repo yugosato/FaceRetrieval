@@ -20,10 +20,10 @@ public:
 	std::vector<std::vector<double>> features_;
 	std::vector<int> init_result_;
 	std::vector<int> reranked_result_;
-	Eigen::MatrixXf similarity_matrix_;
-	int size_;
 	std::string init_method_;
+	Eigen::MatrixXf similarity_matrix_;
 	bool isReranked_;
+	int size_;
 	float process_time_;
 
 
@@ -84,7 +84,7 @@ public:
 		std::cout << "[ReRank] Finished reranking results by VisuralRank." << std::endl;
 	}
 
-	inline void getNumber(std::vector<int>* number) const
+	void getNumber(std::vector<int>* number) const
 	{
 		number->resize(size_);
 		int i = 0;
@@ -111,7 +111,7 @@ private:
 				if (i == j)
 					similarity_matrix_(i, j) = 1.0;
 				else if (i < j)
-					similarity_matrix_(i, j) = cosine(features_[init_result_[i]], features_[init_result_[j]], "similarity");
+					similarity_matrix_(i, j) = mycosine(features_[init_result_[i]], features_[init_result_[j]], "similarity");
 				else
 					similarity_matrix_(i, j) = similarity_matrix_(j, i);
 				++j;
@@ -171,7 +171,7 @@ private:
 		return rankscore;
 	}
 
-	inline void sort_result_by_index(const std::vector<int>& index)
+	void sort_result_by_index(const std::vector<int>& index)
 	{
 		reranked_result_.clear();
 		reranked_result_.resize(size_);

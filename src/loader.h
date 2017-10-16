@@ -6,6 +6,8 @@
 #include <fstream>
 #include "NGT/Index.h"
 #include "ofMain.h"
+#include "util.h"
+
 
 class NowLoading: public ofThread
 {
@@ -15,19 +17,17 @@ public:
 	std::vector<std::vector<double>> features_;
 	std::vector<std::vector<double>> new_features_;
 	std::vector<int> new_index_;
-	int row_;
-	int col_;
 	bool isLoaded_init_;
 	bool isLoaded_new_;
 	bool isLoadNew_;
+	int row_;
+	int col_;
 	float process_time_;
 
 
 public:
 	NowLoading()
 	{
-		row_ = 0;
-		col_ = 0;
 		isLoaded_init_ = false;
 		isLoaded_new_ = false;
 		isLoadNew_ = false;
@@ -74,11 +74,6 @@ public:
 	void setRow(const int row)
 	{
 		row_ = row;
-	}
-
-	const int getCol()
-	{
-		return col_;
 	}
 
 
@@ -138,20 +133,6 @@ private:
 		}
 	}
 
-	bool vector_finder(const std::vector<int>& vector, const int number)
-	{
-		if (vector.size() > 0)
-		{
-			auto itr = std::find(vector.begin(), vector.end(), number);
-			size_t index = std::distance(vector.begin(), itr);
-			if (index != vector.size())
-				return true;	// If the number exists in the vector.
-			else
-				return false;	// If the number does not exist in the vector.
-		}
-		else
-			return false;
-	}
 };
 
 
@@ -180,7 +161,7 @@ public:
 		name_ = name;
 	}
 
-	inline void setShowList(const std::vector<int>& showList)
+	void setShowList(const std::vector<int>& showList)
 	{
 		showList_.clear();
 		std::vector<int>().swap(showList_);

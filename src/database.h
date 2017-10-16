@@ -14,18 +14,16 @@ class DataBase
 {
 public:
 	int searchTarget_;
+	int init_size_;
+	int row_;
 	std::string nameFile_;
 	std::string initFile_;
-	int row_;
 	std::vector<std::string> name_;
 	std::vector<int> number_active_;
 	std::vector<int> number_origin_;
 	std::vector<int> number_rerank_;
 	std::vector<int> number_visualrank_;
 	std::vector<int> showList_;
-	std::vector<int> ids_;
-	int init_size_;
-
 	ofImage target_img_;
 	ofImage toprank_img_origin_;
 	ofImage toprank_img_rerank_;
@@ -59,8 +57,78 @@ public:
 		target_img_.load(name_[searchTarget_]);
 	}
 
+	void makeShowList_active(const int size)
+	{
+		showList_.resize(size);
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_active_[i];
+	}
+
+	void makeShowList_origin(const int size)
+	{
+		showList_.resize(size);
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_origin_[i];
+	}
+
+	void makeShowList_rerank(const int size)
+	{
+		showList_.resize(size);
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_rerank_[i];
+	}
+
+	void makeShowList_visualrank(const int size)
+	{
+		showList_.resize(size);
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_visualrank_[i];
+	}
+
+	void setNumber_active(const std::vector<int>& number)
+	{
+		const int size = number.size();
+		number_active_.resize(size);
+		for (int i = 0; i < size; ++i)
+			number_active_[i] = number[i];
+	}
+
+	void setNumber_origin(const std::vector<int>& number)
+	{
+		const int size = number.size();
+		number_origin_.resize(size);
+		for (int i = 0; i < size; ++i)
+			number_origin_[i] = number[i];
+		toprank_img_origin_.load(name_[number_origin_[0]]);
+	}
+
+	void setNumber_rerank(const std::vector<int>& number)
+	{
+		const int size = number.size();
+		number_rerank_.resize(size);
+		for (int i = 0; i < size; ++i)
+			number_rerank_[i] = number[i];
+		toprank_img_rerank_.load(name_[number_rerank_[0]]);
+	}
+
+	void setNumber_visualrank(const std::vector<int>& number)
+	{
+		const int size = number.size();
+		number_visualrank_.resize(size);
+		for (int i = 0; i < size; ++i)
+			number_visualrank_[i] = number[i];
+		toprank_img_visualrank_.load(name_[number_visualrank_[0]]);
+	}
+
+	const std::vector<int>& getShowList() const
+	{
+		return showList_;
+	}
+
+
+private:
 	// Load image list.
-	inline void loadFileName()
+	void loadFileName()
 	{
 		std::ifstream ifs(nameFile_);
 		if (!ifs)
@@ -75,7 +143,6 @@ public:
 				std::vector<std::string> tokens;
 				NGT::Common::tokenize(line, tokens, " ");
 				name_.push_back(tokens[0]);
-				ids_.push_back(std::atoi(tokens[1].c_str()));
 			}
 			row_ = name_.size();
 		}
@@ -130,134 +197,7 @@ public:
 			{
 				number_origin_[i] = std::atoi(tokens[i].c_str());
 			}
-
-			removeTarget();
 		}
-	}
-
-	void removeTarget()
-	{
-		int size = number_origin_.size();
-		for (int i = 0; i < size; ++i)
-		{
-			int num = number_origin_[i];
-			if (num == searchTarget_)
-			{
-				number_origin_.erase(number_origin_.begin() + i);
-				break;
-			}
-		}
-	}
-
-
-	inline void makeShowList_active(const int size)
-	{
-		showList_.clear();
-		showList_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			showList_[i] = number_active_[i];
-	}
-
-	inline void makeShowList_origin(const int size)
-	{
-		showList_.clear();
-		showList_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			showList_[i] = number_origin_[i];
-	}
-
-	inline void makeShowList_rerank(const int size)
-	{
-		showList_.clear();
-		showList_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			showList_[i] = number_rerank_[i];
-	}
-
-	inline void makeShowList_visualrank(const int size)
-	{
-		showList_.clear();
-		showList_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			showList_[i] = number_visualrank_[i];
-	}
-
-	inline void setNumber_active(const std::vector<int>& number)
-	{
-		const int size = number.size();
-
-		number_active_.clear();
-		number_active_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			number_active_[i] = number[i];
-	}
-
-	inline void setNumber_origin(const std::vector<int>& number)
-	{
-		const int size = number.size();
-
-		number_origin_.clear();
-		number_origin_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			number_origin_[i] = number[i];
-
-		toprank_img_origin_.load(name_[number_origin_[0]]);
-	}
-
-	inline void setNumber_rerank(const std::vector<int>& number)
-	{
-		const int size = number.size();
-
-		number_rerank_.clear();
-		number_rerank_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			number_rerank_[i] = number[i];
-
-		toprank_img_rerank_.load(name_[number_rerank_[0]]);
-	}
-
-	inline void setNumber_visualrank(const std::vector<int>& number)
-	{
-		const int size = number.size();
-
-		number_visualrank_.clear();
-		number_visualrank_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			number_visualrank_[i] = number[i];
-
-		toprank_img_visualrank_.load(name_[number_visualrank_[0]]);
-	}
-
-	inline void getName(std::vector<std::string>* nameList) const
-	{
-		nameList->resize(row_);
-		for (int i = 0; i < row_; ++i)
-			(*nameList)[i] = name_[i];
-	}
-
-	inline void getPersonID(std::vector<int>* person_ids) const
-	{
-		person_ids->resize(row_);
-		for (int i = 0; i < row_; ++i)
-			(*person_ids)[i] = ids_[i];
-	}
-
-	const int& getRow() const
-	{
-		return row_;
-	}
-
-	const std::vector<int>& getShowList() const
-	{
-		return showList_;
 	}
 };
 

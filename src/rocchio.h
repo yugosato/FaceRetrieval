@@ -71,7 +71,7 @@ public:
 		gamma_ = gamma;
 	}
 
-	void run()
+	inline void run()
 	{
 		std::cout << "[Rocchio] Start calculating query vector by rocchio algorithm." << std::endl;
 		std::cout << "[Rocchio] Alpha: " << alpha_ << ", Beta: " << beta_ << ", Gamma: " << gamma_ << std::endl;

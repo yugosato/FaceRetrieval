@@ -6,7 +6,7 @@
 #include <assert.h>
 
 
-inline double cosine(const std::vector<double>& a, const std::vector<double>& b, const std::string mode)
+inline float mycosine(const std::vector<double>& a, const std::vector<double>& b, const std::string mode)
 {
 	// Calculate the norm of A and B (the supplied vector).
 	double normA = 0.0F;
@@ -36,8 +36,8 @@ inline double cosine(const std::vector<double>& a, const std::vector<double>& b,
 	else
 	{
 		std::cout << "[ofApp] Cannot compute specified metric: " << mode << std::endl;
-		return -1;
 		std::abort();
+		return -1;
 	}
 }
 

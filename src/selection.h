@@ -8,12 +8,12 @@
 #include <string>
 #include <fstream>
 #include <random>
+#include "util.h"
 
 
 class Selection
 {
 public:
-	int searchTarget_;
 	std::string uncertain_indexfile_;
 	std::string cueflik_indexfile_;
 	std::string random_indexfile_;
@@ -22,10 +22,10 @@ public:
 	std::vector<int> result_origin_;
 	std::vector<int> result_rerank_;
 	std::string method_;
-	bool mix_;
+	int searchTarget_;
 	int show_size_;
 	int row_;
-
+	bool mix_;
 
 
 public:
@@ -73,7 +73,7 @@ public:
 		result_rerank_ = result_rerank;
 	}
 
-	void load()
+	inline void load()
 	{
 		std::vector<int> index;
 		if (method_ == "uncertain")
@@ -91,7 +91,7 @@ public:
 			mix_selection();
 	}
 
-	inline void getNumber(std::vector<int>* number) const
+	void getNumber(std::vector<int>* number) const
 	{
 		number->clear();
 		int size = (int) selection_.size();
@@ -110,7 +110,7 @@ private:
 	}
 
 	// Mix active selection & reranked results.
-	inline void mix_selection()
+	void mix_selection()
 	{
 		selection_.resize(show_size_, -1);
 
@@ -193,21 +193,6 @@ private:
 			int num = std::atoi(buf.c_str());
 			full_selection_.push_back(num);
 		}
-	}
-
-	bool vector_finder(const std::vector<int>& vector, const int number)
-	{
-		if (vector.size() > 0)
-		{
-			auto itr = std::find(vector.begin(), vector.end(), number);
-			size_t index = std::distance(vector.begin(), itr);
-			if (index != vector.size())
-				return true;	// If the number exists in the vector.
-			else
-				return false;	// If the number does not exist in the vector.
-		}
-		else
-			return false;
 	}
 
 };

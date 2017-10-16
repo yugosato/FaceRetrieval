@@ -16,7 +16,6 @@ public:
 	std::string indexFile_;
 	std::vector<double> queryvector_;
 	bool isSearched_;
-	int clickNo_;
 	int size_;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
@@ -26,7 +25,6 @@ public:
 public:
 	void setup(const std::string indexFile, const int size)
 	{
-		clickNo_ = -1;
 		indexFile_ = indexFile;
 		size_ = size;
 		index_ = new NGT::Index(indexFile_);
@@ -82,7 +80,7 @@ public:
 		}
 	}
 
-	inline void getNumber(std::vector<int>* number) const
+	void getNumber(std::vector<int>* number) const
 	{
 		number->clear();
 		number->resize(size_);

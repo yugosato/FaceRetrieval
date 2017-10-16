@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <fstream>
 #include "distance.h"
+#include "util.h"
 
 
 class SingleSearchEvaluater
@@ -15,25 +16,20 @@ public:
 	int searchTarget_;
 	float distance_;
 	int count_;
+	int target_rank_;
 	std::string filename_;
 	std::vector<std::vector<double>> features_;
 	std::vector<double> inputpoint_;
 	std::vector<int> results_;
-	int target_rank_;
+
 
 public:
-	SingleSearchEvaluater()
-	{
-		distance_ = 9999.9f;
-		searchTarget_ = -1;
-		count_ = 0;
-		target_rank_ = -1;
-	}
-
 	void setup(const int searchTarget, const std::string filename)
 	{
 		searchTarget_ = searchTarget;
 		filename_ = filename;
+		distance_ = 0.0f;
+		count_ = 0;
 	}
 
 	void set_features(const std::vector<std::vector<double>>& features)
@@ -60,15 +56,14 @@ public:
 
 
 private:
-	// Calculate distance between the target and input point.
 	void calculate_distance()
 	{
-		distance_ = cosine(features_[searchTarget_], inputpoint_, "distance");
+		distance_ = mycosine(features_[searchTarget_], inputpoint_, "distance");
 	}
 
 	void find_searchTarget()
 	{
-		target_rank_ = vector_finder(results_, searchTarget_);
+		target_rank_ = vector_index_finder(results_, searchTarget_);
 	}
 
 	void write()
@@ -91,20 +86,6 @@ private:
 		count_++;
 	}
 
-	int vector_finder(const std::vector<int>& vector, const int number)
-	{
-		if (vector.size() > 0)
-		{
-			auto itr = std::find(vector.begin(), vector.end(), number);
-			size_t index = std::distance(vector.begin(), itr);
-			if (index != vector.size())
-				return index;	// If the number exists in the vector.
-			else
-				return -1;	// If the number does not exist in the vector.
-		}
-		else
-			return -1;
-	}
 };
 
 
