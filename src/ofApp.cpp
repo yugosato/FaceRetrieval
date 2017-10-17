@@ -128,6 +128,7 @@ void ofApp::initparam()
 #endif
 	evaluationfile_ = logdir_ + "/distance.csv";
 	testsettingfile_ = logdir_ + "/test.txt";
+	activelogfile_ = logdir_ + "/log.txt";
 
 	// Python Settings.
 	pysettingfile_ = binData_ + "/py_setting.txt";
@@ -308,6 +309,10 @@ void ofApp::setup()
 	test_writer_->setup(testsettingfile_);
 	test_writer_->settings(selection_->searchTarget_, selection_->method_);
 
+	// Setup active selection logger.
+	activelog_ = new ActiveLog;
+	activelog_->setup(activelogfile_);
+
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Matrix file: \"" << featuresfile_ << "\"" << std::endl;
 	std::cout << "[Setting] Npy file: \"" << npyFile_ << "\"" << std::endl;
@@ -352,6 +357,7 @@ void ofApp::exit()
 	delete rocchio_init_;
 	delete rocchio_new_;
 	delete test_writer_;
+	delete activelog_;
 #ifdef VISUALRANK
 	delete logger_visualrank_;
 	delete visualrank_;
@@ -1192,7 +1198,10 @@ void ofApp::mouseReleased(int x, int y, int button)
 						// A -> P.
 						if (isInside_areaP_)
 						{
-							std::cout << "[ofApp] ActiveSelection No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Positive." << std::endl;
+							std::string active = "selection: " + ofToString(dragImgId)+ " --> positive";
+							activelog_->Write(epoch_, active);
+							std::cout << "[ofApp] " << active << std::endl;
+
 							positives_.push_back(dragImgId);
 							positive_images_.push_back(dragImg);
 							len_positives_ = positives_.size();
@@ -1200,7 +1209,10 @@ void ofApp::mouseReleased(int x, int y, int button)
 						}	// A -> N.
 						else if (isInside_areaN_)
 						{
-							std::cout << "[ofApp] ActiveSelection No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Negative." << std::endl;
+							std::string active = "selection: " + ofToString(dragImgId) + " --> negative";
+							activelog_->Write(epoch_, active);
+							std::cout << "[ofApp] " << active << std::endl;
+
 							negatives_.push_back(dragImgId);
 							negative_images_.push_back(dragImg);
 							len_negatives_ = negatives_.size();
@@ -1216,14 +1228,20 @@ void ofApp::mouseReleased(int x, int y, int button)
 
 					if (searchTarget_ == dragImgId)
 					{
+						std::string active = "judge: " + ofToString(dragImgId) + " --> true";
+						activelog_->Write(epoch_, active);
+						std::cout << "[ofApp] " << active << std::endl;
+
 						isJudgeTrue_ = true;
-						std::cout << "[ofApp] Judge: True!" << std::endl;
 					}
 					else
 					{
+						std::string active = "judge: " + ofToString(dragImgId) + " --> false";
+						activelog_->Write(epoch_, active);
+						std::cout << "[ofApp] " << active << std::endl;
+
 						isJudgeFalse_ = true;
 						pause_timer_start_ = ofGetElapsedTimef();
-						std::cout << "[ofApp] Judge: False!" << std::endl;
 					}
 				}
 			}
@@ -1236,7 +1254,10 @@ void ofApp::mouseReleased(int x, int y, int button)
 				// P -> A.
 				if (isInside_areaA_)
 				{
-					std::cout << "[ofApp] Positive No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Removed." << std::endl;
+					std::string active = "positive: " + ofToString(dragImgId) + " --> removed";
+					activelog_->Write(epoch_, active);
+					std::cout << "[ofApp] " << active << std::endl;
+
 					positives_.erase(positives_.begin() + holdImgNum_);
 					positive_images_.erase(positive_images_.begin() + holdImgNum_);
 					len_positives_ = positives_.size();
@@ -1247,7 +1268,10 @@ void ofApp::mouseReleased(int x, int y, int button)
 					bool check_duplication = vector_finder(negatives_, dragImgId);
 					if (!check_duplication)
 					{
-						std::cout << "[ofApp] Positive No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Negative." << std::endl;
+						std::string active = "positive: " +ofToString(dragImgId) + " --> negative";
+						activelog_->Write(epoch_, active);
+						std::cout << "[ofApp] " << active << std::endl;
+
 						negatives_.push_back(dragImgId);
 						negative_images_.push_back(dragImg);
 						positives_.erase(positives_.begin() + holdImgNum_);
@@ -1267,7 +1291,10 @@ void ofApp::mouseReleased(int x, int y, int button)
 				// N -> A.
 				if (isInside_areaA_)
 				{
-					std::cout << "[ofApp] Negative No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Removed." << std::endl;
+					std::string active = "negative: " + ofToString(dragImgId) + " --> removed.";
+					activelog_->Write(epoch_, active);
+					std::cout << "[ofApp] " << active << std::endl;
+
 					negatives_.erase(negatives_.begin() + holdImgNum_);
 					negative_images_.erase(negative_images_.begin() + holdImgNum_);
 					len_negatives_ = negatives_.size();
@@ -1278,7 +1305,10 @@ void ofApp::mouseReleased(int x, int y, int button)
 					bool check_duplication = vector_finder(positives_, dragImgId);
 					if (!check_duplication)
 					{
-						std::cout << "[ofApp] Negative No." << holdImgNum_ << " (ID:" << dragImgId << ") -> Positive." << std::endl;
+						std::string active = "negative: " + ofToString(dragImgId) + " --> positive.";
+						activelog_->Write(epoch_, active);
+						std::cout << "[ofApp] " << active << std::endl;
+
 						positives_.push_back(dragImgId);
 						positive_images_.push_back(dragImg);
 						negatives_.erase(negatives_.begin() + holdImgNum_);

@@ -150,6 +150,7 @@ public:
 	std::string init_candidatefile_;
 	std::string evaluationfile_;
 	std::string testsettingfile_;
+	std::string activelogfile_;
 
 	// Python Settings.
 	std::string pysettingfile_;
@@ -326,4 +327,5 @@ public:
 	Rocchio* rocchio_init_;
 	Rocchio* rocchio_new_;
 	TestWriter* test_writer_;
+	ActiveLog* activelog_;
 };

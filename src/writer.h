@@ -196,4 +196,29 @@ public:
 
 };
 
+
+class ActiveLog
+{
+public:
+	std::string filename_;
+
+
+public:
+	void setup(const std::string filename)
+	{
+		filename_ = filename;
+	}
+
+
+	void Write(const int epoch, const std::string msg)
+	{
+		std::ofstream writer(filename_, std::ios::app);
+		if (!writer)
+			std::cerr << "[Warning] Cannot open the specified file. " << filename_ << std::endl;
+
+		writer << "[iter" << epoch << "] " << msg << std::endl;;
+	}
+
+};
+
 #endif /* SRC_WRITER_H_ */
