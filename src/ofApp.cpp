@@ -1,5 +1,6 @@
 #include "ofApp.h"
 
+
 //--------------------------------------------------------------
 ofApp::ofApp(const char* arg1, const char* arg2, const char* arg3)
 {
@@ -810,22 +811,25 @@ void ofApp::draw()
 		ofSetColor(ofColor(128.0f, 128.0f, 128.0f, 255.0f));
 		ofDrawRectangle(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
 
-		ofImage show_image;
-		if (selection_method_ == "random" || selection_method_ == "traditional")
+		if (isactive_)
 		{
-			if (database_->toprank_img_origin_.isAllocated())
-				show_image = database_->toprank_img_origin_;
-		}
-		else
-		{
-			if (database_->toprank_img_rerank_.isAllocated())
-				show_image = database_->toprank_img_rerank_;
-		}
+			ofImage show_image;
+			if (selection_method_ == "random" || selection_method_ == "traditional")
+			{
+				if (database_->toprank_img_origin_.isAllocated())
+					show_image = database_->toprank_img_origin_;
+			}
+			else
+			{
+				if (database_->toprank_img_rerank_.isAllocated())
+					show_image = database_->toprank_img_rerank_;
+			}
 
-		if (epoch_ > 0 && show_image.isAllocated())
-		{
-			ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
-			show_image.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+			if (epoch_ > 0 && show_image.isAllocated())
+			{
+				ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+				show_image.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+			}
 		}
 
 		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));

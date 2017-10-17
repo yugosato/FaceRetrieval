@@ -2,9 +2,9 @@
 
 
 // -------- DATABASE -------- //
-//#define CFD
+#define CFD
 //#define LFW
-#define CFD_LFW
+//#define CFD_LFW
 // -------- FEATURES -------- //
 #define VGG
 //#define HISTOGRAM
