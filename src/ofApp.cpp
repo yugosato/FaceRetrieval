@@ -165,6 +165,7 @@ void ofApp::initparam()
 	// Retrieval results.
 	search_window_size_ = 50;
 	show_size_ = 25;
+	active_size_ = 25;
 
 	// Flags.
 	isSearchedAll_ = false;
@@ -291,7 +292,7 @@ void ofApp::setup()
 	selection_ = new Selection;
 	selection_->setup(activeIndexfile_, cueflikIndexfile_, randomIndexfile_);
 	selection_->set_searchTarget(searchTarget_);
-	selection_->set_show_size(show_size_);
+	selection_->set_show_size(active_size_);
 	selection_->set_row(database_->row_);
 	selection_->set_method(selection_method_);
 
@@ -485,6 +486,13 @@ void ofApp::update()
 		single_evaluater_->run();
 
 		// Active selection.
+		show_size_ = search_window_size_;
+		if (selection_method_ == "random" || selection_method_ == "traditional")
+		{
+			active_size_ = search_window_size_;
+			selection_->set_show_size(active_size_);
+		}
+
 		selection_->set_result(number_origin_, number_rerank_);
 		selection_->load();
 		selection_->getNumber(&number_active_);
@@ -1535,7 +1543,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo)
 //--------------------------------------------------------------
 void ofApp::calculate()
 {
-	database_->makeShowList_active(show_size_);
+	database_->makeShowList_active(active_size_);
 	showList_active_ = database_->getShowList();
 
 	database_->makeShowList_origin(show_size_);

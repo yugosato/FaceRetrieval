@@ -191,6 +191,7 @@ public:
 	// Retrieval results.
 	int search_window_size_;
 	int show_size_;
+	int active_size_;
 	std::vector<int> number_active_;
 	std::vector<int> number_origin_;
 	std::vector<int> number_rerank_;

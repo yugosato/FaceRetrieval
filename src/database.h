@@ -43,7 +43,7 @@ public:
 	{
 		loadFileName();
 
-		if (init_method == "raadom")
+		if (init_method == "random")
 			random();
 		else if (init_method == "kmeans")
 			init_clustering();
