@@ -377,10 +377,6 @@ void ofApp::update()
 		loading_->stopThread();
 		loading_->isLoaded_init_ = false;
 
-		isFinishedInitSet_ = true;
-		canSearch_ = true;
-		search_timer_start_ = ofGetElapsedTimef();
-
 		logger_active_ = new Logger;
 		logger_origin_ = new Logger;
 		logger_rerank_ = new Logger;
@@ -404,6 +400,10 @@ void ofApp::update()
 		number_visualrank_ = database_->number_visualrank_;
 #endif
 		writelog();
+
+		isFinishedInitSet_ = true;
+		canSearch_ = true;
+		search_timer_start_ = ofGetElapsedTimef();
 	}
 
 	if (search_->isSearched_)
@@ -782,9 +782,12 @@ void ofApp::draw()
 	}
 #endif
 
-	if (isFinishedInitSet_ && !canSearch_)
-		text = "Searching...";
-	else if (!isFinishedInitSet_)
+	if (isFinishedInitSet_)
+	{
+		if (!canSearch_)
+			text = "Searching...";
+	}
+	else
 		text = "Please wait.";
 
 	float width = font_.stringWidth(text);
