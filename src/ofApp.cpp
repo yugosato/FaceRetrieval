@@ -207,17 +207,17 @@ void ofApp::loadImageandFont()
 	searchbutton1_.load(binData_ + "/items/search1.png");
 	searchbutton2_.load(binData_ + "/items/search2.png");
 
-	buttonA1_.load(binData_ + "/items/A1.png");
-	buttonA2_.load(binData_ + "/items/A2.png");
+	buttonA1_.load(binData_ + "/items/A2.png");
+	buttonA2_.load(binData_ + "/items/A1.png");
 
-	buttonB1_.load(binData_ + "/items/B1.png");
-	buttonB2_.load(binData_ + "/items/B2.png");
+	buttonB1_.load(binData_ + "/items/B2.png");
+	buttonB2_.load(binData_ + "/items/B1.png");
 
-	buttonC1_.load(binData_ + "/items/C1.png");
-	buttonC2_.load(binData_ + "/items/C2.png");
+	buttonC1_.load(binData_ + "/items/C2.png");
+	buttonC2_.load(binData_ + "/items/C1.png");
 #ifdef VISUALRANK
-	buttonD1_.load(binData_ + "/items/D1.png");
-	buttonD2_.load(binData_ + "/items/D2.png");
+	buttonD1_.load(binData_ + "/items/D2.png");
+	buttonD2_.load(binData_ + "/items/D1.png");
 #endif
 #else
 	searchbutton1_.load(binData_ + "/items/search_open1.png");

@@ -13,7 +13,7 @@
 // --------- RERANK --------- //
 //#define VISUALRANK
 // --------- DESIGN --------- //
-#define OPENUSE
+//#define OPENUSE
 // -------------------------- //
 
 
