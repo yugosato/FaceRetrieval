@@ -163,7 +163,15 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Retrieval results.
+#ifdef CFD
 	search_window_size_ = 50;
+#endif
+#ifdef LFW
+	search_window_size_ = 100;
+#endif
+#ifdef CFD_LFW
+	search_window_size_ = 100;
+#endif
 	show_size_ = 25;
 	active_size_ = 25;
 
