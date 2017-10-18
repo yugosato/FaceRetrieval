@@ -246,7 +246,7 @@ void ofApp::setup()
 
 	// Get Database information.
 	database_ = new DataBase();
-	database_->setup(searchTarget_, show_size_, nameFile_, init_candidatefile_);
+	database_->setup(searchTarget_, active_size_, nameFile_, init_candidatefile_);
 	database_->initialize("kmeans");
 
 	if (searchTarget_ > database_->row_ - 1)
@@ -1582,20 +1582,20 @@ void ofApp::writelog()
 	std::vector<int> candidate_visualrank;
 #endif
 
-	candidate_active.resize(show_size_);
-	candidate_origin.resize(search_window_size_);
-	candidate_rerank.resize(search_window_size_);
+	candidate_active.resize(active_size_);
+	candidate_origin.resize(show_size_);
+	candidate_rerank.resize(show_size_);
 #ifdef VISUALRANK
 	candidate_visualrank.resize(search_window_size_);
 #endif
 
-	for (int i = 0; i < show_size_; ++i)
+	for (int i = 0; i < active_size_; ++i)
 	{
 		int num_active = number_active_[i];
 		candidate_active[i] = num_active;
 	}
 
-	for (int i = 0; i < search_window_size_; ++i)
+	for (int i = 0; i < show_size_; ++i)
 	{
 		int num_origin = number_origin_[i];
 		int num_rerank = number_rerank_[i];
@@ -1775,7 +1775,7 @@ void ofApp::showProcessingTime()
 //--------------------------------------------------------------
 void ofApp::autoselect_negative()
 {
-	for (int i = 0; i < show_size_; ++i)
+	for (int i = 0; i < active_size_; ++i)
 	{
 		int number = showList_active_[i];
 		bool check_duplication_P = vector_finder(positives_, number);

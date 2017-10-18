@@ -2,8 +2,8 @@
 
 
 // -------- DATABASE -------- //
-#define CFD
-//#define LFW
+//#define CFD
+#define LFW
 //#define CFD_LFW
 // -------- FEATURES -------- //
 #define VGG
