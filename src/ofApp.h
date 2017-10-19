@@ -13,7 +13,7 @@
 // --------- RERANK --------- //
 //#define VISUALRANK
 // --------- DESIGN --------- //
-//#define OPENUSE
+#define OPENUSE
 // -------------------------- //
 
 
@@ -220,6 +220,12 @@ public:
 	// Search target judge.
 	bool isJudgeTrue_;
 	bool isJudgeFalse_;
+
+	//-----------------------------------------
+	// Rocchio algorithm parameters.
+	float alpha_;
+	float beta_;
+	float gamma_;
 
 	//-----------------------------------------
 	// Timer.

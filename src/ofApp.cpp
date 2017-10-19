@@ -194,6 +194,12 @@ void ofApp::initparam()
 	isJudgeFalse_ = false;
 
 	//-----------------------------------------
+	// Rocchio algorithm parameters.
+	alpha_ = 1.0f;
+	beta_ = 0.8f;
+	gamma_ = 0.1f;
+
+	//-----------------------------------------
 	// Timer.
 	total_search_time_ = 0.0f;
 }
@@ -449,7 +455,7 @@ void ofApp::update()
 		// New query vector (new features).
 		rocchio_new_->set_features(loading_->new_features_);
 		rocchio_new_->setInput_multi(positives_, negatives_);
-		rocchio_new_->set_weight(1.0, 0.8, 0.1);
+		rocchio_new_->set_weight(alpha_, beta_, gamma_);
 		rocchio_new_->run();
 
 		// Reranking by new features query vector.
@@ -1442,7 +1448,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 				// Original search query vector (initail features).
 				rocchio_init_->set_features(loading_->features_);
 				rocchio_init_->setInput_multi(positives_, negatives_);
-				rocchio_init_->set_weight(1.0, 0.8, 0.1);
+				rocchio_init_->set_weight(alpha_, beta_, gamma_);
 				rocchio_init_->run();
 
 				// Search neibors data by query vector.

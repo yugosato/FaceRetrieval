@@ -114,7 +114,7 @@ private:
 	{
 		selection_.resize(show_size_, -1);
 
-		int active_num = 10;
+		int active_num = show_size_ * 0.4;
 		int result_num = show_size_ - active_num;
 
 		// Insert top rank result.
