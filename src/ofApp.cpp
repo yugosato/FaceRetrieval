@@ -202,6 +202,11 @@ void ofApp::initparam()
 	//-----------------------------------------
 	// Timer.
 	total_search_time_ = 0.0f;
+
+	//-----------------------------------------
+	// Scroll Bar.
+	change_by_button_ = d_size_ / 3;
+	change_by_button_overview_ = overview_d_size_ / 3;
 }
 
 //--------------------------------------------------------------
@@ -566,8 +571,7 @@ void ofApp::update()
 	}
 
 	// Scroll Bar.
-	if (drawHeight_areaA_ > area_height_)
-		vscroll_areaA_.update();
+	vscroll_areaA_.update();
 	vscroll_areaP_.update();
 	vscroll_areaN_.update();
 
@@ -729,8 +733,7 @@ void ofApp::draw()
     ofDrawRectangle(leftsize_, uppersize_ + area_height_, windowWidth_ - leftsize_, windowHeight_ - (uppersize_ + area_height_));
 
 	// Scroll Bar.
-    if (drawHeight_areaA_ > area_height_)
-    	vscroll_areaA_.draw();
+   	vscroll_areaA_.draw();
 	vscroll_areaP_.draw();
 	vscroll_areaN_.draw();
 
@@ -1483,6 +1486,29 @@ void ofApp::mouseReleased(int x, int y, int button)
 }
 
 //--------------------------------------------------------------
+void ofApp::mouseScrolled(int x, int y, float scrollX, float scrollY)
+{
+	if (isInsideMouseoverArea(leftsize_, uppersize_, area_width_, area_height_))
+	{
+		int current = vscroll_areaA_.current();
+		current -= change_by_button_ * scrollY;
+		vscroll_areaA_.current(current);
+	}
+	else if (isInsideMouseoverArea(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_))
+	{
+		int current = vscroll_areaP_.current();
+		current -= change_by_button_overview_ * scrollY;
+		vscroll_areaP_.current(current);
+	}
+	else if (isInsideMouseoverArea(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_))
+	{
+		int current = vscroll_areaN_.current();
+		current -= change_by_button_overview_ * scrollY;
+		vscroll_areaN_.current(current);
+	}
+}
+
+//--------------------------------------------------------------
 bool ofApp::isReleasedArea(float x, float y, float w, float h)
 {
 	if (clickx_ >= x && clicky_ >= y)
@@ -1588,7 +1614,6 @@ void ofApp::onPaint(const std::vector<int>& list)
 	drawHeight_areaN_ = overview_d_size_ * overviewN_rowShow_;
 
 	vscroll_areaA_.current(0);
-	updateScrollBars();
 }
 
 //--------------------------------------------------------------
@@ -1717,7 +1742,7 @@ void ofApp::initializeBars()
 	vscroll_areaA_.bar_length(area_height_);
 	vscroll_areaA_.bar_pos_widthdir(leftsize_ + area_width_);
 	vscroll_areaA_.bar_pos_lengthdir(uppersize_);
-	vscroll_areaA_.change_by_button(30);
+	vscroll_areaA_.change_by_button(change_by_button_);
 	vscroll_areaA_.current(0);
 
 	//---------------------------------------------------------------------------
@@ -1728,7 +1753,7 @@ void ofApp::initializeBars()
 	vscroll_areaP_.bar_length(overview_areaheight_);
 	vscroll_areaP_.bar_pos_widthdir(overview_areamargin_ + overview_areawidth_);
 	vscroll_areaP_.bar_pos_lengthdir(uppersize_);
-	vscroll_areaP_.change_by_button(30);
+	vscroll_areaP_.change_by_button(change_by_button_overview_);
 	vscroll_areaP_.current(0);
 
 	//---------------------------------------------------------------------------
@@ -1739,7 +1764,7 @@ void ofApp::initializeBars()
 	vscroll_areaN_.bar_length(overview_areaheight_);
 	vscroll_areaN_.bar_pos_widthdir(overview_areamargin_ + overview_areawidth_);
 	vscroll_areaN_.bar_pos_lengthdir(overviewN_areaposy_);
-	vscroll_areaN_.change_by_button(30);
+	vscroll_areaN_.change_by_button(change_by_button_overview_);
 	vscroll_areaN_.current(0);
 }
 

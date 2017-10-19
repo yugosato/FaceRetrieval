@@ -243,6 +243,8 @@ public:
 	int scroll_areaA_;
 	int scroll_areaP_;
 	int scroll_areaN_;
+	int change_by_button_;
+	int change_by_button_overview_;
 	VerticalScrollBar vscroll_areaA_;
 	VerticalScrollBar vscroll_areaP_;
 	VerticalScrollBar vscroll_areaN_;
@@ -259,6 +261,7 @@ public:
 	void mouseDragged(int x, int y, int button);
 	void mousePressed(int x, int y, int button);
 	void mouseReleased(int x, int y, int button);
+	void mouseScrolled(int x, int y, float scrollX, float scrollY);
 	void mouseEntered(int x, int y);
 	void mouseExited(int x, int y);
 	void windowResized(int w, int h);
