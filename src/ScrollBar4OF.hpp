@@ -62,16 +62,14 @@ public:
 		scrollable_size_ = bar_length_ - 2 * bar_width_;
 
 		// The length of the knob
-		knob_size_ = scrollable_size_ * change_by_bar_ / (max_ - min_ + 1);
+		knob_size_ = bar_length_ * scrollable_size_ / ((max_ - min_ + 1) + bar_length_);
+
 		if (knob_size_ < bar_width_ / 2) {
 			knob_size_ = bar_width_ / 2;
 		}
 		if (knob_size_ > scrollable_size_ / 2) {
 			if (max_ == min_) {
 				knob_size_ = scrollable_size_;
-			}
-			else {
-				knob_size_ = scrollable_size_ / 2;
 			}
 		}
 	}

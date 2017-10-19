@@ -1681,10 +1681,7 @@ void ofApp::updateScrollBars()
 		vscroll_areaA_.current(0);
 	}
 	else
-	{
 		vscroll_areaA_.max(drawHeight_areaA_ - vscroll_areaA_.bar_length());
-		vscroll_areaA_.change_by_bar(vscroll_areaA_.max());
-	}
 
 	//---------------------------------------------------------------------------
 	// Positive results viewer.
@@ -1695,10 +1692,7 @@ void ofApp::updateScrollBars()
 		vscroll_areaP_.current(0);
 	}
 	else
-	{
 		vscroll_areaP_.max(drawHeight_areaP_ - vscroll_areaP_.bar_length());
-		vscroll_areaP_.change_by_bar(vscroll_areaP_.max());
-	}
 
 	//---------------------------------------------------------------------------
 	// Negative results viewer.
@@ -1709,10 +1703,7 @@ void ofApp::updateScrollBars()
 		vscroll_areaN_.current(0);
 	}
 	else
-	{
 		vscroll_areaN_.max(drawHeight_areaN_ - vscroll_areaN_.bar_length());
-		vscroll_areaN_.change_by_bar(vscroll_areaN_.max());
-	}
 }
 
 //--------------------------------------------------------------
