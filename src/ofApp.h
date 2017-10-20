@@ -2,8 +2,8 @@
 
 
 // -------- DATABASE -------- //
-#define CFD
-//#define LFW
+//#define CFD
+#define LFW
 //#define MIX
 // --------- RERANK --------- //
 //#define VISUALRANK
@@ -166,10 +166,11 @@ public:
 
 	//-----------------------------------------
 	// Others.
-	int epoch_;
+	bool isMainMethod_;
 	bool isFinishedInitSet_;
 	bool canSearch_;
 	bool isWroteTestResult_;
+	int epoch_;
 	int len_current_showlist_;
 	int selection_count_;
 

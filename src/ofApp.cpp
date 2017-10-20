@@ -120,10 +120,14 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Others.
-	epoch_ = 0;
+	if (selection_method_ == "random" || selection_method_ == "traditional")
+		isMainMethod_ = false;
+	else
+		isMainMethod_ = true;
 	isFinishedInitSet_ = false;
 	canSearch_ = false;
 	isWroteTestResult_ = false;
+	epoch_ = 0;
 	len_current_showlist_ = show_size_;
 	selection_count_ = 0;
 
@@ -469,7 +473,7 @@ void ofApp::update()
 
 		// Single Search Evaluation.
 		single_evaluater_->set_inputpoint(rocchio_init_->queryvector_);
-		if (selection_method_ == "random" || selection_method_ == "traditional")
+		if (!isMainMethod_)
 			single_evaluater_->set_results(number_origin_);
 		else
 			single_evaluater_->set_results(number_rerank_);
@@ -477,7 +481,7 @@ void ofApp::update()
 
 		// Active selection.
 		show_size_ = search_window_size_;
-		if (selection_method_ == "random" || selection_method_ == "traditional")
+		if (!isMainMethod_)
 		{
 			active_size_ = search_window_size_;
 			selection_->set_show_size(active_size_);
@@ -511,7 +515,7 @@ void ofApp::update()
 #ifndef OPENUSE
 		onPaint(showList_active_);
 #else
-		if (selection_method_ == "random" || selection_method_ == "traditional")
+		if (isMainMethod_)
 			onPaint(showList_origin_);
 		else
 			onPaint(showList_rerank_);
@@ -813,7 +817,7 @@ void ofApp::draw()
 		if (isactive_)
 		{
 			ofImage show_image;
-			if (selection_method_ == "random" || selection_method_ == "traditional")
+			if (!isMainMethod_)
 			{
 				if (database_->toprank_img_origin_.isAllocated())
 					show_image = database_->toprank_img_origin_;
@@ -1182,7 +1186,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 #else
 				else if (isresult_)
 				{
-					if (selection_method_ == "random" || selection_method_ == "traditional")
+					if (isMainMethod_)
 						list = &showList_origin_;
 					else
 						list = &showList_rerank_;
@@ -1383,7 +1387,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			isactive_ = false;
 			isresult_ = true;
-			if (selection_method_ == "random" || selection_method_ == "traditional")
+			if (isMainMethod_)
 				onPaint(showList_origin_);
 			else
 				onPaint(showList_rerank_);
@@ -1648,7 +1652,7 @@ void ofApp::sizeChanged()
 #else
 	if (isresult_)
 	{
-		if (selection_method_ == "random" || selection_method_ == "traditional")
+		if (isMainMethod_)
 			sList = &showList_origin_;
 		else
 			sList = &showList_rerank_;
