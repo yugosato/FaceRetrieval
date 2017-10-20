@@ -218,27 +218,27 @@ void ofApp::loadImageandFont()
 	searchbutton1_.load(binData_ + "/items/search1.png");
 	searchbutton2_.load(binData_ + "/items/search2.png");
 
-	buttonA1_.load(binData_ + "/items/A2.png");
-	buttonA2_.load(binData_ + "/items/A1.png");
+	buttonA1_.load(binData_ + "/items/A1.png");
+	buttonA2_.load(binData_ + "/items/A2.png");
 
-	buttonB1_.load(binData_ + "/items/B2.png");
-	buttonB2_.load(binData_ + "/items/B1.png");
+	buttonB1_.load(binData_ + "/items/B1.png");
+	buttonB2_.load(binData_ + "/items/B2.png");
 
-	buttonC1_.load(binData_ + "/items/C2.png");
-	buttonC2_.load(binData_ + "/items/C1.png");
+	buttonC1_.load(binData_ + "/items/C1.png");
+	buttonC2_.load(binData_ + "/items/C2.png");
 #ifdef VISUALRANK
-	buttonD1_.load(binData_ + "/items/D2.png");
-	buttonD2_.load(binData_ + "/items/D1.png");
+	buttonD1_.load(binData_ + "/items/D1.png");
+	buttonD2_.load(binData_ + "/items/D2.png");
 #endif
 #else
 	searchbutton1_.load(binData_ + "/items/search_open1.png");
 	searchbutton2_.load(binData_ + "/items/search_open2.png");
 
-	result_button1_.load(binData_ + "/items/result2.png");
-	result_button2_.load(binData_ + "/items/result1.png");
+	result_button1_.load(binData_ + "/items/result1.png");
+	result_button2_.load(binData_ + "/items/result2.png");
 
-	selection_button1_.load(binData_ + "/items/selection2.png");
-	selection_button2_.load(binData_ + "/items/selection1.png");
+	selection_button1_.load(binData_ + "/items/selection1.png");
+	selection_button2_.load(binData_ + "/items/selection2.png");
 #endif
 }
 
@@ -748,54 +748,54 @@ void ofApp::draw()
 	if (isactive_)
 	{
 #ifndef OPENUSE
-		buttonA2_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
-		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
-		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonB2_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonC2_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
 #ifdef VISUALRANK
-		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonD2_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 #endif
 		text = "Selection";
 #else
-		result_button1_.draw(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_);
-		selection_button2_.draw(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_);
+		result_button2_.draw(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_);
+		selection_button1_.draw(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_);
 #endif
 	}
 #ifndef OPENUSE
 	else if (isorigin_)
 	{
-		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
-		buttonB2_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
-		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonA2_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonC2_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
 #ifdef VISUALRANK
-		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonD2_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 #endif
 		text = "Original";
 	}
 	else if (isrerank_)
 	{
-		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
-		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
-		buttonC2_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonA2_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonB2_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
 #ifdef VISUALRANK
-		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonD2_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 #endif
 		text = "Rerank";
 	}
 #ifdef VISUALRANK
 	else if (isvisualrank_)
 	{
-		buttonA1_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
-		buttonB1_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
-		buttonC1_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
-		buttonD2_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonA2_.draw(buttonA_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonB2_.draw(buttonB_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonC2_.draw(buttonC_posx_, buttonposy_line1_, button_width_, button_height_);
+		buttonD1_.draw(buttonD_posx_, buttonposy_line1_, button_width_, button_height_);
 		text = "VisualRank";
 	}
 #endif
 #else
 	if (isresult_)
 	{
-		result_button2_.draw(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_);
-		selection_button1_.draw(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_);
+		result_button1_.draw(result_button_posx_, buttonposy_line1_, result_button_width_, button_height_);
+		selection_button2_.draw(selection_button_posx_, buttonposy_line1_, selection_button_width_, button_height_);
 	}
 #endif
 
