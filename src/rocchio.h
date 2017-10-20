@@ -15,15 +15,15 @@ class Rocchio
 {
 public:
 	std::vector<std::vector<double>> features_;
-	std::vector<std::vector<double>> relevance_;
-	std::vector<std::vector<double>> irrelevance_;
+	std::vector<std::vector<double>> positive_features_;
+	std::vector<std::vector<double>> negative_features_;
 	std::vector<double> queryvector_;
 	Eigen::VectorXd queryvector_eigen_;
-	Eigen::VectorXd relevance_ave_;
-	Eigen::VectorXd irrelevance_ave_;
+	Eigen::VectorXd positive_ave_;
+	Eigen::VectorXd negative_ave_;
 	int dim_;
-	int relnum_;
-	int irrelnum_;
+	int positive_num_;
+	int negative_num_;
 	float alpha_, beta_, gamma_;
 	float process_time_;
 
@@ -32,8 +32,8 @@ public:
 	Rocchio()
 	{
 		dim_ = 4096;
-		relnum_ = 0;
-		irrelnum_ = 0;
+		positive_num_ = 0;
+		negative_num_ = 0;
 		queryvector_eigen_ = Eigen::VectorXd::Zero(dim_);
 		alpha_ = 1.0f;
 		beta_ = 0.8f;
@@ -48,20 +48,20 @@ public:
 
 	void setInput_multi(const std::vector<int>& positives, const std::vector<int>& negatives)
 	{
-		relevance_.clear();
-		irrelevance_.clear();
+		positive_features_.clear();
+		negative_features_.clear();
 
-		relevance_.resize(positives.size());
-		irrelevance_.resize(negatives.size());
+		positive_features_.resize(positives.size());
+		negative_features_.resize(negatives.size());
 
 		for (int i = 0; i < (int) positives.size(); ++i)
-			relevance_[i] = features_[positives[i]];
+			positive_features_[i] = features_[positives[i]];
 
 		for (int i = 0; i < (int) negatives.size(); ++i)
-			irrelevance_[i] = features_[negatives[i]];
+			negative_features_[i] = features_[negatives[i]];
 
-		relnum_ = positives.size();
-		irrelnum_ = negatives.size();
+		positive_num_ = positives.size();
+		negative_num_ = negatives.size();
 	}
 
 	void set_weight(const float alpha, const float beta, const float gamma)
@@ -80,8 +80,8 @@ public:
 		calcAverage();
 
 		Eigen::VectorXd term1 = alpha_ * queryvector_eigen_.array();
-		Eigen::VectorXd term2 = beta_ * relevance_ave_.array();
-		Eigen::VectorXd term3 = gamma_ * irrelevance_ave_.array();
+		Eigen::VectorXd term2 = beta_ * positive_ave_.array();
+		Eigen::VectorXd term3 = gamma_ * negative_ave_.array();
 
 		queryvector_eigen_ = term1 + term2 - term3;
 		queryvector_ = eigen2stlvector(queryvector_eigen_);
@@ -94,15 +94,15 @@ public:
 private:
 	void calcAverage()
 	{
-		if (relnum_ > 0)
-			average(relevance_, relevance_ave_);
+		if (positive_num_ > 0)
+			average(positive_features_, positive_ave_);
 		else
-			relevance_ave_ = Eigen::VectorXd::Zero(dim_);
+			positive_ave_ = Eigen::VectorXd::Zero(dim_);
 
-		if (irrelnum_ > 0)
-			average(irrelevance_, irrelevance_ave_);
+		if (negative_num_ > 0)
+			average(negative_features_, negative_ave_);
 		else
-			irrelevance_ave_ = Eigen::VectorXd::Zero(dim_);
+			negative_ave_ = Eigen::VectorXd::Zero(dim_);
 	}
 
 	void average(const std::vector<std::vector<double>>& srcVec, Eigen::VectorXd& dstVec)

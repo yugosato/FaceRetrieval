@@ -286,7 +286,7 @@ void ofApp::setup()
 	selection_ = new Selection;
 	selection_->setup(activeIndexfile_, cueflikIndexfile_, randomIndexfile_);
 	selection_->set_searchTarget(searchTarget_);
-	selection_->set_show_size(active_size_);
+	selection_->set_active_size(active_size_);
 	selection_->set_row(database_->row_);
 	selection_->set_method(selection_method_);
 
@@ -484,7 +484,7 @@ void ofApp::update()
 		if (!isMainMethod_)
 		{
 			active_size_ = search_window_size_;
-			selection_->set_show_size(active_size_);
+			selection_->set_active_size(active_size_);
 		}
 
 		selection_->set_result(number_origin_, number_rerank_);

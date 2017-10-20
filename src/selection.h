@@ -23,7 +23,7 @@ public:
 	std::vector<int> result_rerank_;
 	std::string method_;
 	int searchTarget_;
-	int show_size_;
+	int active_size_;
 	int row_;
 	bool mix_;
 
@@ -42,9 +42,9 @@ public:
 		searchTarget_ = searchTarget;
 	}
 
-	void set_show_size(int show_size)
+	void set_active_size(int active_size)
 	{
-		show_size_ = show_size;
+		active_size_ = active_size;
 	}
 
 	void set_row(int row)
@@ -104,18 +104,18 @@ public:
 private:
 	void default_selection()
 	{
-		selection_.resize(show_size_);
-		for (int i = 0; i < show_size_; i++)
+		selection_.resize(active_size_);
+		for (int i = 0; i < active_size_; i++)
 			selection_[i] = full_selection_[i];
 	}
 
 	// Mix active selection & reranked results.
 	void mix_selection()
 	{
-		selection_.resize(show_size_, -1);
+		selection_.resize(active_size_, -1);
 
-		int active_num = show_size_ * 0.4;
-		int result_num = show_size_ - active_num;
+		int active_num = active_size_ * 0.4;
+		int result_num = active_size_ - active_num;
 
 		// Insert top rank result.
 		int loc = 0;
@@ -127,7 +127,7 @@ private:
 
 		// Insert active selection result.
 		int j = 0;
-		while (loc < show_size_ && j < (int) full_selection_.size())
+		while (loc < active_size_ && j < (int) full_selection_.size())
 		{
 			int num = full_selection_[j];
 			if (!vector_finder(selection_, num))
@@ -139,7 +139,7 @@ private:
 		}
 
 		// Insert if empty.
-		while (loc < show_size_)
+		while (loc < active_size_)
 		{
 			int num = rand() % row_;
 			if (!vector_finder(selection_, num))
@@ -170,9 +170,9 @@ private:
 
 	void random()
 	{
-		for (int m = 0; m < show_size_; ++m)
+		for (int m = 0; m < active_size_; ++m)
 		{
-			const int n = rand() % show_size_;
+			const int n = rand() % active_size_;
 			const int tempNo = selection_[m];
 			selection_[m] = selection_[n];
 			selection_[n] = tempNo;
