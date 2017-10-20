@@ -48,7 +48,7 @@ class ImportDataset(chainer.dataset.DatasetMixin):
     def setsamples(self):
         pairs, positive_num, negative_num, neighbor_num = self.get_split_sample(self.iter_num_ - 1)
         self.base_ = pairs
-        print "[Trainer-Dataset] Total sample size: {} (Positive: {}, Negative: {})".format(len(self.base_), positive_num, negative_num)
+        print "[Trainer-Dataset] Total sample size: {} (positive: {}, negative: {})".format(len(self.base_), positive_num, negative_num)
         print "[Trainer-Dataset] Neighbor samples size: {}".format(neighbor_num)
 
     def get_example(self, i):

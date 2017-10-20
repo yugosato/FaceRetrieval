@@ -515,7 +515,7 @@ void ofApp::update()
 #ifndef OPENUSE
 		onPaint(showList_active_);
 #else
-		if (isMainMethod_)
+		if (!isMainMethod_)
 			onPaint(showList_origin_);
 		else
 			onPaint(showList_rerank_);
@@ -1186,7 +1186,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 #else
 				else if (isresult_)
 				{
-					if (isMainMethod_)
+					if (!isMainMethod_)
 						list = &showList_origin_;
 					else
 						list = &showList_rerank_;
@@ -1387,7 +1387,7 @@ void ofApp::mouseReleased(int x, int y, int button)
 		{
 			isactive_ = false;
 			isresult_ = true;
-			if (isMainMethod_)
+			if (!isMainMethod_)
 				onPaint(showList_origin_);
 			else
 				onPaint(showList_rerank_);
@@ -1652,7 +1652,7 @@ void ofApp::sizeChanged()
 #else
 	if (isresult_)
 	{
-		if (isMainMethod_)
+		if (!isMainMethod_)
 			sList = &showList_origin_;
 		else
 			sList = &showList_rerank_;
