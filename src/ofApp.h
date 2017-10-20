@@ -4,12 +4,7 @@
 // -------- DATABASE -------- //
 #define CFD
 //#define LFW
-//#define CFD_LFW
-// -------- FEATURES -------- //
-#define VGG
-//#define HISTOGRAM
-//#define GABOR
-//#define HISTOGRAM_GABOR
+//#define MIX
 // --------- RERANK --------- //
 //#define VISUALRANK
 // --------- DESIGN --------- //
@@ -140,6 +135,7 @@ public:
 	std::string featuresfile_;
 	std::string npyFile_;
 	std::string indexFile_;
+	std::string init_candidatefile_;
 
 	// Log Settings.
 	std::string logdir_;
@@ -147,7 +143,6 @@ public:
 	std::string candidatefile_origin_;
 	std::string candidatefile_rerank_;
 	std::string candidatefile_visualrank_;
-	std::string init_candidatefile_;
 	std::string evaluationfile_;
 	std::string testsettingfile_;
 	std::string activelogfile_;
@@ -235,7 +230,7 @@ public:
 	float search_timer_start_;
 
 	//-----------------------------------------
-	// Scroll Bar..
+	// Scroll Bar.
 	const int ScrollBarWidth_ = 30;
 	int drawHeight_areaA_;
 	int drawHeight_areaP_;
