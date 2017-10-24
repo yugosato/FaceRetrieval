@@ -1463,19 +1463,19 @@ void ofApp::mouseReleased(int x, int y, int button)
 //--------------------------------------------------------------
 void ofApp::mouseScrolled(int x, int y, float scrollX, float scrollY)
 {
-	if (isInsideMouseoverArea(leftsize_, uppersize_, area_width_, area_height_))
+	if (isInsideMouseoverArea(leftsize_, uppersize_, area_width_ + ScrollBarWidth_, area_height_))
 	{
 		int current = vscroll_areaA_.current();
 		current -= change_by_button_ * scrollY;
 		vscroll_areaA_.current(current);
 	}
-	else if (isInsideMouseoverArea(overview_areamargin_, overviewP_areaposy_, overview_areawidth_, overview_areaheight_))
+	else if (isInsideMouseoverArea(overview_areamargin_, overviewP_areaposy_, overview_areawidth_ + ScrollBarWidth_, overview_areaheight_))
 	{
 		int current = vscroll_areaP_.current();
 		current -= change_by_button_overview_ * scrollY;
 		vscroll_areaP_.current(current);
 	}
-	else if (isInsideMouseoverArea(overview_areamargin_, overviewN_areaposy_, overview_areawidth_, overview_areaheight_))
+	else if (isInsideMouseoverArea(overview_areamargin_, overviewN_areaposy_, overview_areawidth_ + ScrollBarWidth_, overview_areaheight_))
 	{
 		int current = vscroll_areaN_.current();
 		current -= change_by_button_overview_ * scrollY;
