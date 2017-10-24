@@ -20,12 +20,13 @@ class ActiveSelection(object):
         self.load_classifier()
         _, trn_ds = self.split_train_test()
 
-        uncertain_index = self.getUncertaintyIndex(trn_ds, "sm", self.clf_)
-        # cueflik_index = self.getCueFlikIndex()
+        if len(trn_ds) > 0:
+            uncertain_index = self.getUncertaintyIndex(trn_ds, "sm", self.clf_)
+        else:
+            uncertain_index = self.getRandomIndex()
         random_index = self.getRandomIndex()
 
         self.write(os.path.join(home_dir, "result/uncertain_index.txt"), uncertain_index)
-        # self.write(os.path.join(home_dir, "result/cueflik_index.txt"), cueflik_index)
         self.write(os.path.join(home_dir, "result/random_index.txt"), random_index)
 
     def run_estimate_class(self):
