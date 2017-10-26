@@ -41,11 +41,11 @@ def make_image():
 
     persize = rowsize / 5
 
-    dstimg0 = np.vstack(rowimgs[:persize])
-    dstimg1 = np.vstack(rowimgs[persize:2*persize])
-    dstimg2 = np.vstack(rowimgs[2*persize:3*persize])
-    dstimg3 = np.vstack(rowimgs[3*persize:4*persize])
-    dstimg4 = np.vstack(rowimgs[4*persize:])
+    dstimg0 = np.vstack(rowimgs[: 1 * persize])
+    dstimg1 = np.vstack(rowimgs[1 * persize : 2 * persize])
+    dstimg2 = np.vstack(rowimgs[2 * persize : 3 * persize])
+    dstimg3 = np.vstack(rowimgs[3 * persize : 4 * persize])
+    dstimg4 = np.vstack(rowimgs[4 * persize :])
 
     # resize
     ratio = 0.3
@@ -57,11 +57,11 @@ def make_image():
     dstimg4 = cv2.resize(dstimg4, (int(width * ratio), int(height * ratio)))
 
     # write
-    cv2.imwrite("imagelist0.png", dstimg0)
-    cv2.imwrite("imagelist1.png", dstimg1)
-    cv2.imwrite("imagelist2.png", dstimg2)
-    cv2.imwrite("imagelist3.png", dstimg3)
-    cv2.imwrite("imagelist4.png", dstimg4)
+    cv2.imwrite(str(0 * persize * colsize) + "-" + str(1 * persize * colsize - 1) + ".png", dstimg0)
+    cv2.imwrite(str(1 * persize * colsize) + "-" + str(2 * persize * colsize - 1) + ".png", dstimg1)
+    cv2.imwrite(str(2 * persize * colsize) + "-" + str(3 * persize * colsize - 1) + ".png", dstimg2)
+    cv2.imwrite(str(3 * persize * colsize) + "-" + str(4 * persize * colsize - 1) + ".png", dstimg3)
+    cv2.imwrite(str(4 * persize * colsize) + "-" + names[-1,1] + ".png", dstimg4)
 
 
 if __name__ == '__main__':
