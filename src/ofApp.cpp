@@ -309,11 +309,6 @@ void ofApp::setup()
 	activelog_ = new ActiveLog;
 	activelog_->setup(activelogfile_);
 
-	// Show target image.
-	std::string command = "eog " + database_->name_[searchTarget_];
-	if (!std::system(command.c_str()))
-		std::cerr << "[Warning] Cannot execute specified command." << std::endl;
-
 	std::cout << "[Setting] NGT-index: \"" << indexFile_ << "\"" << std::endl;
 	std::cout << "[Setting] Matrix file: \"" << featuresfile_ << "\"" << std::endl;
 	std::cout << "[Setting] Npy file: \"" << npyFile_ << "\"" << std::endl;
