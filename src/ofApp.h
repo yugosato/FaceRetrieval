@@ -170,6 +170,7 @@ public:
 	bool isFinishedInitSet_;
 	bool canSearch_;
 	bool isWroteTestResult_;
+	bool showTarget_;
 	int epoch_;
 	int len_current_showlist_;
 	int selection_count_;

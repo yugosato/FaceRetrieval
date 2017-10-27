@@ -127,6 +127,7 @@ void ofApp::initparam()
 	isFinishedInitSet_ = false;
 	canSearch_ = false;
 	isWroteTestResult_ = false;
+	showTarget_ = false;
 	epoch_ = 0;
 	len_current_showlist_ = show_size_;
 	selection_count_ = 0;
@@ -848,6 +849,17 @@ void ofApp::draw()
 		propose = "Exactly!";
 	}
 
+	if (showTarget_)
+	{
+		ofSetColor(ofColor(0.0f, 0.0f, 0.0f, 180.0f));
+		ofDrawRectangle(leftsize_, uppersize_, area_width_, area_height_);
+
+		ofSetColor(ofColor(255.0f, 255.0f, 255.0f, 255.0f));
+		ofDrawRectangle(propose_img_posx_, propose_img_posy_, propose_imgsize_, propose_imgsize_);
+		database_->target_img_.draw(propose_img_posx_ + margin, propose_img_posy_ + margin, propose_imgsize_ - 2 * margin, propose_imgsize_ - 2 * margin);
+		propose = "Target photograph";
+	}
+
 	int propose_txt_width = font_.stringWidth(propose);
 	propose_txt_posx_ = leftsize_ + (area_width_ - propose_txt_width) / 2;
 	font_.drawString(propose, propose_txt_posx_, propose_txt_posy_);
@@ -885,6 +897,13 @@ void ofApp::keyPressed(int key)
 			std::cout << "[ofApp] Saved snapshot image." << std::endl;
 			std::cout << "[ofApp] --> \"" << savepath << "\"" << std::endl;
 			break;
+		}
+		case 126: // Shift+0
+		{
+			if (!showTarget_)
+				showTarget_ = true;
+			else
+				showTarget_ = false;
 		}
 	}
 }
