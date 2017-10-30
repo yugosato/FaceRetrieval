@@ -1,17 +1,5 @@
 #pragma once
 
-
-// -------- DATABASE -------- //
-//#define CFD
-#define LFW
-//#define MIX
-// --------- RERANK --------- //
-//#define VISUALRANK
-// --------- DESIGN --------- //
-#define OPENUSE
-// -------------------------- //
-
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -33,6 +21,7 @@
 #include "evaluation.h"
 #include "rocchio.h"
 #include "util.h"
+#include "defines.h"
 
 
 // openFrameworks base class.
