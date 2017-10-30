@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from xmeans import XMeans
 from sklearn.cluster import KMeans
 from scipy.spatial.distance import cosine
 
@@ -21,10 +20,6 @@ class Clustering:
             k_means = KMeans(n_clusters=self.clustersize_, init='k-means++', max_iter=1000, n_jobs=-1)
             k_means.fit(self.features_)
             self.centers_ = k_means.cluster_centers_
-        elif method is "x_means":
-            x_means = XMeans(random_state=1)
-            x_means.fit(self.features_)
-            self.centers_ = x_means.cluster_centers_
 
     def calculate_NN(self):
         nearest_samples = []
