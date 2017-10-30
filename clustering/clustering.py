@@ -2,34 +2,42 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from xmeans import XMeans
 from sklearn.cluster import KMeans
 from scipy.spatial.distance import cosine
 
 
-def main():
-    # in/out settings
-    inputfile = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy"
-    outputfile = "/home/yugo/workspace/Interface/bin/data/cfd/initialize.txt"
-    clustersize = 25
+class Clustering:
+    def __init__(self):
+        # in/out settings
+        self.inputfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/cfd-vgg.npy"
+        self.outputfile_ = "/home/yugo/workspace/Interface/bin/data/cfd/initialize.txt"
 
-    # kmeans clustering
-    X = np.load(inputfile)
-    kmeans = KMeans(n_clusters=clustersize, init='k-means++', max_iter=1000, n_jobs=-1)
-    kmeans.fit(X)
-    centers = kmeans.cluster_centers_
+    def run(self, method):
+        self.features_ = np.load(self.inputfile_)
 
-    # find nearest sample from centers
-    nearest_samples = []
-    for center in centers:
-        distances = []
-        for sample in X:
-            distances.append(cosine(center, sample))
-        nearest_sample = np.argsort(distances)[0]
-        nearest_samples.append(nearest_sample)
+        if method is "k_means":
+            self.cluster_size_ = 25
+            k_means = KMeans(n_clusters=self.clustersize_, init='k-means++', max_iter=1000, n_jobs=-1)
+            k_means.fit(self.features_)
+            self.centers_ = k_means.cluster_centers_
+        elif method is "x_means":
+            x_means = XMeans(random_state=1)
+            x_means.fit(self.features_)
+            self.centers_ = x_means.cluster_centers_
 
-    # write file
-    np.savetxt(outputfile, np.asarray([nearest_samples]), fmt="%.0f", delimiter=" ")
+    def calculate_NN(self):
+        nearest_samples = []
+        for center in self.centers_:
+            distances = []
+            for feature in self.features_:
+                distances.append(cosine(center, feature))
+            nearest_sample = np.argsort(distances)[0]
+            nearest_samples.append(nearest_sample)
+
+        np.savetxt(self.outputfile_, np.asarray([nearest_samples]), fmt="%.0f", delimiter=" ")
 
 
-if __name__ == "__main__":
-    main()
+clustering = Clustering()
+clustering.run("k_means")
+clustering.calculate_NN()
