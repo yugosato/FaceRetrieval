@@ -17,7 +17,7 @@ class Clustering:
 
         if method is "k_means":
             self.cluster_size_ = 25
-            k_means = KMeans(n_clusters=self.clustersize_, init='k-means++', max_iter=1000, n_jobs=-1)
+            k_means = KMeans(n_clusters=self.cluster_size_, init='k-means++', max_iter=1000, n_jobs=-1)
             k_means.fit(self.features_)
             self.centers_ = k_means.cluster_centers_
 
