@@ -19,6 +19,7 @@ public:
 	std::string nameFile_;
 	std::string initFile_;
 	std::vector<std::string> name_;
+	std::vector<int> number_all_;
 	std::vector<int> number_active_;
 	std::vector<int> number_origin_;
 	std::vector<int> number_rerank_;
@@ -42,13 +43,12 @@ public:
 	void initialize(std::string init_method)
 	{
 		loadFileName();
+		init();
 
 		if (init_method == "random")
 			random();
 		else if (init_method == "kmeans")
 			init_clustering();
-		else
-			init();
 
 		number_active_ = number_origin_;
 		number_rerank_ = number_origin_;
@@ -150,15 +150,15 @@ private:
 
 	void init()
 	{
-		number_origin_.resize(init_size_);
+		number_all_.resize(row_);
 
 		int loc = 0;
 		int num = 0;
-		while (loc < init_size_)
+		while (loc < row_)
 		{
 			if (num != searchTarget_)
 			{
-				number_origin_[loc] = num;
+				number_all_[loc] = num;
 				loc++;
 			}
 			num++;
@@ -167,13 +167,22 @@ private:
 
 	void random()
 	{
-		init();
-		for (int i = 0; i < init_size_; ++i)
+		number_origin_.resize(init_size_);
+
+		int i = 0;
+		int num = 0;
+		while (i < init_size_)
 		{
-			const int j = rand() % init_size_;
-			const int tempNo = number_origin_[i];
-			number_origin_[i] = number_origin_[j];
-			number_origin_[j] = tempNo;
+			const int j = rand() % row_;
+			num = number_all_[j];
+
+			if (num != searchTarget_)
+			{
+				number_origin_[i] = num;
+				i++;
+			}
+			else
+				continue;
 		}
 	}
 

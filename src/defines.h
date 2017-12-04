@@ -3,8 +3,8 @@
 
 
 // -------- DATABASE -------- //
-//#define CFD
-#define LFW
+#define CFD
+//#define LFW
 //#define MIX
 // --------- RERANK --------- //
 //#define VISUALRANK

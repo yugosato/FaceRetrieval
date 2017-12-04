@@ -18,7 +18,7 @@ void ofApp::initparam()
 	windowHeight_ = initHeight_;
 
 	// Display Settings (Result window).
-	colShow_ = 5;
+	colShow_ = 4;
 	d_size_ = (initWidth_ - leftsize_ - 2 * ScrollBarWidth_) / colShow_;
 	area_width_ = d_size_ * colShow_;
 	area_height_ = d_size_ * colShow_;
@@ -82,7 +82,7 @@ void ofApp::initparam()
 	featuresfile_ = binData_ + "/cfd/cfd-vgg.tsv";
 	npyFile_ = binData_ + "/cfd/cfd-vgg.npy";
 	indexFile_ = binData_ + "/cfd/cfd-vgg_index-angle";
-	init_candidatefile_ = binData_ + "/cfd/initialize.txt";
+	init_candidatefile_ = binData_ + "/cfd/initialize16.txt";
 #endif
 #ifdef MIX
 	nameFile_ = datasetdir_ + "/images_selected.txt";
@@ -140,7 +140,7 @@ void ofApp::initparam()
 	//-----------------------------------------
 	// Retrieval results.
 #ifdef CFD
-	search_window_size_ = 50;
+	search_window_size_ = 32;
 #endif
 #ifdef LFW
 	search_window_size_ = 100;
@@ -148,8 +148,8 @@ void ofApp::initparam()
 #ifdef CFD_LFW
 	search_window_size_ = 100;
 #endif
-	show_size_ = 25;
-	active_size_ = 25;
+	show_size_ = 16;
+	active_size_ = 16;
 
 	// Flags.
 	isSearchedAll_ = false;
@@ -242,7 +242,7 @@ void ofApp::setup()
 	// Get Database information.
 	database_ = new DataBase();
 	database_->setup(searchTarget_, active_size_, nameFile_, init_candidatefile_);
-	database_->initialize("kmeans");
+	database_->initialize("random");
 
 	if (searchTarget_ > database_->row_ - 1)
 	{

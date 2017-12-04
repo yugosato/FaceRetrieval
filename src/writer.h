@@ -191,7 +191,7 @@ public:
 
 		writer << "Total Search: " << epoch << std::endl;
 		writer << "Total Search Time: " << time << std::endl;
-		writer << "Total Selection Counte: " << selection_count << std::endl;
+		writer << "Total Selection Count: " << selection_count << std::endl;
 	}
 
 };
