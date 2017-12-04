@@ -120,7 +120,7 @@ void ofApp::initparam()
 
 	//-----------------------------------------
 	// Others.
-	if (selection_method_ == "random" || selection_method_ == "traditional")
+	if (selection_method_ == "random" || selection_method_ == "comparison")
 		isMainMethod_ = false;
 	else
 		isMainMethod_ = true;

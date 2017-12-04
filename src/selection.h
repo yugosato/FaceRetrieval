@@ -56,7 +56,7 @@ public:
 	{
 		method_ = method;
 
-		if(method_ == "random" || method_ == "traditional")
+		if(method_ == "random" || method_ == "comparison")
 			mix_ = false;
 		else if (method_ == "uncertain" || method_ == "cueflik")
 			mix_ = true;
@@ -82,8 +82,8 @@ public:
 			read_index(cueflik_indexfile_);
 		else if (method_ == "random")
 			read_index(random_indexfile_);
-		else if (method_ == "traditional")
-			traditional();
+		else if (method_ == "comparison")
+			comparison();
 
 		if (!mix_)
 			default_selection();
@@ -152,7 +152,7 @@ private:
 		random();
 	}
 
-	void traditional()
+	void comparison()
 	{
 		full_selection_.clear();
 
