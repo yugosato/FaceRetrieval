@@ -181,8 +181,6 @@ private:
 				number_origin_[i] = num;
 				i++;
 			}
-			else
-				continue;
 		}
 	}
 
