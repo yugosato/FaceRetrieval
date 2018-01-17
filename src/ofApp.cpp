@@ -196,10 +196,8 @@ void ofApp::loadImageandFont()
 
 	buttonA1_.load(binData_ + "/items/A1.png");
 	buttonA2_.load(binData_ + "/items/A2.png");
-
 	buttonB1_.load(binData_ + "/items/B1.png");
 	buttonB2_.load(binData_ + "/items/B2.png");
-
 	buttonC1_.load(binData_ + "/items/C1.png");
 	buttonC2_.load(binData_ + "/items/C2.png");
 #ifdef VISUALRANK

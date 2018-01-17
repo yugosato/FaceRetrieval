@@ -7,9 +7,9 @@
 //#define LFW
 //#define MIX
 // --------- RERANK --------- //
-//#define VISUALRANK
+#define VISUALRANK
 // --------- DESIGN --------- //
-#define OPENUSE
+//#define OPENUSE
 // -------------------------- //
 
 

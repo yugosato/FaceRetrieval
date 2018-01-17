@@ -182,7 +182,7 @@ public:
 	std::vector<int> number_origin_;
 	std::vector<int> number_rerank_;
 #ifdef VISUALRANK
-	std::vector<int> number_visusalrank_;
+	std::vector<int> number_visualrank_;
 #endif
 	std::vector<int> showList_active_;
 	std::vector<int> showList_origin_;
