@@ -94,10 +94,10 @@ void ofApp::initparam()
 
 	// Log Settings.
 	logdir_name();
-	candidatefile_active_ = logdir_ + "/candidate_active.txt";
-	candidatefile_origin_ = logdir_ + "/candidate_origin.txt";
-	candidatefile_rerank_ = logdir_ + "/candidate_rerank.txt";
-	candidatefile_visualrank_ = logdir_ + "/candidate_visualrank.txt";
+	candidatefile_active_ = logdir_ + "/active_selection.txt";
+	candidatefile_origin_ = logdir_ + "/original_rank.txt";
+	candidatefile_rerank_ = logdir_ + "/rerank.txt";
+	candidatefile_visualrank_ = logdir_ + "/visualrank.txt";
 	evaluationfile_ = logdir_ + "/distance.csv";
 	testsettingfile_ = logdir_ + "/test.txt";
 	activelogfile_ = logdir_ + "/log.txt";
