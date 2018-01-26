@@ -6,9 +6,10 @@
 _Version: January 26, 2018._  
 
 ### Development Environment
-* Linux Ubuntu 16.04
+* Linux Ubuntu 16.04 LTS
 * CPU: Intel Xeon E5-2687W (3.10GHz)
 * GPU: NVIDIA TITAN X
+* RAM: 32GB
 
 ### Requirements
 C++
