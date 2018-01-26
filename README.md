@@ -15,8 +15,10 @@ C++
 * openFrameworks v0.9.8
 * Boost v1.63.0
 * Eigen v3.3.3
-* Neighborhood Graph and Tree for Indexing High^demensional Data (NGT)  
+* Neighborhood Graph and Tree for Indexing High-demensional Data (NGT)  
 https://github.com/yahoojapan/NGT
 
 Python 2.7.14
 * Chainer v1.24.0
+
+© 2018 Copyright held by Yugo Sato.
