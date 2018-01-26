@@ -21,7 +21,4 @@ https://github.com/yahoojapan/NGT
 Python 2.7.14
 * Chainer v1.24.0
 
-<<<<<<< HEAD
-=======
 © 2018 Copyright held by Yugo Sato.
->>>>>>> develop
