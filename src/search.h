@@ -4,8 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <stdio.h>
-#include "boost/python.hpp"
-#include "boost/python/numpy.hpp"
 #include "NGT/Index.h"
 #include "rocchio.h"
 
@@ -16,90 +14,49 @@ public:
 	NGT::Index* index_;
 	NGT::ObjectDistances objects_;
 	std::string indexFile_;
-	std::vector<std::vector<double>> matrix_;
 	std::vector<double> queryvector_;
-	int phase_;
 	bool isSearched_;
-	bool train_;
-	int clickNo_;
-	const int size_ = 500;
+	int size_;
 	const float radius_ = FLT_MAX;
 	const float epsilon_ = 0.1;
-	boost::python::object extracter_;
+	float process_time_;
 
 
 public:
-	void setup(const std::string indexFile)
+	void setup(const std::string indexFile, const int size)
 	{
-		clickNo_ = -1;
 		indexFile_ = indexFile;
+		size_ = size;
 		index_ = new NGT::Index(indexFile_);
-		phase_ = 0;
 		isSearched_ = false;
 	}
 
-	void setInput_multi(const std::vector<int>& rel, const std::vector<int>& inrel)
+	void set_queryvector(const std::vector<double>& queryvector)
 	{
-		Rocchio* rocchio;
-		rocchio = new Rocchio;
-
-		std::vector<std::vector<double>> relVec;
-		std::vector<std::vector<double>> inrelVec;
-		relVec.reserve(rel.size());
-		inrelVec.reserve(inrel.size());
-
-		for (int i = 0; i < (int) rel.size(); ++i)
-			relVec.push_back(matrix_[rel[i]]);
-
-		for (int i = 0; i < (int) inrel.size(); ++i)
-			inrelVec.push_back(matrix_[inrel[i]]);
-
-		rocchio->setRelevance(relVec);
-		rocchio->setInRelevance(inrelVec);
-		rocchio->setInitquery(queryvector_, phase_);
-		rocchio->calculate(1.0f, 0.8f, 0.3f);
-		rocchio->getquery(&queryvector_);
-
-		phase_++;
-
-		relVec.clear();
-		inrelVec.clear();
-		std::vector<std::vector<double>>().swap(relVec);
-		std::vector<std::vector<double>>().swap(inrelVec);
-
-		delete rocchio;
+		queryvector_ = queryvector;
 	}
 
-	void setMatrix(const std::vector<std::vector<double>>& matrix)
-	{
-		matrix_ = matrix;
-	}
-
-	void setExtracter(const boost::python::object &e)
-	{
-		extracter_ = e;
-	}
-
-	void threadedFunction()
+	inline void threadedFunction()
 	{
 		try
 		{
+			std::cout << "[Search] Start searching." << std::endl;
 			isSearched_ = false;
 			lock();
+			float start = ofGetElapsedTimef();
+
+			// NGT Search.
 			NGT::Object* query = 0;
 			query = index_->allocateObject(queryvector_);
 
 			NGT::SearchContainer sc(*query);
 			NGT::ObjectDistances objects;
-			NGT::ObjectSpace::withTrain = train_;
 
 			sc.setResults(&objects);
 			sc.setSize(size_);
 			sc.setRadius(radius_);
 			sc.setEpsilon(epsilon_);
-			sc.setExtracter(extracter_);
 
-			index_->setExtracter(extracter_);
 			index_->search(sc);
 			index_->deleteObject(query);
 
@@ -107,21 +64,25 @@ public:
 			NGT::ObjectDistances().swap(objects_);
 
 			objects_ = objects;
+
+			process_time_ = ofGetElapsedTimef() - start;
 			unlock();
 			isSearched_ = true;
+			std::cout << "[Search] Finished Searching." << std::endl;
 		}
 		catch (NGT::Exception &err)
 		{
-			std::cerr << "[warning]" << err.what() << std::endl;
+			std::cerr << "[Warning]" << err.what() << std::endl;
 		}
 		catch (...)
 		{
-			std::cerr << "[warning] unknown error in searching" << std::endl;
+			std::cerr << "[Warning] Unknown error in searching" << std::endl;
 		}
 	}
 
 	void getNumber(std::vector<int>* number) const
 	{
+		number->clear();
 		number->resize(size_);
 		for (int i = 0; i < size_; ++i)
 			(*number)[i] = (int)objects_[i].id - 1;

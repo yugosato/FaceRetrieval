@@ -13,40 +13,127 @@
 class DataBase
 {
 public:
+	int searchTarget_;
+	int init_size_;
+	int row_;
 	std::string nameFile_;
 	std::string initFile_;
-	int row_;
 	std::vector<std::string> name_;
-	std::vector<int> number_;
-	std::vector<int> number_removed_;
-	std::vector<int> number_eval_;
+	std::vector<int> number_all_;
+	std::vector<int> number_active_;
+	std::vector<int> number_origin_;
+	std::vector<int> number_rerank_;
+	std::vector<int> number_visualrank_;
 	std::vector<int> showList_;
-	std::vector<int> history_;
-	std::vector<int> ids_;
+	ofImage target_img_;
+	ofImage toprank_img_origin_;
+	ofImage toprank_img_rerank_;
+	ofImage toprank_img_visualrank_;
 
 
 public:
-	void setup(const std::string nameFile, const std::string initFile)
+	void setup(const int searchTarget, const int init_size, const std::string nameFile, const std::string initFile)
 	{
+		searchTarget_ = searchTarget;
+		init_size_ = init_size;
 		nameFile_ = nameFile;
 		initFile_ = initFile;
-		loadFileName();
-
-		// Allocate memory & initialize.
-		number_.resize(row_);
-//		init();
-//		random();
-		init_clustering();
-		number_eval_ = number_;
 	}
 
+	void initialize(std::string init_method)
+	{
+		loadFileName();
+		init();
+
+		if (init_method == "random")
+			random();
+		else if (init_method == "kmeans")
+			init_clustering();
+
+		number_active_ = number_origin_;
+		number_rerank_ = number_origin_;
+		number_visualrank_ = number_origin_;
+
+		target_img_.load(name_[searchTarget_]);
+	}
+
+	void makeShowList_active(const int size)
+	{
+		showList_.resize(size);
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_active_[i];
+	}
+
+	void makeShowList_origin(const int size)
+	{
+		showList_.resize(size);
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_origin_[i];
+	}
+
+	void makeShowList_rerank(const int size)
+	{
+		showList_.resize(size);
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_rerank_[i];
+	}
+
+	void makeShowList_visualrank(const int size)
+	{
+		showList_.resize(size);
+		for (int i = 0; i < size; ++i)
+			showList_[i] = number_visualrank_[i];
+	}
+
+	void setNumber_active(const std::vector<int>& number)
+	{
+		const int size = number.size();
+		number_active_.resize(size);
+		for (int i = 0; i < size; ++i)
+			number_active_[i] = number[i];
+	}
+
+	void setNumber_origin(const std::vector<int>& number)
+	{
+		const int size = number.size();
+		number_origin_.resize(size);
+		for (int i = 0; i < size; ++i)
+			number_origin_[i] = number[i];
+		toprank_img_origin_.load(name_[number_origin_[0]]);
+	}
+
+	void setNumber_rerank(const std::vector<int>& number)
+	{
+		const int size = number.size();
+		number_rerank_.resize(size);
+		for (int i = 0; i < size; ++i)
+			number_rerank_[i] = number[i];
+		toprank_img_rerank_.load(name_[number_rerank_[0]]);
+	}
+
+	void setNumber_visualrank(const std::vector<int>& number)
+	{
+		const int size = number.size();
+		number_visualrank_.resize(size);
+		for (int i = 0; i < size; ++i)
+			number_visualrank_[i] = number[i];
+		toprank_img_visualrank_.load(name_[number_visualrank_[0]]);
+	}
+
+	const std::vector<int>& getShowList() const
+	{
+		return showList_;
+	}
+
+
+private:
 	// Load image list.
 	void loadFileName()
 	{
 		std::ifstream ifs(nameFile_);
 		if (!ifs)
 		{
-			std::cerr << "[warning] cannot open the specified file. " << nameFile_ << std::endl;
+			std::cerr << "[Warning] Cannot open the specified file. " << nameFile_ << std::endl;
 		}
 		else
 		{
@@ -56,7 +143,6 @@ public:
 				std::vector<std::string> tokens;
 				NGT::Common::tokenize(line, tokens, " ");
 				name_.push_back(tokens[0]);
-				ids_.push_back(std::atoi(tokens[1].c_str()));
 			}
 			row_ = name_.size();
 		}
@@ -64,19 +150,37 @@ public:
 
 	void init()
 	{
-		for (int i = 0; i < row_; ++i)
-			number_[i] = i;
+		number_all_.resize(row_);
+
+		int loc = 0;
+		int num = 0;
+		while (loc < row_)
+		{
+			if (num != searchTarget_)
+			{
+				number_all_[loc] = num;
+				loc++;
+			}
+			num++;
+		}
 	}
 
 	void random()
 	{
-		init();
-		for (int i = 0; i < row_; ++i)
+		number_origin_.resize(init_size_);
+
+		int i = 0;
+		int num = 0;
+		while (i < init_size_)
 		{
 			const int j = rand() % row_;
-			const int tempNo = number_[i];
-			number_[i] = number_[j];
-			number_[j] = tempNo;
+			num = number_all_[j];
+
+			if (num != searchTarget_)
+			{
+				number_origin_[i] = num;
+				i++;
+			}
 		}
 	}
 
@@ -86,7 +190,7 @@ public:
 		std::ifstream ifs(initFile_, std::ios::in);
 		if(!ifs)
 		{
-			std::cerr << "[warning] cannot open the specified file. " << initFile_ << std::endl;
+			std::cerr << "[Warning] Cannot open the specified file. " << initFile_ << std::endl;
 		}
 		else
 		{
@@ -95,126 +199,12 @@ public:
 			std::vector<std::string> tokens;
 			NGT::Common::tokenize(line, tokens, " ");
 
-			std::vector<int> num;
-			for (int i = 0; i < (int) tokens.size(); ++i)
+			number_origin_.resize(init_size_);
+			for (int i = 0; i < init_size_; ++i)
 			{
-				num.push_back(std::atoi(tokens[i].c_str()));
-			}
-
-			for (int i = 0; i < (int) num.size(); ++i)
-			{
-				number_[i] = num[i];
+				number_origin_[i] = std::atoi(tokens[i].c_str());
 			}
 		}
-	}
-
-	void makeShowList(const int begin, const int end)
-	{
-		const int size = end - begin + 1;
-
-		showList_.clear();
-		std::vector<int>().swap(showList_);
-		showList_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			showList_[i] = number_[begin + i - 1];
-	}
-
-	void makeShowList_removed(const int begin, const int end)
-	{
-		const int size = end - begin + 1;
-
-		showList_.clear();
-		std::vector<int>().swap(showList_);
-		showList_.resize(size);
-
-		number_removed_.clear();
-		std::vector<int>().swap(number_removed_);
-		number_removed_.resize(size);
-
-		int count = 0;
-		int iter = 0;
-		while (count < size)
-		{
-			auto pos = std::find(history_.begin(), history_.end(), number_[iter]);
-			if (pos != history_.end())
-			{
-				iter++;
-				continue;
-			}
-			else
-			{
-				showList_[count] = number_[iter];
-				number_removed_[count] = number_[iter];
-				iter++;
-				count++;
-			}
-		}
-	}
-
-	void makeShowList_eval(const int begin, const int end)
-	{
-		const int size = end - begin + 1;
-
-		showList_.clear();
-		std::vector<int>().swap(showList_);
-		showList_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			showList_[i] = number_eval_[begin + i - 1];
-	}
-
-	void setHistory(const std::vector<int>& history)
-	{
-		history_ = history;
-	}
-
-	void setNumber(const std::vector<int>& number)
-	{
-		const int size = number.size();
-
-		number_.clear();
-		std::vector<int>().swap(number_);
-		number_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			number_[i] = number[i];
-	}
-
-	void setNumber_eval(const std::vector<int>& number)
-	{
-		const int size = number.size();
-
-		number_eval_.clear();
-		std::vector<int>().swap(number_eval_);
-		number_eval_.resize(size);
-
-		for (int i = 0; i < size; ++i)
-			number_eval_[i] = number[i];
-	}
-
-	void getName(std::vector<std::string>* nameList) const
-	{
-		nameList->resize(row_);
-		for (int i = 0; i < row_; ++i)
-			(*nameList)[i] = name_[i];
-	}
-
-	void getPersonID(std::vector<int>* person_ids) const
-	{
-		person_ids->resize(row_);
-		for (int i = 0; i < row_; ++i)
-			(*person_ids)[i] = ids_[i];
-	}
-
-	const int& getRow() const
-	{
-		return row_;
-	}
-
-	const std::vector<int>& getShowList() const
-	{
-		return showList_;
 	}
 };
 

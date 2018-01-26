@@ -36,21 +36,14 @@
 #include	"NGT/ExperimentalGraph.h"
 #endif
 
-#include "boost/python.hpp"
-#include "boost/python/numpy.hpp"
-
 namespace NGT {
 
   class Property;
 
   class Index {
   public:
-	void setExtracter(const boost::python::object &e)
-	{
-		NGT::ObjectSpace::neuralExtracter = e;
-	}
 
-	class Property {
+    class Property {
     public:
       typedef ObjectSpace::DistanceType		DistanceType;
       typedef NeighborhoodGraph::SeedType	SeedType;

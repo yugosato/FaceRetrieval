@@ -6,43 +6,69 @@
 #include <fstream>
 #include "NGT/Index.h"
 #include "ofMain.h"
+#include "util.h"
+
 
 class NowLoading: public ofThread
 {
 public:
-	std::string matFile_;
-	std::vector<std::vector<double>> mat_;
+	std::string featuresfile_;
+	std::string new_featuresfile_;
+	std::vector<std::vector<double>> features_;
+	std::vector<std::vector<double>> new_features_;
+	std::vector<int> new_index_;
+	bool isLoaded_init_;
+	bool isLoaded_new_;
+	bool isLoadNew_;
 	int row_;
 	int col_;
-	int count_;
-	bool done_;
+	float process_time_;
 
 
 public:
 	NowLoading()
 	{
-		row_ = 0;
-		col_ = 0;
-		count_ = 0;
-		done_ = false;
+		isLoaded_init_ = false;
+		isLoaded_new_ = false;
+		isLoadNew_ = false;
 	}
 
-	void threadedFunction()
+	inline void threadedFunction()
 	{
-		if (!done_)
+		lock();
+
+		if (!isLoadNew_)
 		{
-			std::cout << "[NowLoading] start loading vgg-face features." << std::endl;
-			lock();
-			loadMatrix();
-			unlock();
-			done_ = true;
-			std::cout << "[NowLoading] finished loading vgg-face features." << std::endl;
+			std::cout << "[NowLoading] Start loadinge features." << std::endl;
+			isLoaded_init_ = false;
+			load_features();
+			isLoaded_init_ = true;
+			std::cout << "[NowLoading] Finished loading features." << std::endl;
 		}
+		else
+		{
+			std::cout << "[NowLoading] Start loading new features." << std::endl;
+			isLoaded_new_ = false;
+			float start = ofGetElapsedTimef();
+			load_new_features();
+			process_time_ = ofGetElapsedTimef() - start;
+			isLoaded_new_ = true;
+			std::cout << "[NowLoading] Finished loading new features." << std::endl;
+		}
+
+		unlock();
 	}
 
-	void setMatFile(const std::string& matFile)
+	void set_featuresfile(const std::string& featuresfile, const std::string& new_featuresfile)
 	{
-		matFile_ = matFile;
+		featuresfile_ = featuresfile;
+		new_featuresfile_ = new_featuresfile;
+	}
+
+	// Select new features to load.
+	void set_new_index(const std::vector<int>& new_index)
+	{
+		new_index_ = new_index;
 	}
 
 	void setRow(const int row)
@@ -50,19 +76,19 @@ public:
 		row_ = row;
 	}
 
-	const int getCol()
-	{
-		return col_;
-	}
 
-	void loadMatrix()
+private:
+	inline void load_features()
 	{
-		std::ifstream ifs(matFile_);
+		std::ifstream ifs(featuresfile_);
 		if (!ifs)
-			std::cerr << "[warning] Cannot open the specified file. " << matFile_ << std::endl;
+			std::cerr << "[Warning] Cannot open the specified file. " << featuresfile_ << std::endl;
 		else
 		{
+			features_.resize(row_);
+
 			std::string line;
+			int i = 0;
 			while (getline(ifs, line))
 			{
 				std::vector<std::string> tokens;
@@ -70,12 +96,43 @@ public:
 				std::vector<double> obj;
 				for (std::vector<std::string>::iterator ti = tokens.begin(); ti != tokens.end(); ++ti)
 					obj.push_back(NGT::Common::strtod(*ti));
-				mat_.push_back(obj);
-				count_++;
+				features_[i] = obj;
+				i++;
 			}
-			col_ = mat_[0].size();
+			col_ = features_[0].size();
 		}
 	}
+
+	inline void load_new_features()
+	{
+		std::ifstream ifs(new_featuresfile_);
+		if (!ifs)
+			std::cerr << "[Warning] Cannot open the specified file. " << new_featuresfile_ << std::endl;
+		else
+		{
+			new_features_.resize(row_);
+
+			std::string line;
+			int i = 0;
+			while (getline(ifs, line))
+			{
+				if (!vector_finder(new_index_, i))
+				{
+					i++;
+					continue;
+				}
+
+				std::vector<std::string> tokens;
+				NGT::Common::tokenize(line, tokens, "\t");
+				std::vector<double> obj;
+				for (std::vector<std::string>::iterator ti = tokens.begin(); ti != tokens.end(); ++ti)
+					obj.push_back(NGT::Common::strtod(*ti));
+				new_features_[i] = obj;
+				i++;
+			}
+		}
+	}
+
 };
 
 
@@ -86,11 +143,14 @@ public:
 	std::vector<std::string> name_;
 	std::vector<int> showList_;
 	int row_;
+	int searchTarget_;
 
 
 public:
-	void load()
+	inline void load_images()
 	{
+		picture_.clear();
+		picture_.resize(row_);
 		for (int i = 0; i < row_; i++)
 			picture_[i].load(name_[showList_[i]]);
 	}
@@ -108,10 +168,6 @@ public:
 
 		showList_ = showList;
 		row_ = showList_.size();
-
-		picture_.clear();
-		std::vector<ofImage>().swap(picture_);
-		picture_.resize(row_);
 	}
 
 	void setRow(const int row)

@@ -22,9 +22,6 @@
 #endif
 
 #include	"Common.h"
-#include    "boost/python.hpp"
-#include    "boost/python/numpy.hpp"
-
 
 class ObjectSpace;
 
@@ -230,10 +227,7 @@ namespace NGT {
 
     Comparator &getComparator() { return *comparator; }
 
-    static boost::python::object neuralExtracter;
-    static bool withTrain;
-
-	virtual void serialize(const string &of) = 0;
+    virtual void serialize(const string &of) = 0;
     virtual void deserialize(const string &ifile) = 0;
     virtual void serializeAsText(const string &of) = 0;
     virtual void deserializeAsText(const string &of) = 0;
@@ -1034,79 +1028,7 @@ namespace NGT {
       return (double)count;
     }
 
-    // customed by yg
-	inline static double compareAngleDistance(OBJECT_TYPE *a, OBJECT_TYPE *b, size_t size)
-	{
-		// Calculate the norm of A and B (the supplied vector).
-		double normA = 0.0F;
-		double normB = 0.0F;
-		double sum = 0.0F;
-
-		if (NGT::ObjectSpace::withTrain)
-		{
-			// convert into python's list
-			boost::python::list pylist_a, pylist_b;
-
-			for (int i = 0; i < size; ++i)
-			{
-				pylist_a.append((float)a[i]);
-				pylist_b.append((float)b[i]);
-			}
-
-			// features extraction
-			boost::python::object neural_a = NGT::ObjectSpace::neuralExtracter(pylist_a);
-			boost::python::object neural_b = NGT::ObjectSpace::neuralExtracter(pylist_b);
-
-			std::string a_str, b_str;
-			float a_f, b_f;
-
-			for (size_t loc = 0; loc < size; loc++)
-			{
-				a_str = boost::python::extract<std::string>(boost::python::str(neural_a[loc]));
-				b_str = boost::python::extract<std::string>(boost::python::str(neural_b[loc]));
-
-				a_f = std::atof(a_str.c_str());
-				b_f = std::atof(b_str.c_str());
-
-				normA += a_f * a_f;
-				normB += b_f * b_f;
-				sum += a_f * b_f;
-			}
-		}
-		else
-		{
-			for (size_t loc = 0; loc < size; loc++)
-			{
-				normA += (double) a[loc] * (double) a[loc];
-				normB += (double) b[loc] * (double) b[loc];
-				sum += (double) a[loc] * (double) b[loc];
-			}
-		}
-
-		assert(normA > 0.0F);
-		assert(normB > 0.0F);
-
-		// Compute the dot product of the two vectors.
-		double cosine = sum / (sqrt(normA) * sqrt(normB));
-		// Compute the vector angle from the cosine value, and return.
-		// Roundoff error could have put the cosine value out of range.
-		// Handle these cases explicitly.
-		if (cosine >= 1.0F)
-		{
-			return 0.0F;
-		}
-		else if (cosine <= -1.0F)
-		{
-			return acos(-1.0F);
-		}
-		else
-		{
-			return acos(cosine);
-		}
-
-	}
-
-    inline static double compareCosineSimilarity(OBJECT_TYPE *a, OBJECT_TYPE *b, size_t size) {
+    inline static double compareAngleDistance(OBJECT_TYPE *a, OBJECT_TYPE *b, size_t size) {
       // Calculate the norm of A and B (the supplied vector).
       double normA = 0.0F;
       double normB = 0.0F;
@@ -1122,8 +1044,39 @@ namespace NGT {
 
       // Compute the dot product of the two vectors. 
       double cosine = sum / (sqrt(normA) * sqrt(normB));
+      // Compute the vector angle from the cosine value, and return.
+      // Roundoff error could have put the cosine value out of range.
+      // Handle these cases explicitly.
+      if (cosine >= 1.0F) {
+	return 0.0F;
+      } else if (cosine <= -1.0F) {
+	return acos (-1.0F);
+      } else {
+	return acos (cosine);
+      }
 
-      return 1.0 - cosine;
+    }
+
+    inline static double compareCosineSimilarity(OBJECT_TYPE *a, OBJECT_TYPE *b, size_t size)
+	{
+		// Calculate the norm of A and B (the supplied vector).
+		double normA = 0.0F;
+		double normB = 0.0F;
+		double sum = 0.0F;
+		for (size_t loc = 0; loc < size; loc++)
+		{
+			normA += (double) a[loc] * (double) a[loc];
+			normB += (double) b[loc] * (double) b[loc];
+			sum += (double) a[loc] * (double) b[loc];
+		}
+
+		assert(normA > 0.0F);
+		assert(normB > 0.0F);
+
+		// Compute the dot product of the two vectors.
+		double cosine = sum / (sqrt(normA) * sqrt(normB));
+
+		return 1.0 - cosine;
     }
 
     void serialize(const string &ofile) { ObjectRepository::serialize(ofile, this); }

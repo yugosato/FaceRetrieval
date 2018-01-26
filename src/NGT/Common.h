@@ -36,8 +36,6 @@
 
 #include	"NGT/defines.h"
 #include	"NGT/SharedMemoryAllocator.h"
-#include 	"boost/python.hpp"
-#include 	"boost/python/numpy.hpp"
 
 #define ADVANCED_USE_REMOVED_LIST
 #define	SHARED_REMOVED_LIST
@@ -1599,7 +1597,6 @@ namespace NGT {
       radius = sc.radius;
       explorationCoefficient = sc.explorationCoefficient;
       result = sc.result;
-      extracter = sc.extracter;
       return *this;
     }
     virtual ~SearchContainer() {}
@@ -1614,8 +1611,6 @@ namespace NGT {
     void setRadius(Distance r) { radius = r; }
     void setEpsilon(float e) { explorationCoefficient = e + 1.0; }
 
-    void setExtracter(const boost::python::object &e) { extracter = e; }
-
     ObjectDistances &getResult() {
       if (result == 0) {
 	NGTThrowException("Inner error: results is not set");
@@ -1627,10 +1622,6 @@ namespace NGT {
     size_t		size;
     Distance		radius;
     float		explorationCoefficient;
-
-//    boost::python::object weight;
-//    boost::python::object bias;
-    boost::python::object extracter;
 
   private:
     ObjectDistances	*result;

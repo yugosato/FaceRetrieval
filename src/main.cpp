@@ -1,20 +1,16 @@
 #include "ofMain.h"
 #include "ofApp.h"
-#include "NGT/ObjectSpace.h"
-#include "boost/python.hpp"
-#include "boost/python/numpy.hpp"
 
 
-boost::python::object NGT::ObjectSpace::neuralExtracter;
-bool NGT::ObjectSpace::withTrain;
+// argv[1] subject name
+// argv[2] search target
+// argv[3] selection method
 
 //========================================================================
-int main()
+int main(int argc, char* argv[])
 {
-	ofSetupOpenGL(1024, 768, OF_WINDOW);			// <-------- setup the GL context
-
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp(new ofApp());
+	ofGLFWWindowSettings settings;
+	settings.resizable = false;
+	ofCreateWindow(settings);
+	return ofRunApp(new ofApp(argv[1], argv[2], argv[3]));
 }
