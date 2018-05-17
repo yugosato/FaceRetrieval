@@ -1,8 +1,7 @@
 # Face Retrieval Relying on User's Visual Memory
 Yugo Sato, Tsukasa Fukusato, and Shigeo Morishima.  
 "Face Retrieval Framework Relying on User's Visual Memory".  
-ACM International Conference on Multimedia Retrieval (ICMR2018). Regular Paper (Reviewed).  
-2018.6.11-14, Yokohama, Japan. 
+ACM International Conference on Multimedia Retrieval (ICMR2018).
 
 <img src=https://user-images.githubusercontent.com/20763586/35425115-ccd923e0-029b-11e8-9143-5cb230303f44.png height=200px>  
 <img src=https://user-images.githubusercontent.com/20763586/35425119-d1d22edc-029b-11e8-99fa-e0cea959a5bf.png height=200px>  
