@@ -21,4 +21,4 @@ C++
 Python 2.7.14
 * Chainer v1.24.0
 
-© 2018 Copyright held by Yugo Sato.
+© 2018 Copyright is held by Yugo Sato.
