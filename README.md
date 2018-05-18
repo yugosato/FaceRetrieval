@@ -1,4 +1,4 @@
-# Face Retrieval Relying on User's Visual Memory  
+# Face Retrieval System Relying on User's Visual Memory  
 <img src=https://user-images.githubusercontent.com/20763586/35425115-ccd923e0-029b-11e8-9143-5cb230303f44.png height=200px>  
 <img src=https://user-images.githubusercontent.com/20763586/35425119-d1d22edc-029b-11e8-99fa-e0cea959a5bf.png height=200px>  
 
@@ -22,5 +22,3 @@ C++
 
 Python v2.7.14
 * Chainer v1.24.0
-
-© 2018 Copyright is held by Yugo Sato.
